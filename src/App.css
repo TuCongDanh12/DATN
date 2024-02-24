@@ -1,38 +1,84 @@
-.App {
-  text-align: center;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap");
+
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+:root {
+  --main-1: #FFF6D8;
+  --main-2: #FEE4C3;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
+html {
   min-height: 100vh;
+  background: var(--main-1);
+  background-size: contain;
+}
+
+
+a {
+  text-decoration: none;
+}
+
+::-webkit-scrollbar {
+  width: 0 !important;
+  display: none;
+}
+
+
+html,
+body,
+#root,
+.app,
+.content {
+  height: 100%;
+  width: 100%;
+  font-family: "Source Sans Pro", sans-serif;
+}
+
+.app {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  position: relative;
 }
 
-.App-link {
-  color: #61dafb;
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Track */
+::-webkit-scrollbar-track {
+  background: #e0e0e0;
 }
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+ .app .btn-toggle {
+	 cursor: pointer;
+	 display: none;
+	 position: absolute;
+	 left: 25px;
+	 top: 33px;
+	 z-index: 10;
+}
+
+  @media screen and (max-width: 768px) {
+	.app .btn-toggle {
+      display: flex;
+	  /* z-index: 10000; */
+    }
+  }
