@@ -2,6 +2,7 @@ import React from 'react'
 import Process from './../../../../component/Process/Process';
 
 const QuyTrinhBanHang = () => {
+  const mainContent = "NGHIỆP VỤ BÁN HÀNG";
   const process = [
     {
       url: 'don-dat-hang',
@@ -21,7 +22,7 @@ const QuyTrinhBanHang = () => {
     },
   ]
   return (
-    <Process process={process} />
+    <Process mainContent={mainContent} process={process} />
   )
 }
 

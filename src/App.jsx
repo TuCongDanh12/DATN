@@ -10,11 +10,11 @@ import TongQuan from './page/TongQuan/TongQuan';
 import MuaHang from './page/MuaHang/MuaHang';
 import QuyTrinhMuaHang from './page/MuaHang/components/QuyTrinhMuaHang/QuyTrinhMuaHang';
 import BanHang from './page/BanHang/BanHang';
-import QuyTrinhBanHang from './page/BanHang/components/QuyTrinhBanHang/QuyTrinhBanHang';
-import DonDatHang from './page/BanHang/components/DonDatHang/DonDatHang';
-import ChungTuBanHang from './page/BanHang/components/ChungTuBanHang/ChungTuBanHang';
-import HoaDonBanHang from './page/BanHang/components/HoaDonBanHang/HoaDonBanHang';
-import ThuTienTheoHoaDon from './page/BanHang/components/ThuTienTheoHoaDon';
+import QuyTrinhBanHang from './page/BanHang/scenes/QuyTrinhBanHang/QuyTrinhBanHang';
+import DonDatHang from './page/BanHang/scenes/DonDatHang/DonDatHang';
+import ChungTuBanHang from './page/BanHang/scenes/ChungTuBanHang/ChungTuBanHang';
+import HoaDonBanHang from './page/BanHang/scenes/HoaDonBanHang/HoaDonBanHang';
+import ThuTienTheoHoaDon from './page/BanHang/scenes/ThuTienTheoHoaDon/ThuTienTheoHoaDon';
 import TienMat from './page/TienMat/TienMat';
 import TienGui from './page/TienGui/TienGui';
 import CongNo from './page/CongNo/CongNo';
@@ -22,6 +22,11 @@ import BaoCao from './page/BaoCao/BaoCao';
 import ThongBao from './page/ThongBao/ThongBao';
 import HoTro from './page/HoTro/HoTro';
 import CaiDat from './page/CaiDat/CaiDat';
+import XemDonDatHang from './page/BanHang/scenes/DonDatHang/scenes/XemDonDatHang/XemDonDatHang';
+import XemChungTuBanHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/XemChungTuBanHang";
+import XemHoaDonBanHang from "./page/BanHang/scenes/HoaDonBanHang/scenes/XemHoaDonBanHang";
+import TimKiemThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/TimKiemThuTien";
+import ThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/ThuTien";
 
 
 function App() {
@@ -65,6 +70,12 @@ function App() {
                 <Route path="hoa-don-ban-hang" element={<HoaDonBanHang />} />
                 <Route path="thu-tien-theo-hoa-don" element={<ThuTienTheoHoaDon />} />
               </Route>
+              <Route path="ban-hang/don-dat-hang/xem" element={<XemDonDatHang />} />
+              <Route path="ban-hang/chung-tu-ban-hang/xem" element={<XemChungTuBanHang />} />
+              <Route path="ban-hang/hoa-don-ban-hang/xem" element={<XemHoaDonBanHang />} />
+              <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem" element={<TimKiemThuTien />} />
+              <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThuTien />} />
+              <Route path="ban-hang/thu-tien-theo-hoa-don/xem" element={<ThuTien />} />
               <Route path="/tien-mat" element={<TienMat />} />
               <Route path="/tien-gui" element={<TienGui />} />
               <Route path="/cong-no" element={<CongNo />} />
