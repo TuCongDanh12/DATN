@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import "./App.css";
 import Sidebar from "./layout/Sidebar/Sidebar";
 import { useState } from "react";
-import React from 'react'
+import React from "react";
 import { ColorModeContext, useMode } from "./utils/theme";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { FaBars } from "react-icons/fa";
@@ -27,13 +27,16 @@ import XemChungTuBanHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/XemCh
 import XemHoaDonBanHang from "./page/BanHang/scenes/HoaDonBanHang/scenes/XemHoaDonBanHang";
 import TimKiemThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/TimKiemThuTien";
 import ThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/ThuTien";
+import DonMuaHang from './page/MuaHang/components/DonMuaHang/DonMuaHang';
+import ListChungtu from './component/Table/table-chungtu';
+import MuahangChungtu from "./component/Chungtu/Muahang/chungtu";
+import TablePhieuChi from './component/Table/table-phieuchi';
 
 
 function App() {
   const [theme, colorMode] = useMode();
   const [toggled, setToggled] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
-
 
   const handleToggleSidebar = (value) => {
     setToggled(value);
@@ -43,10 +46,10 @@ function App() {
     setIsCollapsed(value);
   };
   return (
-    <ColorModeContext.Provider value={colorMode} >
+    <ColorModeContext.Provider value={colorMode}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <div className={`app ${toggled ? 'toggled' : ''}`}>
+        <div className={`app ${toggled ? "toggled" : ""}`}>
           <Sidebar
             toggled={toggled}
             handleToggleSidebar={handleToggleSidebar}
@@ -55,20 +58,38 @@ function App() {
           />
 
           <main className="content">
-            <div className="btn-toggle" onClick={() => handleToggleSidebar(true)}>
+            <div
+              className="btn-toggle"
+              onClick={() => handleToggleSidebar(true)}
+            >
               <FaBars size={20} />
             </div>
             <Routes>
               <Route path="/" element={<TongQuan />} />
               <Route path="/mua-hang" element={<MuaHang />}>
                 <Route path="quy-trinh" element={<QuyTrinhMuaHang />} />
+                <Route path="don-mua-hang" element={<DonMuaHang />} />
+                <Route
+                  path="chung-tu-mua-hang"
+                  element={<ListChungtu />}
+                ></Route>
+                <Route
+                  path="chung-tu-mua-hang/id"
+                  element={<MuahangChungtu />}
+                />
+
+                <Route path="phieu-chi" element={<TablePhieuChi />} />
+                {/* <Route path="tra-tien" element={<Tratien />} /> */}
               </Route>
               <Route path="/ban-hang" element={<BanHang />}>
                 <Route path="quy-trinh" element={<QuyTrinhBanHang />} />
                 <Route path="don-dat-hang" element={<DonDatHang />} />
                 <Route path="chung-tu-ban-hang" element={<ChungTuBanHang />} />
                 <Route path="hoa-don-ban-hang" element={<HoaDonBanHang />} />
-                <Route path="thu-tien-theo-hoa-don" element={<ThuTienTheoHoaDon />} />
+                <Route
+                  path="thu-tien-theo-hoa-don"
+                  element={<ThuTienTheoHoaDon />}
+                />
               </Route>
               <Route path="ban-hang/don-dat-hang/xem" element={<XemDonDatHang />} />
               <Route path="ban-hang/chung-tu-ban-hang/xem" element={<XemChungTuBanHang />} />
@@ -87,8 +108,7 @@ function App() {
           </main>
         </div>
       </ThemeProvider>
-    </ColorModeContext.Provider >
-
+    </ColorModeContext.Provider>
   );
 }
 

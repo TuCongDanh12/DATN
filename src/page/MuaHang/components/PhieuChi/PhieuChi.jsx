@@ -1,8 +1,11 @@
 import React from 'react'
+import TablePhieuChi from '../../../../component/Table/table-phieuchi'
 
 const PhieuChi = () => {
   return (
-    <div>PhieuChi</div>
+    <div>
+      <TablePhieuChi/>
+    </div>
   )
 }
 
