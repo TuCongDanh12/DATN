@@ -31,12 +31,15 @@ import DonMuaHang from './page/MuaHang/components/DonMuaHang/DonMuaHang';
 import ListChungtu from './component/Table/table-chungtu';
 import MuahangChungtu from "./component/Chungtu/Muahang/chungtu";
 import TablePhieuChi from './component/Table/table-phieuchi';
+import Login from "./page/Login/Login";
+import Signup from "./page/Signup/Signup";
 
 
 function App() {
   const [theme, colorMode] = useMode();
   const [toggled, setToggled] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const [isLogin, setIsLogin] = useState(false);
 
   const handleToggleSidebar = (value) => {
     setToggled(value);
@@ -50,21 +53,23 @@ function App() {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <div className={`app ${toggled ? "toggled" : ""}`}>
-          <Sidebar
+          {!isLogin && <Sidebar
             toggled={toggled}
             handleToggleSidebar={handleToggleSidebar}
             isCollapsed={isCollapsed}
             handleIsCollapsed={handleIsCollapsed}
-          />
+          />}
 
           <main className="content">
-            <div
+            {!isLogin && <div
               className="btn-toggle"
               onClick={() => handleToggleSidebar(true)}
             >
               <FaBars size={20} />
-            </div>
+            </div>}
             <Routes>
+              <Route path="/dang-nhap" element={<Login />} />
+              <Route path="/dang-ky" element={<Signup />} />
               <Route path="/" element={<TongQuan />} />
               <Route path="/mua-hang" element={<MuaHang />}>
                 <Route path="quy-trinh" element={<QuyTrinhMuaHang />} />
