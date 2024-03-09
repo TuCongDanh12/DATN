@@ -93,7 +93,7 @@ const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed})
                 alignItems="center"
                 ml="15px"
               >
-                <Typography variant="h3" color={colors.grey[100]}>
+                <Typography variant="h3" color={colors.grey[100]} className="flex items-center gap-1">
                   <FaCoins /> Big Ledger
                 </Typography>
                 <IconButton onClick={() => handleIsCollapsed(!isCollapsed)}>

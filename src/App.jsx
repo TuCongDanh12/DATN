@@ -33,7 +33,8 @@ import MuahangChungtu from "./component/Chungtu/Muahang/chungtu";
 import TablePhieuChi from './component/Table/table-phieuchi';
 import Login from "./page/Login/Login";
 import Signup from "./page/Signup/Signup";
-
+import { Provider } from "react-redux";
+import store from './store/store';
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -49,71 +50,73 @@ function App() {
     setIsCollapsed(value);
   };
   return (
-    <ColorModeContext.Provider value={colorMode}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <div className={`app ${toggled ? "toggled" : ""}`}>
-          {!isLogin && <Sidebar
-            toggled={toggled}
-            handleToggleSidebar={handleToggleSidebar}
-            isCollapsed={isCollapsed}
-            handleIsCollapsed={handleIsCollapsed}
-          />}
+    <Provider store={store}>
+      <ColorModeContext.Provider value={colorMode}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <div className={`app ${toggled ? "toggled" : ""}`}>
+            {!isLogin && <Sidebar
+              toggled={toggled}
+              handleToggleSidebar={handleToggleSidebar}
+              isCollapsed={isCollapsed}
+              handleIsCollapsed={handleIsCollapsed}
+            />}
 
-          <main className="content">
-            {!isLogin && <div
-              className="btn-toggle"
-              onClick={() => handleToggleSidebar(true)}
-            >
-              <FaBars size={20} />
-            </div>}
-            <Routes>
-              <Route path="/dang-nhap" element={<Login />} />
-              <Route path="/dang-ky" element={<Signup />} />
-              <Route path="/" element={<TongQuan />} />
-              <Route path="/mua-hang" element={<MuaHang />}>
-                <Route path="quy-trinh" element={<QuyTrinhMuaHang />} />
-                <Route path="don-mua-hang" element={<DonMuaHang />} />
-                <Route
-                  path="chung-tu-mua-hang"
-                  element={<ListChungtu />}
-                ></Route>
-                <Route
-                  path="chung-tu-mua-hang/id"
-                  element={<MuahangChungtu />}
-                />
+            <main className="content">
+              {!isLogin && <div
+                className="btn-toggle"
+                onClick={() => handleToggleSidebar(true)}
+              >
+                <FaBars size={20} />
+              </div>}
+              <Routes>
+                <Route path="/dang-nhap" element={<Login />} />
+                <Route path="/dang-ky" element={<Signup />} />
+                <Route path="/" element={<TongQuan />} />
+                <Route path="/mua-hang" element={<MuaHang />}>
+                  <Route path="quy-trinh" element={<QuyTrinhMuaHang />} />
+                  <Route path="don-mua-hang" element={<DonMuaHang />} />
+                  <Route
+                    path="chung-tu-mua-hang"
+                    element={<ListChungtu />}
+                  ></Route>
+                  <Route
+                    path="chung-tu-mua-hang/id"
+                    element={<MuahangChungtu />}
+                  />
 
-                <Route path="phieu-chi" element={<TablePhieuChi />} />
-                {/* <Route path="tra-tien" element={<Tratien />} /> */}
-              </Route>
-              <Route path="/ban-hang" element={<BanHang />}>
-                <Route path="quy-trinh" element={<QuyTrinhBanHang />} />
-                <Route path="don-dat-hang" element={<DonDatHang />} />
-                <Route path="chung-tu-ban-hang" element={<ChungTuBanHang />} />
-                <Route path="hoa-don-ban-hang" element={<HoaDonBanHang />} />
-                <Route
-                  path="thu-tien-theo-hoa-don"
-                  element={<ThuTienTheoHoaDon />}
-                />
-              </Route>
-              <Route path="ban-hang/don-dat-hang/xem" element={<XemDonDatHang />} />
-              <Route path="ban-hang/chung-tu-ban-hang/xem" element={<XemChungTuBanHang />} />
-              <Route path="ban-hang/hoa-don-ban-hang/xem" element={<XemHoaDonBanHang />} />
-              <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem" element={<TimKiemThuTien />} />
-              <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThuTien />} />
-              <Route path="ban-hang/thu-tien-theo-hoa-don/xem" element={<ThuTien />} />
-              <Route path="/tien-mat" element={<TienMat />} />
-              <Route path="/tien-gui" element={<TienGui />} />
-              <Route path="/cong-no" element={<CongNo />} />
-              <Route path="/bao-cao" element={<BaoCao />} />
-              <Route path="/thong-bao" element={<ThongBao />} />
-              <Route path="/ho-tro" element={<HoTro />} />
-              <Route path="/cai-dat" element={<CaiDat />} />
-            </Routes>
-          </main>
-        </div>
-      </ThemeProvider>
-    </ColorModeContext.Provider>
+                  <Route path="phieu-chi" element={<TablePhieuChi />} />
+                  {/* <Route path="tra-tien" element={<Tratien />} /> */}
+                </Route>
+                <Route path="/ban-hang" element={<BanHang />}>
+                  <Route path="quy-trinh" element={<QuyTrinhBanHang />} />
+                  <Route path="don-dat-hang" element={<DonDatHang />} />
+                  <Route path="chung-tu-ban-hang" element={<ChungTuBanHang />} />
+                  <Route path="hoa-don-ban-hang" element={<HoaDonBanHang />} />
+                  <Route
+                    path="thu-tien-theo-hoa-don"
+                    element={<ThuTienTheoHoaDon />}
+                  />
+                </Route>
+                <Route path="ban-hang/don-dat-hang/xem" element={<XemDonDatHang />} />
+                <Route path="ban-hang/chung-tu-ban-hang/xem" element={<XemChungTuBanHang />} />
+                <Route path="ban-hang/hoa-don-ban-hang/xem" element={<XemHoaDonBanHang />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem" element={<TimKiemThuTien />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThuTien />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/xem" element={<ThuTien />} />
+                <Route path="/tien-mat" element={<TienMat />} />
+                <Route path="/tien-gui" element={<TienGui />} />
+                <Route path="/cong-no" element={<CongNo />} />
+                <Route path="/bao-cao" element={<BaoCao />} />
+                <Route path="/thong-bao" element={<ThongBao />} />
+                <Route path="/ho-tro" element={<HoTro />} />
+                <Route path="/cai-dat" element={<CaiDat />} />
+              </Routes>
+            </main>
+          </div>
+        </ThemeProvider>
+      </ColorModeContext.Provider>
+    </Provider>
   );
 }
 
