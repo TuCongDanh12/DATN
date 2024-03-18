@@ -33,6 +33,14 @@ import MuahangChungtu from "./component/Chungtu/Muahang/chungtu";
 import TablePhieuChi from './component/Table/table-phieuchi';
 import Login from "./page/Login/Login";
 import Signup from "./page/Signup/Signup";
+import DoiTuong from "./page/DoiTuong/DoiTuong";
+import NhaCungCap from './page/DoiTuong/scenes/NhaCungCap/NhaCungCap';
+import NhomNhaCungCap from './page/DoiTuong/scenes/NhomNhaCungCap/NhomNhaCungCap';
+import KhachHang from './page/DoiTuong/scenes/KhachHang/KhachHang';
+import NhomKhachHang from './page/DoiTuong/scenes/NhomKhachHang/NhomKhachHang';
+import SanPham from './page/DoiTuong/scenes/SanPham/SanPham';
+import TaiChinh from './page/DoiTuong/scenes/TaiChinh/TaiChinh';
+import ThemNhaCungCap from "./page/DoiTuong/scenes/NhaCungCap/scenes/ThemNhaCungCap/ThemNhaCungCap";
 
 
 function App() {
@@ -71,6 +79,19 @@ function App() {
               <Route path="/dang-nhap" element={<Login />} />
               <Route path="/dang-ky" element={<Signup />} />
               <Route path="/" element={<TongQuan />} />
+              <Route path="doi-tuong" element={<DoiTuong />}>
+                <Route path="nha-cung-cap" element={<NhaCungCap />} />
+                <Route path="nhom-nha-cung-cap" element={<NhomNhaCungCap />} />
+                <Route path="khach-hang" element={<KhachHang />} />
+                <Route path="nhom-khach-hang" element={<NhomKhachHang />} />
+                <Route path="san-pham" element={<SanPham />} />
+                <Route path="tai-chinh" element={<TaiChinh />} />
+
+              </Route>
+              <Route path="doi-tuong/nha-cung-cap/them" element={<ThemNhaCungCap disabled={false} />} />
+              <Route path="doi-tuong/nha-cung-cap/xem/:id" element={<ThemNhaCungCap disabled={true} />} />
+              <Route path="doi-tuong/nha-cung-cap/chinh-sua/:id" element={<ThemNhaCungCap disabled={false} />} />
+
               <Route path="/mua-hang" element={<MuaHang />}>
                 <Route path="quy-trinh" element={<QuyTrinhMuaHang />} />
                 <Route path="don-mua-hang" element={<DonMuaHang />} />

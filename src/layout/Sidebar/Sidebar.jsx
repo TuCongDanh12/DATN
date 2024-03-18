@@ -10,12 +10,13 @@ import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { FaCoins } from "react-icons/fa";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { MdOutlineDashboard } from "react-icons/md";
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import { IoMdNotificationsOutline } from "react-icons/io";
 import SellIcon from '@mui/icons-material/Sell';
 import { ShoppingCart } from "@mui/icons-material";
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import "./Sidebar.css";
+import { LiaObjectGroup } from "react-icons/lia";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
@@ -35,13 +36,13 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
   );
 };
 
-const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed}) => {
+const Sidebar = ({ toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [selected, setSelected] = useState("Tổng quan");
 
   return (
-   <Box
+    <Box
       sx={{
         "& .pro-sidebar-inner": {
           background: `${colors.primary[400]} !important`,
@@ -63,18 +64,18 @@ const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed})
           // margin: "0 5px !important",
           // borderRadius: "8px !important",
         },
-        "& .pro-menu-item.active .pro-item-content>p":{
+        "& .pro-menu-item.active .pro-item-content>p": {
           fontWeight: 'bold',
-        }, 
-        "& .css-1l8icbj":{
+        },
+        "& .css-1l8icbj": {
           paddingLeft: "5% !important"
-        }, 
+        },
       }}
     >
       <ProSidebar collapsed={isCollapsed}
-   toggled={toggled}
-   onToggle={handleToggleSidebar}
-   breakPoint="md"
+        toggled={toggled}
+        onToggle={handleToggleSidebar}
+        breakPoint="md"
       >
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
@@ -115,7 +116,15 @@ const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed})
             <Item
               title="Tổng quan"
               to="/"
-              icon={<MdOutlineDashboard />}
+              icon={<MdOutlineDashboard size={20} />}
+              selected={selected}
+              setSelected={setSelected}
+            />
+
+            <Item
+              title="Đối tượng"
+              to="/doi-tuong"
+              icon={<LiaObjectGroup size={20} />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -123,21 +132,21 @@ const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed})
             <Item
               title="Mua hàng"
               to="/mua-hang"
-              icon={<SellIcon />}
+              icon={<SellIcon size={20} />}
               selected={selected}
               setSelected={setSelected}
-              />
+            />
             <Item
               title="Bán hàng"
               to="/ban-hang"
-              icon={<ShoppingCart />}
+              icon={<ShoppingCart size={20} />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Tiền mặt"
               to="/tien-mat"
-              icon={<ReceiptOutlinedIcon />}
+              icon={<ReceiptOutlinedIcon size={20} />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -145,7 +154,7 @@ const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed})
             <Item
               title="Tiền gửi"
               to="/tien-gui"
-              icon={<AccountBalanceIcon />}
+              icon={<AccountBalanceIcon size={20} />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -153,14 +162,14 @@ const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed})
             <Item
               title="Công nợ"
               to="/cong-no"
-              icon={<FaCoins />}
+              icon={<FaCoins size={20} />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Báo cáo"
               to="/bao-cao"
-              icon={<AssessmentIcon />}
+              icon={<AssessmentIcon size={20} />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -175,7 +184,7 @@ const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed})
             <Item
               title="Thông báo"
               to="/thong-bao"
-              icon={<NotificationsNoneIcon />}
+              icon={<IoMdNotificationsOutline size={20} />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -183,14 +192,14 @@ const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed})
             <Item
               title="Hỗ trợ"
               to="/ho-tro"
-              icon={<HelpOutlineOutlinedIcon />}
+              icon={<HelpOutlineOutlinedIcon size={20} />}
               selected={selected}
               setSelected={setSelected}
             />
             <Item
               title="Cài đặt"
               to="/cai-dat"
-              icon={<SettingsOutlinedIcon />}
+              icon={<SettingsOutlinedIcon size={20} />}
               selected={selected}
               setSelected={setSelected}
             />
@@ -244,7 +253,7 @@ const Sidebar = ({toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed})
             </Box>
           )} */}
       </ProSidebar>
-    </Box> 
+    </Box>
   );
 };
 
