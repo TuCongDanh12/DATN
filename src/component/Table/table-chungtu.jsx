@@ -37,7 +37,7 @@ const columns = [
     render: () => (
       <Space size="middle">
         <Dropdown menu={{ items }}>
-          <Link href="#" className="!text-black">
+          <Link to='id' className="!text-black">
             Trả tiền <DownOutlined />
           </Link>
         </Dropdown>

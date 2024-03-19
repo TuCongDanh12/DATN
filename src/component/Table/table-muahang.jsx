@@ -32,7 +32,7 @@ const columns = [
     render: () => (
       <Space size="middle">
         <Dropdown menu={{ items }}>
-          <Link href="#" className="!text-black">
+          <Link to='/mua-hang/chung-tu-mua-hang/id' className="!text-black">
             Lập chứng từ <DownOutlined />
           </Link>
         </Dropdown>

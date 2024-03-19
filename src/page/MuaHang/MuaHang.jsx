@@ -25,7 +25,7 @@ const MuaHang = () => {
   ]
   return (
     <div>
-      <Header title="Bán hàng" titlez={titlez} process={process} />
+      <Header title="Mua hàng" titlez={titlez} process={process} />
       <Outlet />
     </div>
       )
