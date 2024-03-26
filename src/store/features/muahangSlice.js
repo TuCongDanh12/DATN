@@ -4,23 +4,13 @@ import muahangService from "../../services/muahang.service";
 
 export const getListDonMuahang = createAsyncThunk(
   "muahang/getListDonMuahang",
-  async (thunkAPI) => {
+  async ({ requestParam }, thunkAPI) => {
     try {
-      const response = await muahangService.getListDonMuahang();
-      // thunkAPI.dispatch(setMessage(response.data.message));
+      const response = await muahangService.getListDonMuahang({ requestParam });
       // console.log(response)
-      console.log(response)
       return response.data;
     } catch (error) {
-      console.log("error",error)
-      // const message =
-      //   (error.response &&
-      //     error.response.data &&
-      //     error.response.data.message) ||
-      //   error.message ||
-      //   error.toString();
-      // thunkAPI.dispatch(setMessage(message));
-      
+      // console.log("error",error)
       return thunkAPI.rejectWithValue(error.response.data);
     }
   }
@@ -44,9 +34,11 @@ export const logout = createAsyncThunk(
 const initialState = {
   isFetching: false,
   isSuccess: false,
+  isSuccessGetListDonMuahang: false,
   isError: false,
   message: "",
-  data: []
+  listDonMuahangData: [],
+  pagination: {}
 };
 
 export const muahangSlice = createSlice({
@@ -56,6 +48,7 @@ export const muahangSlice = createSlice({
     clearState: (state) => {
       state.isError = false;
       state.isSuccess = false;
+      state.isSuccessGetListDonMuahang = false;
       state.isFetching = false;
       state.message = "";
       return state;
@@ -71,19 +64,21 @@ export const muahangSlice = createSlice({
     builder.addCase(getListDonMuahang.fulfilled, (state, action) => {
       console.log("getListDonMuahang.fulfilled", action.payload)
       state.isFetching = false;
-      state.isSuccess = true;
-      state.data = action.payload;
-      state.message = action.payload.message;
+      state.isSuccessGetListDonMuahang = true;
+      state.pagination = action.payload.meta.pagination;
+      state.listDonMuahangData = action.payload.result.data;
+      // state.listDonMuahangData = action.payload;
+      // state.message = action.payload.message;
     })
 
     builder.addCase(getListDonMuahang.rejected, (state, action) => {
       console.log("getListDonMuahang.rejected", action)
       state.isFetching = false;
       state.isError = true;
-    //   state.message = action.payload.message;
+      //   state.message = action.payload.message;
     })
 
-    
+
   },
 });
 

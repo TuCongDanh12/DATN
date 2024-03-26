@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } from "antd";
 import { useNavigate, useParams } from 'react-router-dom';
-import { TbFileExport } from "react-icons/tb";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { clearState, doiTuongSelector, getListSupplierGroup, getSupplier, postSupplier } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getListSupplierGroup, getSupplier } from '../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -89,22 +88,32 @@ const EditableCell = ({
 };
 
 
-const ThemNhaCungCap = ({ disabled = true }) => {
+const EditNhaCungCap = ({ disabled = false }) => {
     const dispatch = useDispatch();
-
+    const params = useParams();
+    console.log("params", params)
+    console.log("params.id", params.id)
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
     const { listSupplierData,
         supplierData,
         listSupplierGroupData,
-        supplierGroupData,
-        isSuccess
-    } = useSelector(doiTuongSelector);
+        supplierGroupData, } = useSelector(doiTuongSelector);
+    console.log("supplierData", supplierData);
 
     useEffect(() => {
+        dispatch(getSupplier({ id: params.id }));
         dispatch(getListSupplierGroup());
     }, []);
+
+    useEffect(() => {
+        if (supplierData) {
+            form.setFieldsValue({
+                ...supplierData
+            });
+        }
+    }, [supplierData]);
 
     const nameValue = Form.useWatch('ten-nha-cung-cap', form);
 
@@ -120,7 +129,6 @@ const ThemNhaCungCap = ({ disabled = true }) => {
     ]);
 
     const [count, setCount] = useState(1);
-
 
     const handleDelete = (key) => {
         const newData = dataSource.filter((item) => item.key !== key);
@@ -217,15 +225,12 @@ const ThemNhaCungCap = ({ disabled = true }) => {
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
         console.log(dataSource);
-
-        dispatch(postSupplier({ values }));
-        navigate(-1);
     };
 
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-8">
-                Nhà cung cấp {nameValue}
+                Nhà cung cấp {nameValue || supplierData.name}
             </h1>
             <Form
                 form={form}
@@ -237,16 +242,12 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                 labelAlign="left"
                 labelWrap
                 onFinish={onFinish}
-                //using init set value 
-                initialValues={{
-                    // 'dia-chi': 'default value'
-                }}
             >
                 <Flex gap={100} justify='center' className='w-[100%] align-left'>
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
                             label="Nhóm nhà cung cấp"
-                            name='supplierGroupId'
+                            name='supplierGroup'
                             rules={[
                                 {
                                     required: true,
@@ -454,30 +455,9 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                         </Button>
                     </Form.Item>
                 }
-                                        
-
             </Form>
-
-            {/* <div className='w-full flex justify-end gap-5'>
-                    <Button
-                        className='bg-[#FF7742] font-bold text-white'
-                        type='link'
-                        onClick={() => navigate(-1)}
-                    >
-                        Thoát
-                    </Button>
-                    <Button
-                        className='!bg-[#67CDBB] font-bold text-white'
-                        type='link'
-                        onClick={() => navigate(-1)}
-                    >
-                        Xác nhận
-                    </Button>
-            </div> */}
-
-
         </div>
     )
 }
 
-export default ThemNhaCungCap
+export default EditNhaCungCap

@@ -2,10 +2,24 @@ import axios from "axios";
 import request from "../api/axious";
 // import authHeader from "./auth-header";
 
-const API_URL = `${process.env.REACT_APP_SERVER_URL}/don-mua-hang`;
+const API_URL = `${process.env.REACT_APP_SERVER_URL}`;
 
-const getListDonMuahang = () => {
-  return axios.get(`${API_URL}`, {
+const getListDonMuahang = ({ requestParam }) => {
+  // if (requestParam) {
+  //   requestParam = {
+  //     currentPage: 1,
+  //     pageSize: 20,
+  //   }
+  // }
+  console.log("requestParam", requestParam)
+  if(requestParam.sorts!=='undefined%3AASC'){
+    return axios.get(`${API_URL}/don-mua-hang?currentPage=${requestParam.currentPage}&pageSize=${requestParam.pageSize}&sorts=${requestParam.sorts}`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+  return axios.get(`${API_URL}/don-mua-hang?currentPage=${requestParam.currentPage}&pageSize=${requestParam.pageSize}`, {
     headers: {
       "Content-Type": "application/json",
     },

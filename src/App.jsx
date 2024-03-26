@@ -43,6 +43,8 @@ import TaiChinh from './page/DoiTuong/scenes/TaiChinh/TaiChinh';
 import ThemNhaCungCap from "./page/DoiTuong/scenes/NhaCungCap/scenes/ThemNhaCungCap/ThemNhaCungCap";
 import store from "./store/store";
 import { Provider } from "react-redux";
+import EditNhaCungCap from "./page/DoiTuong/scenes/NhaCungCap/scenes/EditNhaCungCap/EditNhaCungCap";
+import EditNhomNhaCungCap from './page/DoiTuong/scenes/NhomNhaCungCap/scenes/EditNhomNhaCungCap/EditNhomNhaCungCap';
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -91,8 +93,11 @@ function App() {
 
                 </Route>
                 <Route path="doi-tuong/nha-cung-cap/them" element={<ThemNhaCungCap disabled={false} />} />
-                <Route path="doi-tuong/nha-cung-cap/xem/:id" element={<ThemNhaCungCap disabled={true} />} />
-                <Route path="doi-tuong/nha-cung-cap/chinh-sua/:id" element={<ThemNhaCungCap disabled={false} />} />
+                <Route path="doi-tuong/nha-cung-cap/xem/:id" element={<EditNhaCungCap disabled={true} />} />
+                <Route path="doi-tuong/nha-cung-cap/chinh-sua/:id" element={<EditNhaCungCap disabled={false} />} />
+
+                <Route path="doi-tuong/nhom-nha-cung-cap/xem/:id" element={<EditNhomNhaCungCap disabled={true} />} />
+
 
                 <Route path="/mua-hang" element={<MuaHang />}>
                   <Route path="quy-trinh" element={<QuyTrinhMuaHang />} />
