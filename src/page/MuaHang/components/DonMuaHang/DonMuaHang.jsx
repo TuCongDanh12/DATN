@@ -160,6 +160,20 @@ const DonMuaHang = () => {
     {
       title: "Tình trạng",
       dataIndex: "deliveryStatus",
+      filters: [
+        {
+          text: 'DELIVERED',
+          value: 'DELIVERED',
+        },
+        {
+          text: 'NOT_DELIVERED',
+          value: 'NOT_DELIVERED',
+        },
+        {
+          text: 'DELIVERING',
+          value: 'DELIVERING',
+        },
+      ],
     },
     {
       title: "Giá trị đã thực hiện",
@@ -391,7 +405,7 @@ const DonMuaHang = () => {
       </div>
 
       <Table
-      filterDropdownBg='#000'
+        filterDropdownBg='#000'
         rowSelection={{
           type: "checkbox",
           ...rowSelection,

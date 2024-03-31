@@ -3,7 +3,7 @@ import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } fro
 import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { doiTuongSelector, getCustomerGroup } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getListProductGroup, getProduct } from '../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -88,7 +88,7 @@ const EditableCell = ({
 };
 
 
-const EditNhomKhachHang = ({ disabled = false }) => {
+const EditSanPham = ({ disabled = false }) => {
     const dispatch = useDispatch();
     const params = useParams();
     console.log("params", params)
@@ -96,24 +96,38 @@ const EditNhomKhachHang = ({ disabled = false }) => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
-    const { 
-        customerGroupData, } = useSelector(doiTuongSelector);
+    const { listproductData,
+        productData,
+        listSupplierGroupData,
+        supplierGroupData,
+        listProductGroupData } = useSelector(doiTuongSelector);
+    console.log("productData", productData);
 
     useEffect(() => {
-        dispatch(getCustomerGroup({ id: params.id }));
+        dispatch(getProduct({ id: params.id }));
+        dispatch(getListProductGroup());
     }, []);
 
     useEffect(() => {
-        if (customerGroupData) {
+        if (productData) {
             form.setFieldsValue({
-                ...customerGroupData
+                ...productData
             });
         }
-    }, [customerGroupData]);
+    }, [productData]);
 
-    const nameValue = Form.useWatch('ten-nha-cung-cap', form);
+    const nameValue = Form.useWatch('name', form);
 
-    const [dataSource, setDataSource] = useState([]);
+    const [dataSource, setDataSource] = useState([
+        {
+            key: '0',
+            'tenchietkhau': 'Chiết khấu 1',
+            'songayduocno': '20',
+            'songayhuongchietkhau': '10',
+            'phantramchietkhau': '2',
+            'noidung': '...',
+        }
+    ]);
 
     const [count, setCount] = useState(1);
 
@@ -123,25 +137,29 @@ const EditNhomKhachHang = ({ disabled = false }) => {
     };
     const defaultColumns = [
         {
-            title: "Tên khách hàng",
-            dataIndex: "name",
-            sorter: (a, b) => a.name.localeCompare(b.name),
+            title: 'Tên chiết khấu',
+            dataIndex: 'tenchietkhau',
             width: '30%',
             editable: !disabled,
         },
         {
-            title: "Địa chỉ",
-            dataIndex: "address",
+            title: 'Số ngày được nợ',
+            dataIndex: 'songayduocno',
             editable: !disabled,
         },
         {
-            title: "Số điện thoại",
-            dataIndex: "phone",
+            title: 'Số ngày hưởng chiết khấu',
+            dataIndex: 'songayhuongchietkhau',
             editable: !disabled,
         },
         {
-            title: "Ghi chú",
-            dataIndex: "note",
+            title: '% chiết khấu',
+            dataIndex: 'phantramchietkhau',
+            editable: !disabled,
+        },
+        {
+            title: 'Nội dung',
+            dataIndex: 'noidung',
             editable: !disabled,
         },
         {
@@ -213,7 +231,7 @@ const EditNhomKhachHang = ({ disabled = false }) => {
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-8">
-                Nhóm khách hàng {nameValue || customerGroupData.name}
+                Khách hàng {nameValue || productData.name}
             </h1>
             <Form
                 form={form}
@@ -229,7 +247,26 @@ const EditNhomKhachHang = ({ disabled = false }) => {
                 <Flex gap={100} justify='center' className='w-[100%] align-left'>
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Nhóm khách hàng"
+                            label="Nhóm sản phẩm"
+                            name='productGroup'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Select
+                                disabled={disabled}
+                            >
+                                {
+                                    listProductGroupData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
+                                }
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Tên sản phẩm"
                             name='name'
                             rules={[
                                 {
@@ -243,9 +280,80 @@ const EditNhomKhachHang = ({ disabled = false }) => {
 
                             />
                         </Form.Item>
+
+                        <Form.Item
+                            label="Giá mua"
+                            name='priceReceived'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <InputNumber
+                                style={{
+                                    width: '100%',
+                                }} 
+                                disabled={disabled}
+                                />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Giá bán"
+                            name='priceDelivery'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <InputNumber
+                                style={{
+                                    width: '100%',
+                                }} 
+                                disabled={disabled}
+                                />
+                        </Form.Item>
+
+
                     </Flex>
 
                     <Flex vertical gap={5} className='w-[50%]'>
+                        <Form.Item
+                            label="Đơn vị tính"
+                            name='unit'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                placeholder="abc@gmail.com"
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>
+
+                        {/* <Form.Item
+                            label="Số dư"
+                            name=''
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item> */}
+
                         <Form.Item
                             label="Mô tả"
                             name='description'
@@ -255,6 +363,8 @@ const EditNhomKhachHang = ({ disabled = false }) => {
 
                             />
                         </Form.Item>
+
+
                     </Flex>
 
                 </Flex>
@@ -273,7 +383,7 @@ const EditNhomKhachHang = ({ disabled = false }) => {
                         components={components}
                         rowClassName={() => 'editable-row'}
                         bordered
-                        dataSource={customerGroupData.customers}
+                        dataSource={dataSource}
                         columns={columns}
                         pagination={false}
                     />
@@ -312,4 +422,4 @@ const EditNhomKhachHang = ({ disabled = false }) => {
     )
 }
 
-export default EditNhomKhachHang
+export default EditSanPham

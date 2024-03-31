@@ -215,7 +215,7 @@ const EditNhomNhaCungCap = ({ disabled = false }) => {
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-8">
-                Nhà cung cấp {nameValue || supplierGroupData.name}
+                Nhóm nhà cung cấp {nameValue || supplierGroupData.name}
             </h1>
             <Form
                 form={form}
@@ -231,7 +231,7 @@ const EditNhomNhaCungCap = ({ disabled = false }) => {
                 <Flex gap={100} justify='center' className='w-[100%] align-left'>
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Tên nhà cung cấp"
+                            label="Nhà cung cấp"
                             name='name'
                             rules={[
                                 {

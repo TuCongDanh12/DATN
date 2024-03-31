@@ -54,7 +54,7 @@ const NhaCungCap = () => {
             dispatch(clearState());
         }
         if (isError) {
-            api.success({
+            api.error({
                 message: message,
                 placement: 'bottomLeft',
                 duration: 2

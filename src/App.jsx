@@ -45,6 +45,13 @@ import store from "./store/store";
 import { Provider } from "react-redux";
 import EditNhaCungCap from "./page/DoiTuong/scenes/NhaCungCap/scenes/EditNhaCungCap/EditNhaCungCap";
 import EditNhomNhaCungCap from './page/DoiTuong/scenes/NhomNhaCungCap/scenes/EditNhomNhaCungCap/EditNhomNhaCungCap';
+import EditNhomKhachHang from './page/DoiTuong/scenes/NhomKhachHang/scenes/EditNhomKhachHang/EditNhomKhachHang';
+import ThemKhachHang from "./page/DoiTuong/scenes/KhachHang/scenes/ThemKhachHang/ThemKhachHang";
+import EditKhachHang from "./page/DoiTuong/scenes/KhachHang/scenes/EditKhachHang/EditKhachHang";
+import NhomSanPham from "./page/DoiTuong/scenes/NhomSanPham/NhomSanPham";
+import EditNhomSanPham from "./page/DoiTuong/scenes/NhomSanPham/scenes/EditNhomSanPham/EditNhomSanPham";
+import ThemSanPham from "./page/DoiTuong/scenes/SanPham/scenes/ThemSanPham/ThemSanPham";
+import EditSanPham from "./page/DoiTuong/scenes/SanPham/scenes/EditSanPham/EditSanPham";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -89,6 +96,7 @@ function App() {
                   <Route path="khach-hang" element={<KhachHang />} />
                   <Route path="nhom-khach-hang" element={<NhomKhachHang />} />
                   <Route path="san-pham" element={<SanPham />} />
+                  <Route path="nhom-san-pham" element={<NhomSanPham />} />
                   <Route path="tai-chinh" element={<TaiChinh />} />
 
                 </Route>
@@ -97,7 +105,21 @@ function App() {
                 <Route path="doi-tuong/nha-cung-cap/chinh-sua/:id" element={<EditNhaCungCap disabled={false} />} />
 
                 <Route path="doi-tuong/nhom-nha-cung-cap/xem/:id" element={<EditNhomNhaCungCap disabled={true} />} />
+                <Route path="doi-tuong/nhom-nha-cung-cap/chinh-sua/:id" element={<EditNhomNhaCungCap disabled={false} />} />
 
+                <Route path="doi-tuong/khach-hang/them" element={<ThemKhachHang disabled={false} />} />
+                <Route path="doi-tuong/khach-hang/xem/:id" element={<EditKhachHang disabled={true} />} />
+                <Route path="doi-tuong/khach-hang/chinh-sua/:id" element={<EditKhachHang disabled={false} />} />
+
+                <Route path="doi-tuong/nhom-khach-hang/xem/:id" element={<EditNhomKhachHang disabled={true} />} />
+                <Route path="doi-tuong/nhom-khach-hang/chinh-sua/:id" element={<EditNhomKhachHang disabled={false} />} />
+
+                <Route path="doi-tuong/san-pham/them" element={<ThemSanPham disabled={false} />} />
+                <Route path="doi-tuong/san-pham/xem/:id" element={<EditSanPham disabled={true} />} />
+                <Route path="doi-tuong/san-pham/chinh-sua/:id" element={<EditSanPham disabled={false} />} />
+
+                <Route path="doi-tuong/nhom-san-pham/xem/:id" element={<EditNhomSanPham disabled={true} />} />
+                <Route path="doi-tuong/nhom-san-pham/chinh-sua/:id" element={<EditNhomSanPham disabled={false} />} />
 
                 <Route path="/mua-hang" element={<MuaHang />}>
                   <Route path="quy-trinh" element={<QuyTrinhMuaHang />} />

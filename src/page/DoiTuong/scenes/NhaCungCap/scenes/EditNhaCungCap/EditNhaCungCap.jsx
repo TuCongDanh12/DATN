@@ -115,7 +115,7 @@ const EditNhaCungCap = ({ disabled = false }) => {
         }
     }, [supplierData]);
 
-    const nameValue = Form.useWatch('ten-nha-cung-cap', form);
+    const nameValue = Form.useWatch('name', form);
 
     const [dataSource, setDataSource] = useState([
         {

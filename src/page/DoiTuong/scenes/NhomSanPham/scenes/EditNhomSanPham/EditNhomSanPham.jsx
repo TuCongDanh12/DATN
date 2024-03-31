@@ -3,7 +3,7 @@ import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } fro
 import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { doiTuongSelector, getCustomerGroup } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getProductGroup } from '../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -88,7 +88,7 @@ const EditableCell = ({
 };
 
 
-const EditNhomKhachHang = ({ disabled = false }) => {
+const EditNhomSanPham = ({ disabled = false }) => {
     const dispatch = useDispatch();
     const params = useParams();
     console.log("params", params)
@@ -97,19 +97,19 @@ const EditNhomKhachHang = ({ disabled = false }) => {
     const [form] = Form.useForm();
 
     const { 
-        customerGroupData, } = useSelector(doiTuongSelector);
+        productGroupData, } = useSelector(doiTuongSelector);
 
     useEffect(() => {
-        dispatch(getCustomerGroup({ id: params.id }));
+        dispatch(getProductGroup({ id: params.id }));
     }, []);
 
     useEffect(() => {
-        if (customerGroupData) {
+        if (productGroupData) {
             form.setFieldsValue({
-                ...customerGroupData
+                ...productGroupData
             });
         }
-    }, [customerGroupData]);
+    }, [productGroupData]);
 
     const nameValue = Form.useWatch('ten-nha-cung-cap', form);
 
@@ -123,25 +123,45 @@ const EditNhomKhachHang = ({ disabled = false }) => {
     };
     const defaultColumns = [
         {
-            title: "Tên khách hàng",
+            title: "Sản phẩm",
             dataIndex: "name",
             sorter: (a, b) => a.name.localeCompare(b.name),
             width: '30%',
             editable: !disabled,
         },
         {
-            title: "Địa chỉ",
-            dataIndex: "address",
+            title: "Giá mua",
+            dataIndex: "priceReceived",
+            // sorter: (a, b) => a.name.localeCompare(b.name),
             editable: !disabled,
         },
         {
-            title: "Số điện thoại",
-            dataIndex: "phone",
+            title: "Giá bán",
+            dataIndex: "priceDelivery",
+            // sorter: (a, b) => a.name.localeCompare(b.name),
+            editable: !disabled,
+        },
+        {
+            title: "Đơn vị tính",
+            dataIndex: "unit",
+            // sorter: (a, b) => a.name.localeCompare(b.name),
+            editable: !disabled,
+        },
+        // {
+        //     title: "% thuế GTGT",
+        //     dataIndex: "tax",
+        //     // sorter: (a, b) => a.name.localeCompare(b.name),
+        //     editable: !disabled,
+        // },
+        {
+            title: "Số dư",
+            dataIndex: "",
+            // sorter: (a, b) => a.name.localeCompare(b.name),
             editable: !disabled,
         },
         {
             title: "Ghi chú",
-            dataIndex: "note",
+            dataIndex: "description",
             editable: !disabled,
         },
         {
@@ -213,7 +233,7 @@ const EditNhomKhachHang = ({ disabled = false }) => {
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-8">
-                Nhóm khách hàng {nameValue || customerGroupData.name}
+                Nhóm sản phẩm {nameValue || productGroupData.name}
             </h1>
             <Form
                 form={form}
@@ -229,7 +249,7 @@ const EditNhomKhachHang = ({ disabled = false }) => {
                 <Flex gap={100} justify='center' className='w-[100%] align-left'>
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Nhóm khách hàng"
+                            label="Nhóm sản phẩm"
                             name='name'
                             rules={[
                                 {
@@ -247,7 +267,7 @@ const EditNhomKhachHang = ({ disabled = false }) => {
 
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Mô tả"
+                            label="Mô tả"   
                             name='description'
                         >
                             <Input
@@ -273,7 +293,7 @@ const EditNhomKhachHang = ({ disabled = false }) => {
                         components={components}
                         rowClassName={() => 'editable-row'}
                         bordered
-                        dataSource={customerGroupData.customers}
+                        dataSource={productGroupData.products}
                         columns={columns}
                         pagination={false}
                     />
@@ -312,4 +332,4 @@ const EditNhomKhachHang = ({ disabled = false }) => {
     )
 }
 
-export default EditNhomKhachHang
+export default EditNhomSanPham

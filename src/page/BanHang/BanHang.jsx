@@ -5,10 +5,10 @@ import { Outlet } from 'react-router-dom';
 const BanHang = () => {
     const titlez = "Bán hàng";
     const process = [
-      {
-        url: 'quy-trinh',
-        content: "Quy trình"
-      },
+      // {
+      //   url: 'quy-trinh',
+      //   content: "Quy trình"
+      // },
       {
         url: 'don-dat-hang',
         content: "Đơn đặt hàng"
