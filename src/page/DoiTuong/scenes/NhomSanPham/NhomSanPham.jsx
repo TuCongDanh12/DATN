@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import { Table, Dropdown, Space, Select, Button, Modal, Form, Input, message as msg, notification } from "antd";
+import { Table, Dropdown, Space, Select, Button, Modal, Form, Input, message as msg, notification, InputNumber } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { TfiReload } from 'react-icons/tfi';
 import { Add } from '@mui/icons-material';
 import { MdOutlineSearch } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearState, doiTuongSelector, getListCustomerGroup, getListSupplier, getListSupplierGroup, postCustomerGroup, postSupplierGroup } from '../../../../store/features/doiTuongSilce';
+import { clearState, doiTuongSelector, getListProductGroup, getListSupplier, getListSupplierGroup, postProductGroup, postSupplierGroup } from '../../../../store/features/doiTuongSilce';
 
-const NhomKhachHang = () => {
+const NhomSanPham = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [formAddNhomKhachHang] = Form.useForm();
+  const [formAddNhomSanPham] = Form.useForm();
   const [open, setOpen] = useState(false);
-  const [openAddNhomKhachHang, setOpenAddNhomKhachHang] = useState(false);
+  const [openAddNhomSanPham, setOpenAddNhomSanPham] = useState(false);
   const [dataSelected, setDataSelected] = useState({});
 
   const [messageApi, contextHolderMes] = msg.useMessage();
@@ -23,20 +23,19 @@ const NhomKhachHang = () => {
   const [api, contextHolder] = notification.useNotification();
 
   const {
-    listCustomerGroupData,
-    listSupplierGroupData,
-    isSuccessGetListCustomerGroup,
-    isSuccessPostCustomerGroup,
+    listProductGroupData,
+    isSuccessGetListProductGroup,
+    isSuccessPostProductGroup,
     isError,
     message
   } = useSelector(doiTuongSelector);
 
   useEffect(() => {
-    dispatch(getListCustomerGroup());
+    dispatch(getListProductGroup());
   }, []);
 
   useEffect(() => {
-    if (isSuccessPostCustomerGroup) {
+    if (isSuccessPostProductGroup) {
       api.success({
         message: 'Thêm dữ liệu thành công!',
         placement: 'bottomLeft',
@@ -44,9 +43,9 @@ const NhomKhachHang = () => {
       });
 
       dispatch(clearState());
-      dispatch(getListCustomerGroup());
+      dispatch(getListProductGroup());
     }
-    else if (isSuccessGetListCustomerGroup) {
+    else if (isSuccessGetListProductGroup) {
       messageApi.open({
         key: 'updatable',
         type: 'success',
@@ -67,8 +66,8 @@ const NhomKhachHang = () => {
     }
 
   }, [
-    isSuccessGetListCustomerGroup,
-    isSuccessPostCustomerGroup,
+    isSuccessGetListProductGroup,
+    isSuccessPostProductGroup,
     isError,
     message
   ]);
@@ -112,23 +111,27 @@ const NhomKhachHang = () => {
     setOpen(false);
   };
 
-  const handleCancelAddNhomKhachHang = () => {
-    setOpenAddNhomKhachHang(false);
+  const handleCancelAddNhomSanPham = () => {
+    setOpenAddNhomSanPham(false);
   }
 
   const columns = [
     {
-      title: "Nhóm khách hàng",
+      title: "Nhóm sản phẩm",
       dataIndex: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Số khách hàng trong nhóm",
+      title: "Số sản phẩm trong nhóm",
       dataIndex: "size",
     },
     {
+      title: "% thuế GTGT",
+      dataIndex: "tax",
+    },
+    {
       title: "Ghi chú",
-      dataIndex: "note",
+      dataIndex: "description",
     },
     {
       title: "Chức năng",
@@ -166,10 +169,10 @@ const NhomKhachHang = () => {
     console.log('Received values of form: ', values);
   };
 
-  const onFinishAddNhomKhachHang = (values) => {
+  const onFinishAddNhomSanPham = (values) => {
     console.log('Received values of form: ', values);
-    dispatch(postCustomerGroup({ values }));
-    formAddNhomKhachHang.resetFields();
+    dispatch(postProductGroup({ values }));
+    formAddNhomSanPham.resetFields();
   };
 
 
@@ -217,7 +220,7 @@ const NhomKhachHang = () => {
           <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' />
           <TfiReload size={30} className='p-2 bg-white border border-black cursor-pointer'
             onClick={() => {
-              dispatch(getListCustomerGroup());
+              dispatch(getListProductGroup());
               messageApi.open({
                 key: 'updatable',
                 type: 'loading',
@@ -231,7 +234,7 @@ const NhomKhachHang = () => {
         <Button
           className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1'
           type='link'
-          onClick={() => setOpenAddNhomKhachHang(true)}
+          onClick={() => setOpenAddNhomSanPham(true)}
         >
           <Add />Thêm
         </Button>
@@ -244,7 +247,7 @@ const NhomKhachHang = () => {
           footer=''
           onCancel={handleCancel}
         >
-          <div className='m-8 mt-10 text-center'>Bạn muốn xóa nhóm khách hàng<br /> <strong>"{dataSelected.name}"</strong>?</div>
+          <div className='m-8 mt-10 text-center'>Bạn muốn xóa nhóm sản phẩm<br /> <strong>"{dataSelected.name}"</strong>?</div>
 
           <div className='flex justify-end gap-2 mb-0'>
             <Button
@@ -270,17 +273,17 @@ const NhomKhachHang = () => {
         </Modal>
 
         <Modal
-          title="TẠO MỚI NHÓM KHÁCH HÀNG"
+          title="TẠO MỚI NHÓM SẢN PHẨM"
           centered
-          open={openAddNhomKhachHang}
+          open={openAddNhomSanPham}
           width={700}
           footer=''
-          onCancel={handleCancelAddNhomKhachHang}
+          onCancel={handleCancelAddNhomSanPham}
         >
           <Form
-            form={formAddNhomKhachHang}
+            form={formAddNhomSanPham}
             layout='horizontal'
-            onFinish={onFinishAddNhomKhachHang}
+            onFinish={onFinishAddNhomSanPham}
             labelCol={{
               flex: '200px',
             }}
@@ -288,7 +291,7 @@ const NhomKhachHang = () => {
             className='mt-4'
           >
             <Form.Item
-              label="Tên nhóm khách hàng"
+              label="Tên nhóm sản phẩm"
               name='name'
               rules={[
                 {
@@ -302,8 +305,24 @@ const NhomKhachHang = () => {
             </Form.Item>
 
             <Form.Item
+              label="% thuế GTGT"
+              name='tax'
+              rules={[
+                {
+                  required: true,
+                  message: 'Trường này là bắt buộc!',
+                },
+              ]}
+            >
+              <InputNumber
+                style={{
+                  width: '100%',
+                }} />
+            </Form.Item>
+
+            <Form.Item
               label="Ghi chú"
-              name='note'
+              name='description'
             >
               <Input
               />
@@ -314,14 +333,14 @@ const NhomKhachHang = () => {
               <Button
                 className='bg-[#FF7742] font-bold text-white mr-2'
                 htmlType="reset"
-                onClick={() => setOpenAddNhomKhachHang(false)}
+                onClick={() => setOpenAddNhomSanPham(false)}
               >
                 Hủy
               </Button>
               <Button
                 className='!bg-[#67CDBB] font-bold text-white'
                 htmlType="submit"
-                onClick={() => setOpenAddNhomKhachHang(false)}
+                onClick={() => setOpenAddNhomSanPham(false)}
               >
                 Xác nhận
               </Button>
@@ -336,9 +355,9 @@ const NhomKhachHang = () => {
         //     ...rowSelection,
         // }}
         columns={columns}
-        dataSource={listCustomerGroupData}
+        dataSource={listProductGroupData}
         pagination={{
-          total: listCustomerGroupData.length,
+          total: listProductGroupData.length,
           defaultPageSize: 20,
           // pageSize: 20,
           position: ['bottomRight'],
@@ -350,4 +369,4 @@ const NhomKhachHang = () => {
   )
 }
 
-export default NhomKhachHang
+export default NhomSanPham

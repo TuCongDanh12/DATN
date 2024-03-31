@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { TbFileExport } from "react-icons/tb";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { clearState, doiTuongSelector, getListSupplierGroup, getSupplier, postSupplier } from '../../../../../../store/features/doiTuongSilce';
+import { clearState, doiTuongSelector, getListProductGroup, getSupplier, postProduct, postSupplier } from '../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -89,7 +89,7 @@ const EditableCell = ({
 };
 
 
-const ThemNhaCungCap = ({ disabled = true }) => {
+const ThemSanPham = ({ disabled = true }) => {
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
@@ -97,13 +97,13 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
     const { listSupplierData,
         supplierData,
-        listSupplierGroupData,
+        listProductGroupData,
         supplierGroupData,
         isSuccess
     } = useSelector(doiTuongSelector);
 
     useEffect(() => {
-        dispatch(getListSupplierGroup());
+        dispatch(getListProductGroup());
     }, []);
 
     const nameValue = Form.useWatch('name', form);
@@ -218,14 +218,14 @@ const ThemNhaCungCap = ({ disabled = true }) => {
         console.log('Received values of form: ', values);
         console.log(dataSource);
 
-        dispatch(postSupplier({ values }));
+        dispatch(postProduct({ values }));
         navigate(-1);
     };
 
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-8">
-                Nhà cung cấp {nameValue}
+                Sản phẩm {nameValue}
             </h1>
             <Form
                 form={form}
@@ -245,8 +245,8 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                 <Flex gap={100} justify='center' className='w-[100%] align-left'>
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Nhóm nhà cung cấp"
-                            name='supplierGroupId'
+                            label="Nhóm sản phẩm"
+                            name='productGroupId'
                             rules={[
                                 {
                                     required: true,
@@ -258,13 +258,13 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                                 disabled={disabled}
                             >
                                 {
-                                    listSupplierGroupData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
+                                    listProductGroupData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
                                 }
                             </Select>
                         </Form.Item>
 
                         <Form.Item
-                            label="Tên nhà cung cấp"
+                            label="Tên sản phẩm"
                             name='name'
                             rules={[
                                 {
@@ -280,8 +280,8 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                         </Form.Item>
 
                         <Form.Item
-                            label="Địa chỉ"
-                            name='address'
+                            label="Giá mua"
+                            name='priceReceived'
                             rules={[
                                 {
                                     required: true,
@@ -289,14 +289,17 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                                 },
                             ]}
                         >
-                            <Input
+                            <InputNumber
+                                style={{
+                                    width: '100%',
+                                }}
                                 disabled={disabled}
                             />
                         </Form.Item>
 
                         <Form.Item
-                            label="Số điện thoại"
-                            name='phoneNumber'
+                            label="Giá bán"
+                            name='priceDelivery'
                             rules={[
                                 {
                                     required: true,
@@ -304,27 +307,11 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                                 },
                             ]}
                         >
-                            <Input
+                            <InputNumber
+                                style={{
+                                    width: '100%',
+                                }}
                                 disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-
-                        <Form.Item
-                            label="Email"
-                            name='email'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                placeholder="abc@gmail.com"
-                                disabled={disabled}
-
                             />
                         </Form.Item>
 
@@ -333,8 +320,38 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Tên người liên hệ"
-                            name='representative'
+                            label="Đơn vị tính"
+                            name='unit'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Select
+                                disabled={disabled}
+                            >
+                                <Select.Option value={"CAI"}>Cái</Select.Option>
+                                <Select.Option value={"CAY"}>Cây</Select.Option>
+                                <Select.Option value={"CHAI"}>Chai</Select.Option>
+                                <Select.Option value={"CHUC"}>Chục</Select.Option>
+                                <Select.Option value={"CUON"}>Cuộn</Select.Option>
+                                <Select.Option value={"GOI"}>Gói</Select.Option>
+                                <Select.Option value={"HOP"}>Hộp</Select.Option>
+                                <Select.Option value={"HU"}>Hủ</Select.Option>
+                                <Select.Option value={"KG"}>Kg</Select.Option>
+                                <Select.Option value={"LOC"}>Lốc</Select.Option>
+                                <Select.Option value={"LON"}>Lon</Select.Option>
+                                <Select.Option value={"THUNG"}>Thùng</Select.Option>
+                                <Select.Option value={"TON"}>Ton</Select.Option>
+                                <Select.Option value={"VIEN"}>Viên</Select.Option>
+                            </Select>
+                        </Form.Item>
+
+                        {/* <Form.Item
+                            label="Số dư"
+                            name=''
                             rules={[
                                 {
                                     required: true,
@@ -346,56 +363,7 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                                 disabled={disabled}
 
                             />
-                        </Form.Item>
-                        <Form.Item
-                            label="Ngân hàng"
-                            name='bankName'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Chủ tài khoản"
-                            name='accountName'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-
-                        <Form.Item
-                            label="Số tài khoản"
-                            name='accountNumber'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
+                        </Form.Item> */}
 
                         <Form.Item
                             label="Mô tả"
@@ -406,6 +374,8 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                             />
                         </Form.Item>
+
+
                     </Flex>
 
                 </Flex>
@@ -484,4 +454,4 @@ const ThemNhaCungCap = ({ disabled = true }) => {
     )
 }
 
-export default ThemNhaCungCap
+export default ThemSanPham

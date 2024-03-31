@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { TbFileExport } from "react-icons/tb";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { clearState, doiTuongSelector, getListSupplierGroup, getSupplier, postSupplier } from '../../../../../../store/features/doiTuongSilce';
+import { clearState, doiTuongSelector, getListCustomerGroup, getSupplier, postCustomer, postProduct, postSupplier } from '../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -89,7 +89,7 @@ const EditableCell = ({
 };
 
 
-const ThemNhaCungCap = ({ disabled = true }) => {
+const ThemKhachHang = ({ disabled = true }) => {
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
@@ -97,13 +97,13 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
     const { listSupplierData,
         supplierData,
-        listSupplierGroupData,
+        listCustomerGroupData,
         supplierGroupData,
         isSuccess
     } = useSelector(doiTuongSelector);
 
     useEffect(() => {
-        dispatch(getListSupplierGroup());
+        dispatch(getListCustomerGroup());
     }, []);
 
     const nameValue = Form.useWatch('name', form);
@@ -218,14 +218,14 @@ const ThemNhaCungCap = ({ disabled = true }) => {
         console.log('Received values of form: ', values);
         console.log(dataSource);
 
-        dispatch(postSupplier({ values }));
+        dispatch(postCustomer({ values }));
         navigate(-1);
     };
 
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-8">
-                Nhà cung cấp {nameValue}
+                Khách hàng {nameValue}
             </h1>
             <Form
                 form={form}
@@ -245,8 +245,8 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                 <Flex gap={100} justify='center' className='w-[100%] align-left'>
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Nhóm nhà cung cấp"
-                            name='supplierGroupId'
+                            label="Nhóm khách hàng"
+                            name='customerGroupId'
                             rules={[
                                 {
                                     required: true,
@@ -258,13 +258,13 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                                 disabled={disabled}
                             >
                                 {
-                                    listSupplierGroupData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
+                                    listCustomerGroupData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
                                 }
                             </Select>
                         </Form.Item>
 
                         <Form.Item
-                            label="Tên nhà cung cấp"
+                            label="Tên khách hàng"
                             name='name'
                             rules={[
                                 {
@@ -296,7 +296,7 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                         <Form.Item
                             label="Số điện thoại"
-                            name='phoneNumber'
+                            name='phone'
                             rules={[
                                 {
                                     required: true,
@@ -309,7 +309,6 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                             />
                         </Form.Item>
-
 
                         <Form.Item
                             label="Email"
@@ -327,14 +326,12 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                             />
                         </Form.Item>
-
-
                     </Flex>
 
                     <Flex vertical gap={5} className='w-[50%]'>
-                        <Form.Item
-                            label="Tên người liên hệ"
-                            name='representative'
+                        {/* <Form.Item
+                            label="Ngân hàng"
+                            name='bankName'
                             rules={[
                                 {
                                     required: true,
@@ -347,9 +344,10 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                             />
                         </Form.Item>
+
                         <Form.Item
-                            label="Ngân hàng"
-                            name='bankName'
+                            label="Số tài khoản"
+                            name='accountNumber'
                             rules={[
                                 {
                                     required: true,
@@ -377,29 +375,12 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                                 disabled={disabled}
 
                             />
-                        </Form.Item>
+                        </Form.Item> */}
 
 
                         <Form.Item
-                            label="Số tài khoản"
-                            name='accountNumber'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-
-                        <Form.Item
-                            label="Mô tả"
-                            name='description'
+                            label="Ghi chú"
+                            name='note'
                         >
                             <Input
                                 disabled={disabled}
@@ -484,4 +465,4 @@ const ThemNhaCungCap = ({ disabled = true }) => {
     )
 }
 
-export default ThemNhaCungCap
+export default ThemKhachHang

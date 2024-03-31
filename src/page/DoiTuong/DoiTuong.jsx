@@ -29,20 +29,24 @@ const DoiTuong = () => {
   const titlez = "Đối tượng";
   const process = [
     {
+      url: 'nhom-nha-cung-cap',
+      content: "Nhóm nhà cung cấp"
+    },
+    {
       url: 'nha-cung-cap',
       content: "Nhà cung cấp"
     },
     {
-      url: 'nhom-nha-cung-cap',
-      content: "Nhóm nhà cung cấp"
+      url: 'nhom-khach-hang',
+      content: "Nhóm khách hàng"
     },
     {
       url: 'khach-hang',
       content: "Khách hàng"
     },
     {
-      url: 'nhom-khach-hang',
-      content: "Nhóm khách hàng"
+      url: 'nhom-san-pham',
+      content: "Nhóm sản phẩm"
     },
     {
       url: 'san-pham',

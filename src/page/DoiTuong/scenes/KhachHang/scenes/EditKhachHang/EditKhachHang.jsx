@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } from "antd";
 import { useNavigate, useParams } from 'react-router-dom';
-import { TbFileExport } from "react-icons/tb";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { clearState, doiTuongSelector, getListSupplierGroup, getSupplier, postSupplier } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getListCustomerGroup, getCustomer } from '../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -89,22 +88,33 @@ const EditableCell = ({
 };
 
 
-const ThemNhaCungCap = ({ disabled = true }) => {
+const EditKhachHang = ({ disabled = false }) => {
     const dispatch = useDispatch();
-
+    const params = useParams();
+    console.log("params", params)
+    console.log("params.id", params.id)
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
-    const { listSupplierData,
-        supplierData,
+    const { listcustomerData,
+        customerData,
         listSupplierGroupData,
         supplierGroupData,
-        isSuccess
-    } = useSelector(doiTuongSelector);
+        listCustomerGroupData } = useSelector(doiTuongSelector);
+    console.log("customerData", customerData);
 
     useEffect(() => {
-        dispatch(getListSupplierGroup());
+        dispatch(getCustomer({ id: params.id }));
+        dispatch(getListCustomerGroup());
     }, []);
+
+    useEffect(() => {
+        if (customerData) {
+            form.setFieldsValue({
+                ...customerData
+            });
+        }
+    }, [customerData]);
 
     const nameValue = Form.useWatch('name', form);
 
@@ -120,7 +130,6 @@ const ThemNhaCungCap = ({ disabled = true }) => {
     ]);
 
     const [count, setCount] = useState(1);
-
 
     const handleDelete = (key) => {
         const newData = dataSource.filter((item) => item.key !== key);
@@ -217,15 +226,12 @@ const ThemNhaCungCap = ({ disabled = true }) => {
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
         console.log(dataSource);
-
-        dispatch(postSupplier({ values }));
-        navigate(-1);
     };
 
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-8">
-                Nhà cung cấp {nameValue}
+                Khách hàng {nameValue || customerData.name}
             </h1>
             <Form
                 form={form}
@@ -237,16 +243,12 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                 labelAlign="left"
                 labelWrap
                 onFinish={onFinish}
-                //using init set value 
-                initialValues={{
-                    // 'dia-chi': 'default value'
-                }}
             >
                 <Flex gap={100} justify='center' className='w-[100%] align-left'>
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Nhóm nhà cung cấp"
-                            name='supplierGroupId'
+                            label="Nhóm khách hàng"
+                            name='customerGroup'
                             rules={[
                                 {
                                     required: true,
@@ -258,13 +260,13 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                                 disabled={disabled}
                             >
                                 {
-                                    listSupplierGroupData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
+                                    listCustomerGroupData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
                                 }
                             </Select>
                         </Form.Item>
 
                         <Form.Item
-                            label="Tên nhà cung cấp"
+                            label="Tên khách hàng"
                             name='name'
                             rules={[
                                 {
@@ -296,7 +298,7 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                         <Form.Item
                             label="Số điện thoại"
-                            name='phoneNumber'
+                            name='phone'
                             rules={[
                                 {
                                     required: true,
@@ -309,7 +311,6 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                             />
                         </Form.Item>
-
 
                         <Form.Item
                             label="Email"
@@ -327,14 +328,12 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                             />
                         </Form.Item>
-
-
                     </Flex>
 
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Tên người liên hệ"
-                            name='representative'
+                            label="Ngân hàng"
+                            name='bankName'
                             rules={[
                                 {
                                     required: true,
@@ -347,9 +346,10 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
                             />
                         </Form.Item>
+
                         <Form.Item
-                            label="Ngân hàng"
-                            name='bankName'
+                            label="Số tài khoản"
+                            name='accountNumber'
                             rules={[
                                 {
                                     required: true,
@@ -381,25 +381,8 @@ const ThemNhaCungCap = ({ disabled = true }) => {
 
 
                         <Form.Item
-                            label="Số tài khoản"
-                            name='accountNumber'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-
-                        <Form.Item
-                            label="Mô tả"
-                            name='description'
+                            label="Ghi chú"
+                            name='note'
                         >
                             <Input
                                 disabled={disabled}
@@ -458,30 +441,9 @@ const ThemNhaCungCap = ({ disabled = true }) => {
                         </Button>
                     </Form.Item>
                 }
-
-
             </Form>
-
-            {/* <div className='w-full flex justify-end gap-5'>
-                    <Button
-                        className='bg-[#FF7742] font-bold text-white'
-                        type='link'
-                        onClick={() => navigate(-1)}
-                    >
-                        Thoát
-                    </Button>
-                    <Button
-                        className='!bg-[#67CDBB] font-bold text-white'
-                        type='link'
-                        onClick={() => navigate(-1)}
-                    >
-                        Xác nhận
-                    </Button>
-            </div> */}
-
-
         </div>
     )
 }
 
-export default ThemNhaCungCap
+export default EditKhachHang
