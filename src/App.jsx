@@ -52,6 +52,7 @@ import NhomSanPham from "./page/DoiTuong/scenes/NhomSanPham/NhomSanPham";
 import EditNhomSanPham from "./page/DoiTuong/scenes/NhomSanPham/scenes/EditNhomSanPham/EditNhomSanPham";
 import ThemSanPham from "./page/DoiTuong/scenes/SanPham/scenes/ThemSanPham/ThemSanPham";
 import EditSanPham from "./page/DoiTuong/scenes/SanPham/scenes/EditSanPham/EditSanPham";
+import EditDonDatHang from "./page/BanHang/scenes/DonDatHang/scenes/EditDonDatHang/EditDonDatHang";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -146,7 +147,8 @@ function App() {
                     element={<ThuTienTheoHoaDon />}
                   />
                 </Route>
-                <Route path="ban-hang/don-dat-hang/xem" element={<XemDonDatHang />} />
+
+                <Route path="ban-hang/don-dat-hang/xem/:id" element={<EditDonDatHang disabled={true} />} />
                 <Route path="ban-hang/chung-tu-ban-hang/xem" element={<XemChungTuBanHang />} />
                 <Route path="ban-hang/hoa-don-ban-hang/xem" element={<XemHoaDonBanHang />} />
                 <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem" element={<TimKiemThuTien />} />
