@@ -22,6 +22,9 @@ const NhomNhaCungCap = () => {
 
     const [api, contextHolder] = notification.useNotification();
 
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [sortedInfo, setSortedInfo] = useState({});
+
     const {
         listSupplierGroupData,
         isSuccessGetListSupplierGroup,
@@ -117,15 +120,24 @@ const NhomNhaCungCap = () => {
         {
             title: "Nhóm nhà cung cấp",
             dataIndex: "name",
+            key: "name",
+            ellipsis: true,
             sorter: (a, b) => a.name.localeCompare(b.name),
+            sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+
         },
         {
             title: "Số nhà cung cập trong nhóm",
             dataIndex: "size",
+            key: "size",
+            sorter: (a, b) => a.size - b.size,
+            sortOrder: sortedInfo.columnKey === "size" ? sortedInfo.order : null,
         },
         {
             title: "Ghi chú",
             dataIndex: "description",
+            key: "description",
+            ellipsis: true,
         },
         {
             title: "Chức năng",
@@ -169,10 +181,17 @@ const NhomNhaCungCap = () => {
         formAddNhomNhaCungCap.resetFields();
     };
 
-
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
+        setFilteredInfo(filters);
+        setSortedInfo(sorter);
     };
+
+    const clearAll = () => {
+        setFilteredInfo({});
+        setSortedInfo({});
+    };
+
     return (
         <div className='m-4'>
             <div className='px-[20px] w-full flex justify-between py-7 bg-white'>
@@ -221,6 +240,7 @@ const NhomNhaCungCap = () => {
                                 content: 'Loading...',
                             });
                             form.resetFields();
+                            clearAll();
                         }}
                     />
                 </div>

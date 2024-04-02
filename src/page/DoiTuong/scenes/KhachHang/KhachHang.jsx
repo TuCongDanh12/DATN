@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import {  Table, Dropdown, Space, Select, Button, Modal, Form,  Input, message as msg, notification } from "antd";
+import { Table, Dropdown, Space, Select, Button, Modal, Form, Input, message as msg, notification } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { TfiReload } from 'react-icons/tfi';
@@ -20,6 +20,9 @@ const KhachHang = () => {
 
     const [api, contextHolder] = notification.useNotification();
 
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [sortedInfo, setSortedInfo] = useState({});
+
     const {
         listCustomerData,
         isSuccessGetListCustomer,
@@ -38,7 +41,7 @@ const KhachHang = () => {
                 message: 'Thêm dữ liệu thành công!',
                 placement: 'bottomLeft',
                 duration: 2
-              });
+            });
 
             dispatch(clearState());
 
@@ -58,7 +61,7 @@ const KhachHang = () => {
                 message: message,
                 placement: 'bottomLeft',
                 duration: 2
-              });
+            });
 
             dispatch(clearState());
         }
@@ -107,7 +110,10 @@ const KhachHang = () => {
         {
             title: "Khách hàng",
             dataIndex: "name",
+            key: "name",
             sorter: (a, b) => a.name.localeCompare(b.name),
+            sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+            ellipsis: true,
         },
         {
             title: "Địa chỉ",
@@ -158,12 +164,16 @@ const KhachHang = () => {
     };
 
     const onChange = (pagination, filters, sorter, extra) => {
-        // console.log('onChange params', pagination, filters, sorter, extra);
-        console.log('onChange params pagination', pagination);
-        console.log('onChange params filters', filters);
-        console.log('onChange params sorter', sorter);
-        console.log('onChange params extra', extra);
+        console.log('params', pagination, filters, sorter, extra);
+        setFilteredInfo(filters);
+        setSortedInfo(sorter);
     };
+
+    const clearAll = () => {
+        setFilteredInfo({});
+        setSortedInfo({});
+    };
+
 
     return (
         <div className='m-4'>
@@ -213,6 +223,8 @@ const KhachHang = () => {
                                 content: 'Loading...',
                             });
                             form.resetFields();
+                            clearAll();
+
                         }}
                     />
                 </div>
@@ -275,7 +287,7 @@ const KhachHang = () => {
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 }}
                 onChange={onChange}
-                
+
             />
         </div>
     )
