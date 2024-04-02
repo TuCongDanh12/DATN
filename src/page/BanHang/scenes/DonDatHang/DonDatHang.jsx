@@ -25,6 +25,7 @@ import {
   getListDonBanHang,
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
+import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
 const { RangePicker } = DatePicker;
 const KhachHang = () => {
   const dispatch = useDispatch();
@@ -55,12 +56,14 @@ const KhachHang = () => {
 
   useEffect(() => {
     dispatch(getListDonBanHang());
+    dispatch(getListProduct());
   }, []);
 
-  const [donbanhang, setDonbanhang] = useState(listDonBanHangData);
+  const [donbanhang, setDonbanhang] = useState([]);
+  const [dataConvert, setDataConvert] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterday, setFilterday] = useState([]);
-  const [valueRangepicker,setValueRangepicker] = useState([])
+  const [valueRangepicker, setValueRangepicker] = useState([])
   const handleSearch = (value) => {
     setSearchText(value);
   };
@@ -68,8 +71,8 @@ const KhachHang = () => {
     if (dates && dates.length === 2) {
       const startTimestamp = dates[0].valueOf();
       const endTimestamp = dates[1].valueOf();
-      console.log("Start Timestamp:", startTimestamp, typeof(startTimestamp));
-      console.log("End Timestamp:", endTimestamp,  typeof(endTimestamp));
+      console.log("Start Timestamp:", startTimestamp, typeof (startTimestamp));
+      console.log("End Timestamp:", endTimestamp, typeof (endTimestamp));
       setFilterday([startTimestamp, endTimestamp]);
       setValueRangepicker(dates);
     } else {
@@ -77,7 +80,13 @@ const KhachHang = () => {
       setValueRangepicker([]);
     }
   };
-  
+
+  const {
+    listProductData,
+    isSuccessGetListProduct,
+    isSuccessPostProduct,
+  } = useSelector(doiTuongSelector);
+
   useEffect(() => {
     if (isSuccessPostDonBanHang) {
       api.success({
@@ -87,17 +96,40 @@ const KhachHang = () => {
       });
 
       dispatch(clearState());
-    } else if (isSuccessGetListDonBanHang) {
+    } else if (isSuccessGetListDonBanHang && isSuccessGetListProduct) {
       messageApi.open({
         key: "updatable",
         type: "success",
         content: "Tải dữ liệu thành công!",
         duration: 2,
       });
+      const dataConvertCurrent = listDonBanHangData.map(donBanHangData => {
+        // console.log("donBanHangData", donBanHangData)
 
+        let tong = 0;
+        donBanHangData.productOfDonBanHangs.forEach(product => {
+          const data = listProductData.filter(item => item.id === product.id);
+          tong += product.count * product.price;
+          tong += product.count * product.price * (data[0].productGroupInfo.tax / 100);
+        })
+
+        let dathu = 0;
+        let chuathu = tong-dathu;
+
+        return {
+          ...donBanHangData,
+          tong,
+          dathu,
+          chuathu
+        }
+      })
+
+      console.log("dataConvertCurrent", dataConvertCurrent)
+      setDataConvert(dataConvertCurrent);
+      setDonbanhang(dataConvertCurrent);
       dispatch(clearState());
     }
-    if (isError) {
+    else if (isError) {
       api.error({
         message: message,
         placement: "bottomLeft",
@@ -106,17 +138,17 @@ const KhachHang = () => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostDonBanHang, isSuccessGetListDonBanHang, isError]);
-  
+  }, [isSuccessPostDonBanHang, isSuccessGetListDonBanHang, isError, isSuccessGetListProduct]);
+
   useEffect(() => {
     if (searchText.trim() === "" && filterday.length === 0) {
-      if (!listDonBanHangData || (Array.isArray(listDonBanHangData) && !listDonBanHangData.length)) {
+      if (!dataConvert || (Array.isArray(dataConvert) && !dataConvert.length)) {
         setDonbanhang([]);
       } else {
-        setDonbanhang(listDonBanHangData);
+        setDonbanhang(dataConvert);
       }
     } else {
-      const filteredData = listDonBanHangData.filter((data) => {
+      const filteredData = dataConvert.filter((data) => {
         const saleDateMoment = moment(data.saleDate);
         return (
           data.customer.toLowerCase().includes(searchText.toLowerCase()) &&
@@ -126,7 +158,7 @@ const KhachHang = () => {
       });
       setDonbanhang(filteredData);
     }
-  }, [searchText, listDonBanHangData, filterday]);
+  }, [searchText, dataConvert, filterday]);
 
   const items = [
     {
@@ -292,6 +324,7 @@ const KhachHang = () => {
   ];
 
   const rowSelection = {
+    selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRowKeys(selectedRowKeys);
       console.log(
@@ -373,8 +406,9 @@ const KhachHang = () => {
               });
               form.resetFields();
               clearAll();
-              setValueRangepicker([]) 
-              setFilterday([])
+              setValueRangepicker([]);
+              setFilterday([]);
+              setSelectedRowKeys([]);
             }}
           />
         </div>
@@ -382,7 +416,7 @@ const KhachHang = () => {
         <Button
           className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
           type="link"
-          onClick={() => navigate("them")}
+          onClick={() => navigate("/ban-hang/chung-tu-ban-hang/them", { state: { id: selectedRowKeys.join(",") } })}
         >
           Lập chứng từ bán hàng
         </Button>

@@ -749,7 +749,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListProduct.fulfilled", action.payload)
             state.isFetching = false;
             state.isSuccessGetListProduct = true;
-            state.listProductData = action.payload.result.data.map(item=>{return {...item, key: item.id, productGroup:item.productGroup.id}});
+            state.listProductData = action.payload.result.data.map(item=>{return {...item, key: item.id,productGroupInfo: item.productGroup, productGroup:item.productGroup.id}});
             //   state.message = action.payload.message;
         })
 

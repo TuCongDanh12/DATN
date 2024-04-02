@@ -49,6 +49,7 @@ const initialState = {
     isFetching: false,
 
     isSuccessGetListDonBanHang: false,
+    isSuccessGetDonBanHang: false,
     isSuccessPostDonBanHang: false,
 
     isError: false,
@@ -67,6 +68,7 @@ export const banHangSlice = createSlice({
             state.isError = false;
 
             state.isSuccessGetListDonBanHang = false;
+            state.isSuccessGetDonBanHang = false;
             state.isSuccessPostDonBanHang = false;
 
             state.isFetching = false;
@@ -105,7 +107,7 @@ export const banHangSlice = createSlice({
         builder.addCase(getDonBanHang.fulfilled, (state, action) => {
             console.log("getDonBanHang.fulfilled", action.payload)
             state.isFetching = false;
-            state.isSuccess = true;
+            state.isSuccessGetDonBanHang = true;
             state.donBanHangData =
             {
                 ...action.payload.result.data,

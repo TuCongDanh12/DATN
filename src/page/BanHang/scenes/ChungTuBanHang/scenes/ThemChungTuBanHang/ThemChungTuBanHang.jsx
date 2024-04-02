@@ -4,7 +4,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
 import { banHangSelector, getDonBanHang } from '../../../../../../store/features/banHangSlice';
-import { clearState, doiTuongSelector, getListProduct } from './../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -89,110 +88,27 @@ const EditableCell = ({
 };
 
 
-const EditDonDatHang = ({ disabled = false }) => {
+const ThemChungTuBanHang = ({ disabled = false }) => {
     const dispatch = useDispatch();
-    const params = useParams();
-    console.log("params", params)
-    console.log("params.id", params.id)
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
     const {
         donBanHangData,
-        isSuccessGetDonBanHang
-        
     } = useSelector(banHangSelector);
-
     console.log("donBanHangData", donBanHangData);
 
     useEffect(() => {
-        dispatch(getDonBanHang({ id: params.id }));
-        dispatch(getListProduct());
+        // dispatch(getDonBanHang({ id: params.id }));
     }, []);
 
     useEffect(() => {
         if (donBanHangData) {
-            const data = { ...donBanHangData };
-
-            switch (donBanHangData.documentStatus) {
-                case "UNDOCUMENTED":
-                    data.documentStatus = "Chưa thực hiện";
-                    break;
-                case "DOCUMENTING":
-                    data.documentStatus = "Đang thực hiện";
-                    break;
-                case "DOCUMENTED":
-                    data.documentStatus = "Hoàn thành";
-                    break;
-                default:
-                    data.documentStatus = "Lỗi";
-                    break;
-            }
-
-            switch (donBanHangData.deliveryStatus) {
-                case "NOT_DELIVERED":
-                    data.deliveryStatus = "Chưa giao";
-                    break;
-                case "DELIVERING":
-                    data.deliveryStatus = "Đang giao";
-                    break;
-                case "DELIVERED":
-                    data.deliveryStatus = "Đã giao đủ";
-                    break;
-                default:
-                    data.deliveryStatus = "Lỗi";
-                    break;
-            }
-
-
             form.setFieldsValue({
-                ...data
+                ...donBanHangData
             });
         }
     }, [donBanHangData]);
-
-
-    const {
-        listProductData,
-        isSuccessGetListProduct,
-        isSuccessPostProduct,
-    } = useSelector(doiTuongSelector);
-
-    const [productOfDonBanHangs, setProductOfDonBanHangs] = useState([]);
-
-    // console.log("listProductData", listProductData);
-    useEffect(() => {
-        if (isSuccessGetListProduct && isSuccessGetDonBanHang) {
-            const products = donBanHangData.productOfDonBanHangs.map(product => {
-                console.log("product", product)
-                const data = listProductData.filter(item => item.id === product.id);
-                console.log("data", data);
-
-
-                return {
-                    ...product,
-                    id: product.id,
-                    productName: data[0].name,
-                    unit: product.unit,
-                    count: product.count,
-                    soluongdaban: 1,
-                    soluongdaxuat: 1,
-                    price: product.price,
-                    thanhtien: product.price * product.count,
-                    phantramthuegtgt: data[0].productGroupInfo.tax,
-                    tienthuegtgt: product.count * product.price * (data[0].productGroupInfo.tax / 100)
-                }
-            })
-
-
-
-            console.log("products", products)
-
-            setProductOfDonBanHangs(products);
-            dispatch(clearState());
-        }
-    }, [isSuccessGetListProduct, isSuccessGetDonBanHang]);
-
 
     const nameValue = Form.useWatch('id', form);
 
@@ -226,7 +142,7 @@ const EditDonDatHang = ({ disabled = false }) => {
         },
         {
             title: "ĐVT",
-            dataIndex: "unit",
+            dataIndex: "dvt",
             editable: !disabled,
         },
         {
@@ -521,7 +437,7 @@ const EditDonDatHang = ({ disabled = false }) => {
                         components={components}
                         rowClassName={() => 'editable-row'}
                         bordered
-                        dataSource={productOfDonBanHangs}
+                        dataSource={dataSource}
                         columns={columns}
                         pagination={false}
                     />
@@ -560,4 +476,4 @@ const EditDonDatHang = ({ disabled = false }) => {
     )
 }
 
-export default EditDonDatHang
+export default ThemChungTuBanHang
