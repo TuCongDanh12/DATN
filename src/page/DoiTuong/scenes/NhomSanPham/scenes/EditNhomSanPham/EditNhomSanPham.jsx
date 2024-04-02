@@ -96,7 +96,7 @@ const EditNhomSanPham = ({ disabled = false }) => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
-    const { 
+    const {
         productGroupData, } = useSelector(doiTuongSelector);
 
     useEffect(() => {
@@ -127,42 +127,132 @@ const EditNhomSanPham = ({ disabled = false }) => {
             dataIndex: "name",
             sorter: (a, b) => a.name.localeCompare(b.name),
             width: '30%',
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Giá mua",
             dataIndex: "priceReceived",
-            // sorter: (a, b) => a.name.localeCompare(b.name),
-            editable: !disabled,
+            sorter: (a, b) => a.priceReceived - b.priceReceived,
+            editable: false,
         },
         {
             title: "Giá bán",
             dataIndex: "priceDelivery",
-            // sorter: (a, b) => a.name.localeCompare(b.name),
-            editable: !disabled,
+            sorter: (a, b) => a.priceDelivery - b.priceDelivery,
+            editable: false,
         },
         {
             title: "Đơn vị tính",
             dataIndex: "unit",
-            // sorter: (a, b) => a.name.localeCompare(b.name),
-            editable: !disabled,
+            editable: false,
+            render: (val, record) => {
+                switch (val) {
+                    case "CAI":
+                        return "Cái";
+                    case "CAY":
+                        return "Cây";
+                    case "CHAI":
+                        return "Chai";
+                    case "CHUC":
+                        return "Chục";
+                    case "CUON":
+                        return "Cuộn";
+                    case "GOI":
+                        return "Gói";
+                    case "HOP":
+                        return "Hộp";
+                    case "HU":
+                        return "Hủ";
+                    case "KG":
+                        return "Kg";
+                    case "LOC":
+                        return "Lốc";
+                    case "LON":
+                        return "Lon";
+                    case "THUNG":
+                        return "Thùng";
+                    case "VIEN":
+                        return "Viên";
+                    default:
+                        return "Lỗi";
+                }
+            },
+            filters: [
+                {
+                    value: "CAI",
+                    text: "Cái",
+                },
+                {
+                    value: "CAY",
+                    text: "Cây",
+                },
+                {
+                    value: "CHAI",
+                    text: "Chai",
+                },
+                {
+                    value: "CHUC",
+                    text: "Chục",
+                },
+                {
+                    value: "CUON",
+                    text: "Cuộn",
+                },
+                {
+                    value: "GOI",
+                    text: "Gói",
+                },
+                {
+                    value: "HOP",
+                    text: "Hộp",
+                },
+                {
+                    value: "HU",
+                    text: "Hủ",
+                },
+                {
+                    value: "KG",
+                    text: "Kg",
+                },
+                {
+                    value: "LOC",
+                    text: "Lốc",
+                },
+                {
+                    value: "LON",
+                    text: "Lon",
+                },
+                {
+                    value: "THUNG",
+                    text: "Thùng",
+                },
+                {
+                    value: "VIEN",
+                    text: "Viên",
+                },
+                {
+                    value: "LON",
+                    text: "Lon",
+                },
+            ],
+            onFilter: (value, record) => record.unit.indexOf(value) === 0,
+
         },
         // {
         //     title: "% thuế GTGT",
         //     dataIndex: "tax",
         //     // sorter: (a, b) => a.name.localeCompare(b.name),
-        //     editable: !disabled,
+        //     editable: false,
         // },
         {
             title: "Số dư",
             dataIndex: "",
-            // sorter: (a, b) => a.name.localeCompare(b.name),
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Ghi chú",
             dataIndex: "description",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: '',
@@ -267,7 +357,7 @@ const EditNhomSanPham = ({ disabled = false }) => {
 
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Mô tả"   
+                            label="Mô tả"
                             name='description'
                         >
                             <Input
@@ -280,14 +370,14 @@ const EditNhomSanPham = ({ disabled = false }) => {
                 </Flex>
 
 
-                <div>
-                    <Button
+                <div className='mt-4'>
+                    {/* <Button
                         className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1 mb-4'
                         onClick={handleAdd}
                         disabled={disabled}
                     >
                         Thêm 1 dòng
-                    </Button>
+                    </Button> */}
 
                     <Table
                         components={components}

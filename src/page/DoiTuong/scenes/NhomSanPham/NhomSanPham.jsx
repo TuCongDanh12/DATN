@@ -21,6 +21,8 @@ const NhomSanPham = () => {
   const [messageApi, contextHolderMes] = msg.useMessage();
 
   const [api, contextHolder] = notification.useNotification();
+  const [filteredInfo, setFilteredInfo] = useState({});
+  const [sortedInfo, setSortedInfo] = useState({});
 
   const {
     listProductGroupData,
@@ -119,19 +121,29 @@ const NhomSanPham = () => {
     {
       title: "Nhóm sản phẩm",
       dataIndex: "name",
+      key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
+      sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+      ellipsis: true,
     },
     {
       title: "Số sản phẩm trong nhóm",
       dataIndex: "size",
+      key: "size",
+      sorter: (a, b) => a.size - b.size,
+      sortOrder: sortedInfo.columnKey === "size" ? sortedInfo.order : null,
     },
     {
       title: "% thuế GTGT",
       dataIndex: "tax",
+      key: "tax",
+      sorter: (a, b) => a.tax - b.tax,
+      sortOrder: sortedInfo.columnKey === "tax" ? sortedInfo.order : null,
     },
     {
       title: "Ghi chú",
       dataIndex: "description",
+      key: "description",
     },
     {
       title: "Chức năng",
@@ -178,7 +190,15 @@ const NhomSanPham = () => {
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
-  };
+    setFilteredInfo(filters);
+    setSortedInfo(sorter);
+};
+
+const clearAll = () => {
+    setFilteredInfo({});
+    setSortedInfo({});
+};
+
   return (
     <div className='m-4'>
       <div className='px-[20px] w-full flex justify-between py-7 bg-white'>
@@ -227,6 +247,7 @@ const NhomSanPham = () => {
                 content: 'Loading...',
               });
               form.resetFields();
+              clearAll();
             }}
           />
         </div>

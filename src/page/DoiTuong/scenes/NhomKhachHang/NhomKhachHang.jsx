@@ -22,6 +22,10 @@ const NhomKhachHang = () => {
 
   const [api, contextHolder] = notification.useNotification();
 
+  const [filteredInfo, setFilteredInfo] = useState({});
+  const [sortedInfo, setSortedInfo] = useState({});
+
+
   const {
     listCustomerGroupData,
     listSupplierGroupData,
@@ -120,15 +124,24 @@ const NhomKhachHang = () => {
     {
       title: "Nhóm khách hàng",
       dataIndex: "name",
+      key: "name",
+      ellipsis: true,
       sorter: (a, b) => a.name.localeCompare(b.name),
+      sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+
     },
     {
       title: "Số khách hàng trong nhóm",
       dataIndex: "size",
+      key: "size",
+      sorter: (a, b) => a.size - b.size,
+      sortOrder: sortedInfo.columnKey === "size" ? sortedInfo.order : null,
     },
     {
       title: "Ghi chú",
       dataIndex: "note",
+      key: "note",
+      ellipsis: true,
     },
     {
       title: "Chức năng",
@@ -175,7 +188,15 @@ const NhomKhachHang = () => {
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
+    setFilteredInfo(filters);
+    setSortedInfo(sorter);
   };
+
+  const clearAll = () => {
+    setFilteredInfo({});
+    setSortedInfo({});
+  };
+
   return (
     <div className='m-4'>
       <div className='px-[20px] w-full flex justify-between py-7 bg-white'>
@@ -224,6 +245,7 @@ const NhomKhachHang = () => {
                 content: 'Loading...',
               });
               form.resetFields();
+              clearAll();
             }}
           />
         </div>

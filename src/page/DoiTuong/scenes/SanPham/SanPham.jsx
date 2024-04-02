@@ -20,6 +20,9 @@ const SanPham = () => {
 
     const [api, contextHolder] = notification.useNotification();
 
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [sortedInfo, setSortedInfo] = useState({});
+
     const {
         listProductData,
         isSuccessGetListProduct,
@@ -107,22 +110,122 @@ const SanPham = () => {
         {
             title: "Sản phẩm",
             dataIndex: "name",
+            key: "name",
             sorter: (a, b) => a.name.localeCompare(b.name),
+            sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+            ellipsis: true,
         },
         {
             title: "Giá mua",
             dataIndex: "priceReceived",
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            key: "priceReceived",
+            sorter: (a, b) => a.priceReceived - b.priceReceived,
+            sortOrder: sortedInfo.columnKey === "priceReceived" ? sortedInfo.order : null,
         },
         {
             title: "Giá bán",
             dataIndex: "priceDelivery",
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            key: "priceDelivery",
+            sorter: (a, b) => a.priceDelivery - b.priceDelivery,
+            sortOrder: sortedInfo.columnKey === "priceDelivery" ? sortedInfo.order : null,
         },
         {
             title: "Đơn vị tính",
             dataIndex: "unit",
-            // sorter: (a, b) => a.name.localeCompare(b.name),
+            key: "unit",
+            render: (val, record) => {
+                switch (val) {
+                    case "CAI":
+                        return "Cái";
+                    case "CAY":
+                        return "Cây";
+                    case "CHAI":
+                        return "Chai";
+                    case "CHUC":
+                        return "Chục";
+                    case "CUON":
+                        return "Cuộn";
+                    case "GOI":
+                        return "Gói";
+                    case "HOP":
+                        return "Hộp";
+                    case "HU":
+                        return "Hủ";
+                    case "KG":
+                        return "Kg";
+                    case "LOC":
+                        return "Lốc";
+                    case "LON":
+                        return "Lon";
+                    case "THUNG":
+                        return "Thùng";
+                    case "VIEN":
+                        return "Viên";
+                    default:
+                        return "Lỗi";
+                }
+            },
+            filters: [
+                {
+                    value: "CAI",
+                    text: "Cái",
+                },
+                {
+                    value: "CAY",
+                    text: "Cây",
+                },
+                {
+                    value: "CHAI",
+                    text: "Chai",
+                },
+                {
+                    value: "CHUC",
+                    text: "Chục",
+                },
+                {
+                    value: "CUON",
+                    text: "Cuộn",
+                },
+                {
+                    value: "GOI",
+                    text: "Gói",
+                },
+                {
+                    value: "HOP",
+                    text: "Hộp",
+                },
+                {
+                    value: "HU",
+                    text: "Hủ",
+                },
+                {
+                    value: "KG",
+                    text: "Kg",
+                },
+                {
+                    value: "LOC",
+                    text: "Lốc",
+                },
+                {
+                    value: "LON",
+                    text: "Lon",
+                },
+                {
+                    value: "THUNG",
+                    text: "Thùng",
+                },
+                {
+                    value: "VIEN",
+                    text: "Viên",
+                },
+                {
+                    value: "LON",
+                    text: "Lon",
+                },
+            ],
+            onFilter: (value, record) => record.unit.indexOf(value) === 0,
+            filteredValue: filteredInfo.unit || null,
+
         },
         // {
         //     title: "% thuế GTGT",
@@ -131,12 +234,17 @@ const SanPham = () => {
         // },
         {
             title: "Số dư",
-            dataIndex: "",
+            dataIndex: "xxx",
+            key: "xxx",
+            sorter: (a, b) => a.xxx - b.xxx,
+            sortOrder: sortedInfo.columnKey === "xxx" ? sortedInfo.order : null,
             // sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
             title: "Mô tả",
             dataIndex: "description",
+            key: "description",
+            ellipsis: true,
         },
         {
             title: "Chức năng",
@@ -175,11 +283,14 @@ const SanPham = () => {
     };
 
     const onChange = (pagination, filters, sorter, extra) => {
-        // console.log('onChange params', pagination, filters, sorter, extra);
-        console.log('onChange params pagination', pagination);
-        console.log('onChange params filters', filters);
-        console.log('onChange params sorter', sorter);
-        console.log('onChange params extra', extra);
+        console.log('params', pagination, filters, sorter, extra);
+        setFilteredInfo(filters);
+        setSortedInfo(sorter);
+    };
+
+    const clearAll = () => {
+        setFilteredInfo({});
+        setSortedInfo({});
     };
 
     return (
@@ -230,6 +341,8 @@ const SanPham = () => {
                                 content: 'Loading...',
                             });
                             form.resetFields();
+                            clearAll();
+
                         }}
                     />
                 </div>

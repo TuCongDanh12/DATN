@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import {  Table, Dropdown, Space, Select, Button, Modal, Form,  Input, message as msg, notification } from "antd";
+import { Table, Dropdown, Space, Select, Button, Modal, Form, Input, message as msg, notification } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { TfiReload } from 'react-icons/tfi';
@@ -20,6 +20,9 @@ const NhaCungCap = () => {
 
     const [api, contextHolder] = notification.useNotification();
 
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [sortedInfo, setSortedInfo] = useState({});
+
     const {
         listSupplierData,
         isSuccessGetListSupplier,
@@ -38,7 +41,7 @@ const NhaCungCap = () => {
                 message: 'Thêm dữ liệu thành công!',
                 placement: 'bottomLeft',
                 duration: 2
-              });
+            });
 
             dispatch(clearState());
 
@@ -58,7 +61,7 @@ const NhaCungCap = () => {
                 message: message,
                 placement: 'bottomLeft',
                 duration: 2
-              });
+            });
 
             dispatch(clearState());
         }
@@ -108,18 +111,27 @@ const NhaCungCap = () => {
             title: "Nhà cung cấp",
             dataIndex: "name",
             sorter: (a, b) => a.name.localeCompare(b.name),
+            sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+            key: "name",
+            ellipsis: true,
         },
         {
             title: "Địa chỉ",
             dataIndex: "address",
+            key: "address",
+            ellipsis: true,
         },
         {
             title: "Liên hệ",
             dataIndex: "phoneNumber",
+            key: "phoneNumber",
+            ellipsis: true,
         },
         {
             title: "Ghi chú",
             dataIndex: "description",
+            key: "description",
+            ellipsis: true,
         },
         {
             title: "Chức năng",
@@ -158,11 +170,14 @@ const NhaCungCap = () => {
     };
 
     const onChange = (pagination, filters, sorter, extra) => {
-        // console.log('onChange params', pagination, filters, sorter, extra);
-        console.log('onChange params pagination', pagination);
-        console.log('onChange params filters', filters);
-        console.log('onChange params sorter', sorter);
-        console.log('onChange params extra', extra);
+        console.log('params', pagination, filters, sorter, extra);
+        setFilteredInfo(filters);
+        setSortedInfo(sorter);
+    };
+
+    const clearAll = () => {
+        setFilteredInfo({});
+        setSortedInfo({});
     };
 
     return (
@@ -213,6 +228,7 @@ const NhaCungCap = () => {
                                 content: 'Loading...',
                             });
                             form.resetFields();
+                            clearAll();
                         }}
                     />
                 </div>
@@ -275,7 +291,7 @@ const NhaCungCap = () => {
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 }}
                 onChange={onChange}
-                
+
             />
         </div>
     )
