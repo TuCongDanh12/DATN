@@ -85,6 +85,7 @@ export const banHangSlice = createSlice({
             console.log("getListDonBanHang.fulfilled", action.payload)
             state.isFetching = false;
             state.isSuccessGetListDonBanHang = true;
+        
             state.listDonBanHangData = action.payload.result.data.map(item => { return { ...item, key: item.id, customer: item.customer.name } });
             //   state.message = action.payload.message;
         })

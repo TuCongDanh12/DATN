@@ -1,15 +1,31 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Table, Dropdown, Space, Select, Button, Modal, Form, Input, message as msg, notification, DatePicker } from "antd";
+import {
+  Table,
+  Dropdown,
+  Space,
+  Select,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message as msg,
+  notification,
+  DatePicker,
+} from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { SiMicrosoftexcel } from 'react-icons/si';
-import { TfiReload } from 'react-icons/tfi';
-import { Add } from '@mui/icons-material';
-import { MdOutlineSearch } from 'react-icons/md';
-import { useDispatch, useSelector } from 'react-redux';
-import { banHangSelector, clearState, getListDonBanHang } from '../../../../store/features/banHangSlice';
-import moment from 'moment/moment';
-
+import { SiMicrosoftexcel } from "react-icons/si";
+import { TfiReload } from "react-icons/tfi";
+import { Add } from "@mui/icons-material";
+import { MdOutlineSearch } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  banHangSelector,
+  clearState,
+  getListDonBanHang,
+} from "../../../../store/features/banHangSlice";
+import moment from "moment/moment";
+const { RangePicker } = DatePicker;
 const KhachHang = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,7 +42,6 @@ const KhachHang = () => {
 
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
-
   const {
     isSuccessGetListDonBanHang,
     isSuccessPostDonBanHang,
@@ -35,29 +50,48 @@ const KhachHang = () => {
     message,
 
     listDonBanHangData,
-    donBanHangData
+    donBanHangData,
   } = useSelector(banHangSelector);
 
   useEffect(() => {
     dispatch(getListDonBanHang());
   }, []);
 
+  const [donbanhang, setDonbanhang] = useState(listDonBanHangData);
+  const [searchText, setSearchText] = useState("");
+  const [filterday, setFilterday] = useState([]);
+  const [valueRangepicker,setValueRangepicker] = useState([])
+  const handleSearch = (value) => {
+    setSearchText(value);
+  };
+  const handleFilterday = (dates) => {
+    if (dates && dates.length === 2) {
+      const startTimestamp = dates[0].valueOf();
+      const endTimestamp = dates[1].valueOf();
+      console.log("Start Timestamp:", startTimestamp, typeof(startTimestamp));
+      console.log("End Timestamp:", endTimestamp,  typeof(endTimestamp));
+      setFilterday([startTimestamp, endTimestamp]);
+      setValueRangepicker(dates);
+    } else {
+      setFilterday([]);
+      setValueRangepicker([]);
+    }
+  };
+  
   useEffect(() => {
     if (isSuccessPostDonBanHang) {
       api.success({
-        message: 'Thêm dữ liệu thành công!',
-        placement: 'bottomLeft',
-        duration: 2
+        message: "Thêm dữ liệu thành công!",
+        placement: "bottomLeft",
+        duration: 2,
       });
 
       dispatch(clearState());
-
-    }
-    else if (isSuccessGetListDonBanHang) {
+    } else if (isSuccessGetListDonBanHang) {
       messageApi.open({
-        key: 'updatable',
-        type: 'success',
-        content: 'Tải dữ liệu thành công!',
+        key: "updatable",
+        type: "success",
+        content: "Tải dữ liệu thành công!",
         duration: 2,
       });
 
@@ -66,41 +100,43 @@ const KhachHang = () => {
     if (isError) {
       api.error({
         message: message,
-        placement: 'bottomLeft',
-        duration: 2
+        placement: "bottomLeft",
+        duration: 2,
       });
 
       dispatch(clearState());
     }
-
   }, [isSuccessPostDonBanHang, isSuccessGetListDonBanHang, isError]);
-
+  
+  useEffect(() => {
+    if (searchText.trim() === "" && filterday.length === 0) {
+      if (!listDonBanHangData || (Array.isArray(listDonBanHangData) && !listDonBanHangData.length)) {
+        setDonbanhang([]);
+      } else {
+        setDonbanhang(listDonBanHangData);
+      }
+    } else {
+      const filteredData = listDonBanHangData.filter((data) => {
+        const saleDateMoment = moment(data.saleDate);
+        return (
+          data.customer.toLowerCase().includes(searchText.toLowerCase()) &&
+          (!filterday[0] || saleDateMoment.valueOf() >= filterday[0]) &&
+          (!filterday[1] || saleDateMoment.valueOf() <= filterday[1])
+        );
+      });
+      setDonbanhang(filteredData);
+    }
+  }, [searchText, listDonBanHangData, filterday]);
 
   const items = [
     {
       key: "xem",
-      label: (<Link className="!text-black">
-        Xem
-      </Link>),
+      label: <Link className="!text-black">Xem</Link>,
     },
     {
       key: "lap-chung-tu-ban-hang",
-      label: (<Link className="!text-black">
-        Lập chứng từ bán hàng
-      </Link>),
+      label: <Link className="!text-black">Lập chứng từ bán hàng</Link>,
     },
-    // {
-    //   key: "chinh-sua",
-    //   label: (<Link className="!text-black">
-    //     Chỉnh sửa
-    //   </Link>)
-    // },
-    // {
-    //   key: "xoa",
-    //   label: (<Link className="!text-black">
-    //     Xóa
-    //   </Link>)
-    // },
   ];
 
   const handleDropdownItemClick = (e, record) => {
@@ -109,8 +145,7 @@ const KhachHang = () => {
     if (e.key === "xoa") {
       setDataSelected(record);
       setOpen(true);
-    }
-    else {
+    } else {
       navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
     }
   };
@@ -124,20 +159,12 @@ const KhachHang = () => {
       title: "Ngày đặt hàng",
       dataIndex: "saleDate",
       key: "saleDate",
-      render: (val, record) =>
-        (new Date(val)).toLocaleDateString("vi-VN"),
-      sorter: (a, b) => moment(a.saleDate, "DD-MM-YYYY") - moment(b.saleDate, "DD-MM-YYYY"),
+      render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+      sorter: (a, b) =>
+        moment(a.saleDate, "DD-MM-YYYY") - moment(b.saleDate, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "saleDate" ? sortedInfo.order : null,
       // fixed: 'left',
     },
-    // {
-    //   title: "Số đơn hàng",
-    //   dataIndex: "id",
-    //   key: "id",
-    //   sorter: (a, b) => a.id - b.id,
-    //   sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
-
-    // },
     {
       title: "Khách hàng",
       dataIndex: "customer",
@@ -178,9 +205,9 @@ const KhachHang = () => {
       render: (val, record) => {
         switch (val) {
           case "UNDOCUMENTED":
-            return "Chưa thực hiện"
+            return "Chưa thực hiện";
           case "DOCUMENTING":
-            return "Đang thực hiện"
+            return "Đang thực hiện";
           case "DOCUMENTED":
             return "Hoàn thành";
           default:
@@ -189,16 +216,16 @@ const KhachHang = () => {
       },
       filters: [
         {
-          value: 'UNDOCUMENTED',
-          text: 'Chưa thực hiện',
+          value: "UNDOCUMENTED",
+          text: "Chưa thực hiện",
         },
         {
-          value: 'DOCUMENTING',
-          text: 'Đang thực hiện',
+          value: "DOCUMENTING",
+          text: "Đang thực hiện",
         },
         {
-          value: 'DOCUMENTED',
-          text: 'Hoàn thành',
+          value: "DOCUMENTED",
+          text: "Hoàn thành",
         },
       ],
       onFilter: (value, record) => record.documentStatus.indexOf(value) === 0,
@@ -211,9 +238,9 @@ const KhachHang = () => {
       render: (val, record) => {
         switch (val) {
           case "NOT_DELIVERED":
-            return "Chưa giao"
+            return "Chưa giao";
           case "DELIVERING":
-            return "Đang giao"
+            return "Đang giao";
           case "DELIVERED":
             return "Đã giao đủ";
           default:
@@ -222,16 +249,16 @@ const KhachHang = () => {
       },
       filters: [
         {
-          value: 'NOT_DELIVERED',
-          text: 'Chưa giao',
+          value: "NOT_DELIVERED",
+          text: "Chưa giao",
         },
         {
-          value: 'DELIVERING',
-          text: 'Đang giao',
+          value: "DELIVERING",
+          text: "Đang giao",
         },
         {
-          value: 'DELIVERED',
-          text: 'Đã giao đủ',
+          value: "DELIVERED",
+          text: "Đã giao đủ",
         },
       ],
       onFilter: (value, record) => record.deliveryStatus.indexOf(value) === 0,
@@ -240,7 +267,7 @@ const KhachHang = () => {
     {
       title: "Chức năng",
       dataIndex: "chucnang",
-      fixed: 'right',
+      fixed: "right",
       width: "10%",
       render: (_, record) => (
         <Space size="middle">
@@ -248,8 +275,13 @@ const KhachHang = () => {
             menu={{
               onClick: (e) => handleDropdownItemClick(e, record),
               items: items,
-            }}>
-            <Link to={`xem/${record.key}`} state={{ id: record.key }} className="!text-black">
+            }}
+          >
+            <Link
+              to={`xem/${record.key}`}
+              state={{ id: record.key }}
+              className="!text-black"
+            >
               Xem
               <DownOutlined />
             </Link>
@@ -270,24 +302,21 @@ const KhachHang = () => {
     },
   };
 
-  console.log(selectedRowKeys);
-
   const onSelectChange = (newSelectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
-
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+    console.log("Received values of form: ", values);
   };
 
   const onChange = (pagination, filters, sorter, extra) => {
     // console.log('onChange params', pagination, filters, sorter, extra);
-    console.log('onChange params pagination', pagination);
-    console.log('onChange params filters', filters);
-    console.log('onChange params sorter', sorter);
-    console.log('onChange params extra', extra);
+    console.log("onChange params pagination", pagination);
+    console.log("onChange params filters", filters);
+    console.log("onChange params sorter", sorter);
+    console.log("onChange params extra", extra);
     setFilteredInfo(filters);
     setSortedInfo(sorter);
   };
@@ -297,68 +326,62 @@ const KhachHang = () => {
     setSortedInfo({});
   };
 
-  const onChangeDatePicker = (date, dateString) => {
-    console.log(date, dateString);
-    console.log((new Date(dateString)).toLocaleDateString("vi-VN"));
-  };
-
   return (
-    <div className='m-4'>
-      <div className='px-[20px] w-full flex justify-between py-7 bg-white'>
-        <div className='flex gap-[5px] items-center'>
-          <Form
-            form={form}
-            layout='inline'
-            onFinish={onFinish}
-          >
-            <DatePicker onChange={onChangeDatePicker} className='!me-[5px]' />
-            <Form.Item
-              name='type'
-              className='w-[200px] !me-[5px]'
-            >
-              <Select placeholder='Tìm kiếm theo'>
-                <Select.Option value="nhacungcap">Nhà cung cấp</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name='keyword'
-              className='w-[300px] !me-0'
-            >
+    <div className="m-4">
+      <div className="px-[20px] w-full flex justify-between py-7 bg-white">
+        <div className="flex gap-[5px] items-center">
+          <Form form={form} layout="inline" onFinish={onFinish}>
+            <RangePicker
+              value={valueRangepicker}
+              format='DD-MM-YYYY'
+              onChange={(dates) => handleFilterday(dates)}
+              className="!me-[5px]"
+            />
+            <Form.Item name="keyword" className="w-[300px] !me-0">
               <Input
-                className='rounded-tr-none rounded-br-none'
-                placeholder="Nhập từ khóa"
+                className="rounded-tr-none rounded-br-none"
+                placeholder="Nhập tên khách hàng"
+                value={searchText}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </Form.Item>
 
             <Button
-              className='!bg-[#FAFAFA] font-bold m-0 p-0 w-[32px] h-[32px] flex justify-center items-center rounded-tl-none rounded-bl-none rounded-tr-md rounded-br-md'
+              className="!bg-[#FAFAFA] font-bold m-0 p-0 w-[32px] h-[32px] flex justify-center items-center rounded-tl-none rounded-bl-none rounded-tr-md rounded-br-md"
               htmlType="submit"
             >
-              <MdOutlineSearch size={20} color='#898989' />
+              <MdOutlineSearch size={20} color="#898989" />
             </Button>
           </Form>
 
           {contextHolderMes}
           {contextHolder}
 
-          <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' />
-          <TfiReload size={30} className='p-2 bg-white border border-black cursor-pointer'
+          <SiMicrosoftexcel
+            size={30}
+            className="p-2 bg-white border border-black cursor-pointer"
+          />
+          <TfiReload
+            size={30}
+            className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {
               dispatch(getListDonBanHang());
               messageApi.open({
-                key: 'updatable',
-                type: 'loading',
-                content: 'Loading...',
+                key: "updatable",
+                type: "loading",
+                content: "Loading...",
               });
               form.resetFields();
               clearAll();
+              setValueRangepicker([]) 
+              setFilterday([])
             }}
           />
         </div>
 
         <Button
-          className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1'
-          type='link'
+          className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
+          type="link"
           onClick={() => navigate("them")}
         >
           Lập chứng từ bán hàng
@@ -369,14 +392,17 @@ const KhachHang = () => {
           centered
           open={open}
           width={500}
-          footer=''
+          footer=""
           onCancel={handleCancel}
         >
-          <div className='m-8 mt-10 text-center'>Bạn muốn xóa khách hàng<br /> <strong>"{dataSelected.name}"</strong>?</div>
+          <div className="m-8 mt-10 text-center">
+            Bạn muốn xóa khách hàng
+            <br /> <strong>"{dataSelected.name}"</strong>?
+          </div>
 
-          <div className='flex justify-end gap-2 mb-0'>
+          <div className="flex justify-end gap-2 mb-0">
             <Button
-              className='bg-[#FF7742] font-bold text-white mr-2'
+              className="bg-[#FF7742] font-bold text-white mr-2"
               onClick={() => {
                 setDataSelected({});
                 setOpen(false);
@@ -385,7 +411,7 @@ const KhachHang = () => {
               Hủy
             </Button>
             <Button
-              className='!bg-[#67CDBB] font-bold text-white'
+              className="!bg-[#67CDBB] font-bold text-white"
               onClick={() => {
                 //dispatch(deleteNhaCungCap({id:dataSelected.key}));
                 setDataSelected({});
@@ -404,23 +430,24 @@ const KhachHang = () => {
           ...rowSelection,
         }}
         columns={columns}
-        dataSource={listDonBanHangData}
+        dataSource={donbanhang}
         pagination={{
           // total: listDonBanHangData.length,
           defaultPageSize: 20,
           // // pageSize: 20,
           // defaultCurrent: 1,
-          position: ['bottomRight'],
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+          position: ["bottomRight"],
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`,
         }}
         onChange={onChange}
         scroll={{
           x: 1300,
         }}
-        className='overflow-x-visible	overflow-y-visible'
+        className="overflow-x-visible	overflow-y-visible"
       />
     </div>
-  )
-}
+  );
+};
 
-export default KhachHang
+export default KhachHang;
