@@ -19,7 +19,11 @@ const KhachHang = () => {
     const [messageApi, contextHolderMes] = msg.useMessage();
 
     const [api, contextHolder] = notification.useNotification();
-
+    const [customerData, setCustomerData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const handleSearch = (value) => {
+    setSearchText(value);
+  };
     const {
         listCustomerData,
         isSuccessGetListCustomer,
@@ -65,7 +69,24 @@ const KhachHang = () => {
 
     }, [isSuccessGetListCustomer, isSuccessPostCustomer, isError]);
 
-
+    useEffect(() => {
+        console.log("DAY NE", searchText)
+        if (searchText.trim() === "") {
+          if (
+            !listCustomerData ||
+            (Array.isArray(listCustomerData) && !listCustomerData.length)
+          ) {
+            setCustomerData([]);
+          } else {
+            setCustomerData(listCustomerData);
+          }
+        } else {
+          const filteredData = listCustomerData.filter((data) => {
+            return data.name.toLowerCase().includes(searchText.toLowerCase());
+          });
+          setCustomerData(filteredData);
+        }
+      }, [searchText, customerData]);
     const items = [
         {
             key: "xem",
@@ -174,17 +195,12 @@ const KhachHang = () => {
                         layout='inline'
                         onFinish={onFinish}
                     >
-                        <Form.Item
-                            name='type'
-                            className='w-[200px] !me-[5px]'
-                        >
-                            <Select placeholder='Tìm kiếm theo'>
-                                <Select.Option value="nhacungcap">Nhà cung cấp</Select.Option>
-                            </Select>
-                        </Form.Item>
+                        
                         <Form.Item
                             name='keyword'
                             className='w-[300px] !me-0'
+                            value={searchText}
+                            onChange={(e) => handleSearch(e.target.value)}
                         >
                             <Input
                                 className='rounded-tr-none rounded-br-none'
@@ -265,7 +281,7 @@ const KhachHang = () => {
                 //     ...rowSelection,
                 // }}
                 columns={columns}
-                dataSource={listCustomerData}
+                dataSource={customerData}
                 pagination={{
                     total: listCustomerData.length,
                     defaultPageSize: 20,

@@ -21,7 +21,11 @@ const NhomKhachHang = () => {
   const [messageApi, contextHolderMes] = msg.useMessage();
 
   const [api, contextHolder] = notification.useNotification();
-
+  const [customerGroupData, setCustomerGroupData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const handleSearch = (value) => {
+    setSearchText(value);
+  };
   const {
     listCustomerGroupData,
     listSupplierGroupData,
@@ -73,6 +77,23 @@ const NhomKhachHang = () => {
     message
   ]);
 
+  useEffect(() => {
+    if (searchText.trim() === "") {
+      if (
+        !listCustomerGroupData ||
+        (Array.isArray(listCustomerGroupData) && !listCustomerGroupData.length)
+      ) {
+        setCustomerGroupData([]);
+      } else {
+        setCustomerGroupData(listCustomerGroupData);
+      }
+    } else {
+      const filteredData = listCustomerGroupData.filter((data) => {
+        return data.name.toLowerCase().includes(searchText.toLowerCase());
+      });
+      setCustomerGroupData(filteredData);
+    }
+  }, [searchText,customerGroupData]);
 
 
   const items = [
@@ -185,14 +206,7 @@ const NhomKhachHang = () => {
             layout='inline'
             onFinish={onFinish}
           >
-            <Form.Item
-              name='type'
-              className='w-[200px] !me-[5px]'
-            >
-              <Select placeholder='Tìm kiếm theo'>
-                <Select.Option value="nhacungcap">Nhà cung cấp</Select.Option>
-              </Select>
-            </Form.Item>
+            
             <Form.Item
               name='keyword'
               className='w-[300px] !me-0'
@@ -200,6 +214,8 @@ const NhomKhachHang = () => {
               <Input
                 className='rounded-tr-none rounded-br-none'
                 placeholder="Nhập từ khóa"
+                value={searchText}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </Form.Item>
 
@@ -336,7 +352,7 @@ const NhomKhachHang = () => {
         //     ...rowSelection,
         // }}
         columns={columns}
-        dataSource={listCustomerGroupData}
+        dataSource={customerGroupData}
         pagination={{
           total: listCustomerGroupData.length,
           defaultPageSize: 20,
