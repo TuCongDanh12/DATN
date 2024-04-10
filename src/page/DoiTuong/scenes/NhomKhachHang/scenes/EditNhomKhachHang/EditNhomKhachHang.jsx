@@ -127,34 +127,34 @@ const EditNhomKhachHang = ({ disabled = false }) => {
             dataIndex: "name",
             sorter: (a, b) => a.name.localeCompare(b.name),
             width: '30%',
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Địa chỉ",
             dataIndex: "address",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Số điện thoại",
             dataIndex: "phone",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Ghi chú",
             dataIndex: "note",
-            editable: !disabled,
+            editable: false,
         },
-        {
-            title: '',
-            dataIndex: 'operation',
-            width: '50px',
-            render: (_, record) =>
-                dataSource.length >= 1 ? (
-                    <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
-                        <RiDeleteBin6Line size={20} color='#1E1E1E' />
-                    </Typography.Link>
-                ) : null,
-        },
+        // {
+        //     title: '',
+        //     dataIndex: 'operation',
+        //     width: '50px',
+        //     render: (_, record) =>
+        //         dataSource.length >= 1 ? (
+        //             <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
+        //                 <RiDeleteBin6Line size={20} color='#1E1E1E' />
+        //             </Typography.Link>
+        //         ) : null,
+        // },
     ];
 
     const handleAdd = () => {
@@ -260,14 +260,14 @@ const EditNhomKhachHang = ({ disabled = false }) => {
                 </Flex>
 
 
-                <div>
-                    <Button
+                <div className='mt-4'>
+                    {/* <Button
                         className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1 mb-4'
                         onClick={handleAdd}
                         disabled={disabled}
                     >
                         Thêm 1 dòng
-                    </Button>
+                    </Button> */}
 
                     <Table
                         components={components}

@@ -129,34 +129,34 @@ const EditNhomNhaCungCap = ({ disabled = false }) => {
             dataIndex: "name",
             sorter: (a, b) => a.name.localeCompare(b.name),
             width: '30%',
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Địa chỉ",
             dataIndex: "address",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Liên hệ",
             dataIndex: "phoneNumber",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Ghi chú",
             dataIndex: "description",
-            editable: !disabled,
+            editable: false,
         },
-        {
-            title: '',
-            dataIndex: 'operation',
-            width: '50px',
-            render: (_, record) =>
-                dataSource.length >= 1 ? (
-                    <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
-                        <RiDeleteBin6Line size={20} color='#1E1E1E' />
-                    </Typography.Link>
-                ) : null,
-        },
+        // {
+        //     title: '',
+        //     dataIndex: 'operation',
+        //     width: '50px',
+        //     render: (_, record) =>
+        //         dataSource.length >= 1 ? (
+        //             <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
+        //                 <RiDeleteBin6Line size={20} color='#1E1E1E' />
+        //             </Typography.Link>
+        //         ) : null,
+        // },
     ];
 
     const handleAdd = () => {
@@ -231,7 +231,7 @@ const EditNhomNhaCungCap = ({ disabled = false }) => {
                 <Flex gap={100} justify='center' className='w-[100%] align-left'>
                     <Flex vertical gap={5} className='w-[50%]'>
                         <Form.Item
-                            label="Nhà cung cấp"
+                            label="Nhóm nhà cung cấp"
                             name='name'
                             rules={[
                                 {
@@ -262,14 +262,14 @@ const EditNhomNhaCungCap = ({ disabled = false }) => {
                 </Flex>
 
 
-                <div>
-                    <Button
+                <div className='mt-4'>
+                    {/* <Button
                         className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1 mb-4'
                         onClick={handleAdd}
                         disabled={disabled}
                     >
                         Thêm 1 dòng
-                    </Button>
+                    </Button> */}
 
                     <Table
                         components={components}

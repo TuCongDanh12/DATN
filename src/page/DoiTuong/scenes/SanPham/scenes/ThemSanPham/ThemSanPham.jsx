@@ -344,7 +344,7 @@ const ThemSanPham = ({ disabled = true }) => {
                                 <Select.Option value={"LOC"}>Lốc</Select.Option>
                                 <Select.Option value={"LON"}>Lon</Select.Option>
                                 <Select.Option value={"THUNG"}>Thùng</Select.Option>
-                                <Select.Option value={"TON"}>Ton</Select.Option>
+                                {/* <Select.Option value={"TON"}>Ton</Select.Option> */}
                                 <Select.Option value={"VIEN"}>Viên</Select.Option>
                             </Select>
                         </Form.Item>

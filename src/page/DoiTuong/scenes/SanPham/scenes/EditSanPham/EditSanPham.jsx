@@ -331,11 +331,24 @@ const EditSanPham = ({ disabled = false }) => {
                                 },
                             ]}
                         >
-                            <Input
-                                placeholder="abc@gmail.com"
+                            <Select
                                 disabled={disabled}
-
-                            />
+                            >
+                                <Select.Option value={"CAI"}>Cái</Select.Option>
+                                <Select.Option value={"CAY"}>Cây</Select.Option>
+                                <Select.Option value={"CHAI"}>Chai</Select.Option>
+                                <Select.Option value={"CHUC"}>Chục</Select.Option>
+                                <Select.Option value={"CUON"}>Cuộn</Select.Option>
+                                <Select.Option value={"GOI"}>Gói</Select.Option>
+                                <Select.Option value={"HOP"}>Hộp</Select.Option>
+                                <Select.Option value={"HU"}>Hủ</Select.Option>
+                                <Select.Option value={"KG"}>Kg</Select.Option>
+                                <Select.Option value={"LOC"}>Lốc</Select.Option>
+                                <Select.Option value={"LON"}>Lon</Select.Option>
+                                <Select.Option value={"THUNG"}>Thùng</Select.Option>
+                                {/* <Select.Option value={"TON"}>Ton</Select.Option> */}
+                                <Select.Option value={"VIEN"}>Viên</Select.Option>
+                            </Select>
                         </Form.Item>
 
                         {/* <Form.Item
