@@ -141,6 +141,7 @@ const KhachHang = () => {
   }, [isSuccessPostDonBanHang, isSuccessGetListDonBanHang, isError, isSuccessGetListProduct]);
 
   useEffect(() => {
+    console.log(searchText);
     if (searchText.trim() === "" && filterday.length === 0) {
       if (!dataConvert || (Array.isArray(dataConvert) && !dataConvert.length)) {
         setDonbanhang([]);
@@ -463,6 +464,7 @@ const KhachHang = () => {
           type: "checkbox",
           ...rowSelection,
         }}
+        scroll={{ x: 1500}}
         columns={columns}
         dataSource={donbanhang}
         pagination={{
@@ -475,9 +477,7 @@ const KhachHang = () => {
             `${range[0]}-${range[1]} of ${total} items`,
         }}
         onChange={onChange}
-        scroll={{
-          x: 1300,
-        }}
+       
         className="overflow-x-visible	overflow-y-visible"
       />
     </div>
