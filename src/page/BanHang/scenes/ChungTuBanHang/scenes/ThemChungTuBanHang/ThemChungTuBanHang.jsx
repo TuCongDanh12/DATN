@@ -1,9 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } from "antd";
+import { Tabs, Form, Input, Flex, Table, Button, InputNumber, Select, Checkbox } from "antd";
 import { useNavigate, useParams } from 'react-router-dom';
-import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { banHangSelector, getDonBanHang } from '../../../../../../store/features/banHangSlice';
+import { banHangSelector, getDonBanHang, postChungTuBan } from '../../../../../../store/features/banHangSlice';
+import { clearState, doiTuongSelector, getListProduct } from './../../../../../../store/features/doiTuongSilce';
+import { VND } from '../../../../../../utils/func';
+import PhieuXuat from '../../../../../../component/Form/BanHang/PhieuXuat';
+import PhieuThu from '../../../../../../component/Form/BanHang/PhieuThu';
+import HoaDon from '../../../../../../component/Form/BanHang/HoaDon';
+
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+const dateFormat = "YYYY-MM-DD";
+dayjs.extend(customParseFormat);
+
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -54,7 +65,7 @@ const EditableCell = ({
         }
     };
     let childNode = children;
-    const inputNode = inputType === 'number' ? <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} /> : <Input ref={inputRef} onPressEnter={save} onBlur={save} />;
+    const inputNode = inputType === 'number' ? <InputNumber ref={inputRef} onPressEnter={save} onBlur={save} min={0} max={record.soluongchuadat} /> : <Input ref={inputRef} onPressEnter={save} onBlur={save} />;
 
     if (editable) {
         childNode = editing ? (
@@ -66,7 +77,7 @@ const EditableCell = ({
                 rules={[
                     {
                         required: true,
-                        message: `Please Input ${title}!`,
+                        message: `Vui lòng nhập Input ${title}!`,
                     },
                 ]}
             >
@@ -90,108 +101,183 @@ const EditableCell = ({
 
 const ThemChungTuBanHang = ({ disabled = false }) => {
     const dispatch = useDispatch();
+    const params = useParams();
+    console.log("params", params)
+    console.log("params.id", params.id)
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
     const {
         donBanHangData,
+        isSuccessGetDonBanHang
+
     } = useSelector(banHangSelector);
+
     console.log("donBanHangData", donBanHangData);
 
     useEffect(() => {
-        // dispatch(getDonBanHang({ id: params.id }));
+        dispatch(getDonBanHang({ id: params.id }));
+        dispatch(getListProduct());
     }, []);
 
+
+
+    const {
+        listProductData,
+        isSuccessGetListProduct,
+        isSuccessPostProduct,
+    } = useSelector(doiTuongSelector);
+
+    const [productOfDonBanHangs, setProductOfDonBanHangs] = useState([]);
+
+    // console.log("listProductData", listProductData);
     useEffect(() => {
-        if (donBanHangData) {
-            form.setFieldsValue({
-                ...donBanHangData
-            });
+        if (isSuccessGetListProduct && isSuccessGetDonBanHang) {
+            const products = donBanHangData.productOfDonBanHangs.map(product => {
+                console.log("product", product)
+                const data = listProductData.filter(item => item.id === product.id);
+                console.log("data", data);
+
+                let soluongdaban = 0;
+                // donBanHangData.ctban.forEach(chungtuban => {
+                //     chungtuban.productOfCtban.forEach(productOfCtbanItem => {
+                //         if (productOfCtbanItem.product.id === product.id) {
+                //             soluongdaban += productOfCtbanItem.count;
+                //         }
+                //     })
+                // })
+
+                return {
+                    ...product,
+                    key: product.id,
+                    id: product.id,
+                    productName: data[0].name,
+                    unit: data[0].unit,
+                    count: product.count - soluongdaban,
+                    soluongchuadat: product.count - soluongdaban,
+                    // soluongdaxuat: 1,
+                    price: product.price,
+                    thanhtien: product.price * product.count,
+                    phantramthuegtgt: data[0].productGroupInfo.tax,
+                    tienthuegtgt: product.count * product.price * (data[0].productGroupInfo.tax / 100)
+                }
+            })
+
+
+
+            console.log("products", products)
+
+            setProductOfDonBanHangs(products);
+            dispatch(clearState());
         }
-    }, [donBanHangData]);
+    }, [isSuccessGetListProduct, isSuccessGetDonBanHang]);
+
 
     const nameValue = Form.useWatch('id', form);
 
-    const [dataSource, setDataSource] = useState([
-        // {
-        //     key: '0',
-        //     'tenchietkhau': 'Chiết khấu 1',
-        //     'songayduocno': '20',
-        //     'songayhuongchietkhau': '10',
-        //     'phantramchietkhau': '2',
-        //     'noidung': '...',
-        // }
-    ]);
 
     const [count, setCount] = useState(1);
 
     const handleDelete = (key) => {
-        const newData = dataSource.filter((item) => item.key !== key);
-        setDataSource(newData);
+        const newData = productOfDonBanHangs.filter((item) => item.key !== key);
+        setProductOfDonBanHangs(newData);
     };
     const defaultColumns = [
         {
             title: "Mã hàng",
             dataIndex: "id",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Tên hàng",
             dataIndex: "productName",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "ĐVT",
-            dataIndex: "dvt",
-            editable: !disabled,
+            dataIndex: "unit",
+            editable: false,
+            render: (val, record) => {
+                switch (val) {
+                    case "CAI":
+                        return "Cái";
+                    case "CAY":
+                        return "Cây";
+                    case "CHAI":
+                        return "Chai";
+                    case "CHUC":
+                        return "Chục";
+                    case "CUON":
+                        return "Cuộn";
+                    case "GOI":
+                        return "Gói";
+                    case "HOP":
+                        return "Hộp";
+                    case "HU":
+                        return "Hủ";
+                    case "KG":
+                        return "Kg";
+                    case "LOC":
+                        return "Lốc";
+                    case "LON":
+                        return "Lon";
+                    case "THUNG":
+                        return "Thùng";
+                    case "VIEN":
+                        return "Viên";
+                    default:
+                        return "Lỗi";
+                }
+            },
         },
         {
             title: "Số lượng",
             dataIndex: "count",
             editable: !disabled,
         },
-        {
-            title: "Số lượng đã bán",
-            dataIndex: "soluongdaban",
-            editable: !disabled,
-        },
-        {
-            title: "Số lượng đã xuất",
-            dataIndex: "soluongdaxuat",
-            editable: !disabled,
-        },
+        // {
+        //     title: "Số lượng chưa đặt",
+        //     dataIndex: "soluongchuadat",
+        //     editable: false,
+        // },
+        // {
+        //     title: "Số lượng đã xuất",
+        //     dataIndex: "soluongdaxuat",
+        //     editable: !disabled,
+        // },
         {
             title: "Đơn giá",
             dataIndex: "price",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Thành tiền",
             dataIndex: "thanhtien",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "% thuế GTGT",
             dataIndex: "phantramthuegtgt",
-            editable: !disabled,
+            editable: false,
         },
         {
             title: "Tiền thuế GTGT",
             dataIndex: "tienthuegtgt",
-            editable: !disabled,
+            editable: false,
         },
         // {
         //     title: '',
         //     dataIndex: 'operation',
         //     width: '50px',
         //     render: (_, record) =>
-        //         dataSource.length >= 1 ? (
+        //         productOfDonBanHangs.length >= 1 ? (
         //             <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
         //                 <RiDeleteBin6Line size={20} color='#1E1E1E' />
         //             </Typography.Link>
         //         ) : null,
         // },
     ];
+
 
     const handleAdd = () => {
         const newData = {
@@ -202,19 +288,23 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
             'phantramchietkhau': '.',
             'noidung': '.',
         };
-        setDataSource([...dataSource, newData]);
+        setProductOfDonBanHangs([...productOfDonBanHangs, newData]);
         setCount(count + 1);
     };
 
     const handleSave = (row) => {
-        const newData = [...dataSource];
+        console.log("row", row);
+        row.thanhtien= row.price*row.count;
+        row.tienthuegtgt = row.price*row.count*(row.phantramthuegtgt/100);
+        
+        const newData = [...productOfDonBanHangs];
         const index = newData.findIndex((item) => row.key === item.key);
         const item = newData[index];
         newData.splice(index, 1, {
             ...item,
             ...row,
         });
-        setDataSource(newData);
+        setProductOfDonBanHangs(newData);
     };
 
     const components = {
@@ -232,7 +322,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: ['songayduocno', 'songayhuongchietkhau', 'phantramchietkhau'].includes(col.dataIndex) ? 'number' : 'text',
+                inputType: ['count'].includes(col.dataIndex) ? 'number' : 'text',
                 editable: col.editable,
                 dataIndex: col.dataIndex,
                 title: col.title,
@@ -241,16 +331,211 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
         };
     });
 
+    //End
     const onFinish = (values) => {
+        // values.createdAt = `${values.createdAt.$y}-${values.createdAt.$M + 1}-${values.createdAt.$D}`;
+        // values.deliveryDate = `${values.deliveryDate.$y}-${values.deliveryDate.$M + 1}-${values.deliveryDate.$D}`;
         console.log('Received values of form: ', values);
-        console.log(dataSource);
+        console.log(productOfDonBanHangs);
+        
+        let dataConvert = {
+            "deliveryDate": values.deliveryDate,
+            "warehouseKeeperId": values.warehouseKeeperId,
+            "content": values.content,
+            "receiver": values.receiver,
+            "paymentTerm": values.paymentTerm,
+            "donBanHangId": donBanHangData.id,
+            "products": productOfDonBanHangs.map(product => {
+                return {
+                    productId: product.id,
+                    count: product.count
+                }
+            })
+
+        };
+
+        console.log("dataConvert",dataConvert)
+        // "deliveryDate": `${values.deliveryDate.$y}-${values.deliveryDate.$M + 1}-${values.deliveryDate.$D}`,
+
+        // console.log("dayjs(values.deliveryDate, dateFormat)",dayjs(new Date(values.deliveryDate.$d).toISOString().slice(0, 10), dateFormat))
+
+        dispatch(postChungTuBan({values:dataConvert}));
+
     };
+
+
+    // Tab
+
+    const [phieuThuChecked, setPhieuThuChecked] = useState(false);
+    // const [selectedOption, setSelectedOption] = useState("CASH");
+
+
+    const onChangePhieuThu = (e) => {
+        setPhieuThuChecked(e.target.checked);
+    };
+
+    const itemsTienMat = [
+        {
+            key: "1",
+            label: "Phiếu xuất",
+            children: <PhieuXuat
+                components={components}
+                dataSource={productOfDonBanHangs}
+                columns={columns}
+
+                form={form}
+                disabled={disabled}
+                onFinish={onFinish} />,
+        },
+        {
+            key: "2",
+            label: "Hóa đơn",
+            children: <HoaDon
+                components={components}
+                dataSource={productOfDonBanHangs}
+                columns={columns}
+
+                form={form}
+                disabled={disabled}
+                onFinish={onFinish}
+            />,
+        },
+        phieuThuChecked && {
+            key: "3",
+            label: "Phiếu thu",
+            children: <PhieuThu />,
+        },
+    ];
+
+    // const itemsTienGui = [
+    //     {
+    //         key: "1",
+    //         label: "Phiếu xuất",
+    //         children: <PhieuXuat
+    //             components={components}
+    //             dataSource={productOfDonBanHangs}
+    //             columns={columns}
+
+    //             form={form}
+    //             disabled={disabled}
+    //             onFinish={onFinish} />,
+    //     },
+    //     {
+    //         key: "2",
+    //         label: "Hóa đơn",
+    //         children: <HoaDon
+    //             components={components}
+    //             dataSource={productOfDonBanHangs}
+    //             columns={columns}
+
+    //             form={form}
+    //             disabled={disabled}
+    //             onFinish={onFinish} />,
+    //     },
+    //     phieuThuChecked && {
+    //         key: "3",
+    //         label: "Phiếu thu",
+    //         children: <PhieuThu tiengui={true} />,
+    //     },
+    // ];
+
+    // const handleChangeSelectedOption = (e) => {
+    //     console.log(e)
+    //     setSelectedOption(e);
+    // }
+
+    const renderItems = () => {
+        return itemsTienMat;
+
+        // if (selectedOption === "CASH") {
+        //     return itemsTienMat;
+        // } else if (selectedOption === "TRANSFER") {
+        //     return itemsTienGui;
+        // }
+    };
+
+
+
+
+    useEffect(() => {
+        if (donBanHangData) {
+            const data = {
+                ...donBanHangData,
+                receiver: donBanHangData.namecCustomer,
+                paymentMethod: "CASH",
+                paymentTerm: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
+                createdAt: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
+                deliveryDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat)
+            };
+
+            switch (donBanHangData.documentStatus) {
+                case "UNDOCUMENTED":
+                    data.documentStatus = "Chưa thực hiện";
+                    break;
+                case "DOCUMENTING":
+                    data.documentStatus = "Đang thực hiện";
+                    break;
+                case "DOCUMENTED":
+                    data.documentStatus = "Hoàn thành";
+                    break;
+                default:
+                    data.documentStatus = "Lỗi";
+                    break;
+            }
+
+            switch (donBanHangData.deliveryStatus) {
+                case "NOT_DELIVERED":
+                    data.deliveryStatus = "Chưa giao";
+                    break;
+                case "DELIVERING":
+                    data.deliveryStatus = "Đang giao";
+                    break;
+                case "DELIVERED":
+                    data.deliveryStatus = "Đã giao đủ";
+                    break;
+                default:
+                    data.deliveryStatus = "Lỗi";
+                    break;
+            }
+
+
+            form.setFieldsValue({
+                ...data
+            });
+        }
+    }, [donBanHangData]);
+
+
 
     return (
         <div className="m-6">
-            <h1 className="font-bold text-[32px] mb-8">
-                Đơn đặt hàng {nameValue || donBanHangData.id}
+            <h1 className="font-bold text-[32px] mb-4">
+                Chứng từ bán hàng
+                {/* {nameValue || donBanHangData.id} */}
             </h1>
+
+
+            {/* <Flex gap={20}>
+                <Flex gap={5} align="center" justify="center">
+                    <p>Phương thức thanh toán</p>
+                    <Select
+                        className="!w-[200px]"
+                        defaultValue="CASH"
+                        style={{ width: 120 }}
+                        onChange={handleChangeSelectedOption}
+                        options={[
+                            { value: "CASH", label: "Tiền mặt" },
+                            { value: "TRANSFER", label: "Tiền gửi" }
+                        ]}
+                    />
+                </Flex>
+                <Checkbox checked={phieuThuChecked} onChange={onChangePhieuThu}>
+                    Phiếu thu
+                </Checkbox>
+
+            </Flex> */}
+
+
             <Form
                 form={form}
                 // labelCol={{ span: 10 }}
@@ -262,185 +547,73 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                 labelWrap
                 onFinish={onFinish}
             >
-                <Flex gap={100} justify='center' className='w-[100%] align-left'>
-                    <Flex vertical gap={5} className='w-[50%]'>
-                        <Form.Item
-                            label="Tên khách hàng"
-                            name='namecCustomer'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
+
+                <Flex gap={50}>
+                    {/* <Form.Item
+                        label="Phương thức thanh toán"
+                        name='paymentMethod'
+                        labelCol={{
+                            flex: '200px',
+                        }}
+                        className='!m-0 !p-0'
+                    >
+                        <Select
+                            disabled={disabled}
+                            className="!w-[200px]"
                         >
-                            <Input
-                                disabled={disabled}
+                            <Select.Option value={"CASH"}>Tiền mặt</Select.Option>
+                            <Select.Option value={"TRANSFER"}>Tiền gửi</Select.Option>
+                        </Select>
+                    </Form.Item> */}
 
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Địa chỉ"
-                            name='address'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-                            />
-                        </Form.Item>
-
-                        {/* <Form.Item
-                            label="Mã số thuế"
-                            name="code"
-                        >
-                            <Input
-                                disabled={disabled}
-                            />
-                        </Form.Item> */}
-
-                        <Form.Item
-                            label="Người nhận hàng"
-                            name="namecCustomer"
-                        >
-                            <Input
-                                disabled={disabled}
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Nhân viên bán hàng"
-                            name='salesperson'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Nội dung"
-                            name='content'
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-                    </Flex>
-
-                    <Flex vertical gap={5} className='w-[50%]'>
-                        {/* <Form.Item
-                            label="Số đơn hàng"
-                            name='id'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item> */}
-
-                        <Form.Item
-                            label="Ngày đặt hàng"
-                            name='saleDate'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Hạn giao hàng"
-                            name='deliveryTerm'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-
-                        <Form.Item
-                            label="Điều khoản thanh toán"
-                            name='x'
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Tình trạng đơn hàng"
-                            name='documentStatus'
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Tình trạng giao hàng"
-                            name='deliveryStatus'
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-                    </Flex>
-
+                    <Checkbox checked={phieuThuChecked} onChange={onChangePhieuThu}>
+                        Lập kèm phiếu thu
+                    </Checkbox>
                 </Flex>
 
 
-                <div>
-                    <Button
-                        className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1 mb-4'
-                        onClick={handleAdd}
-                        disabled={disabled}
-                    >
-                        Thêm 1 dòng
-                    </Button>
+                <Tabs
+                    defaultActiveKey="1"
+                    items={renderItems()}
+                />
 
-                    <Table
-                        components={components}
-                        rowClassName={() => 'editable-row'}
-                        bordered
-                        dataSource={dataSource}
-                        columns={columns}
-                        pagination={false}
-                    />
+                <div className='flex justify-end'>
+                    <div className='w-[300px] my-8'>
+                        <div className='flex justify-between'>
+                            <p>Tổng tiền hàng</p>
+                            <p>
+                                {
+                                    VND.format(productOfDonBanHangs.map(product => product.thanhtien).reduce((total, currentValue) => {
+                                        return total + currentValue;
+                                    }, 0))
+                                }
+                            </p>
+                        </div>
+                        <div className='flex justify-between border-b border-zinc-950'>
+                            <p>Thuế GTGT</p>
+                            <p>
+                                {
+                                    VND.format(productOfDonBanHangs.map(product => product.tienthuegtgt).reduce((total, currentValue) => {
+                                        return total + currentValue;
+                                    }, 0))
+                                }
+                            </p>
+                        </div>
+                        <div className='flex justify-between font-bold text-xl'>
+                            <p>TỔNG</p>
+                            <p>
+                                {
+                                    VND.format(productOfDonBanHangs.map(product => product.thanhtien).reduce((total, currentValue) => {
+                                        return total + currentValue;
+                                    }, 0)
+                                        +
+                                        productOfDonBanHangs.map(product => product.tienthuegtgt).reduce((total, currentValue) => {
+                                            return total + currentValue;
+                                        }, 0))
+                                }
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
                 {disabled ?

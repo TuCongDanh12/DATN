@@ -45,6 +45,56 @@ export const postDonBanHang = createAsyncThunk(
     }
 );
 
+
+
+
+
+
+
+
+export const getListChungTuBan = createAsyncThunk(
+    "banHang/getListChungTuBan",
+    async (thunkAPI) => {
+        try {
+            const response = await banHangService.getListChungTuBan();
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const getChungTuBan = createAsyncThunk(
+    "banHang/getChungTuBan",
+    async ({ id }, thunkAPI) => {
+        try {
+            const response = await banHangService.getChungTuBan({ id });
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const postChungTuBan = createAsyncThunk(
+    "banHang/postChungTuBan",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await banHangService.postChungTuBan({ values });
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
 const initialState = {
     isFetching: false,
 
@@ -52,11 +102,18 @@ const initialState = {
     isSuccessGetDonBanHang: false,
     isSuccessPostDonBanHang: false,
 
+    isSuccessGetListChungTuBan: false,
+    isSuccessGetChungTuBan: false,
+    isSuccessPostChungTuBan: false,
+
     isError: false,
     message: "",
 
     listDonBanHangData: [],
     donBanHangData: {},
+
+    listChungTuBanData: [],
+    chungTuBanData: {},
 };
 
 
@@ -70,6 +127,10 @@ export const banHangSlice = createSlice({
             state.isSuccessGetListDonBanHang = false;
             state.isSuccessGetDonBanHang = false;
             state.isSuccessPostDonBanHang = false;
+
+            state.isSuccessGetListChungTuBan = false;
+            state.isSuccessGetChungTuBan = false;
+            state.isSuccessPostChungTuBan = false;
 
             state.isFetching = false;
             state.message = "";
@@ -96,7 +157,7 @@ export const banHangSlice = createSlice({
             console.log("getListDonBanHang.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(getDonBanHang.pending, (state) => {
@@ -115,7 +176,7 @@ export const banHangSlice = createSlice({
                 salesperson: action.payload.result.data.salesperson.name,
                 address: action.payload.result.data.customer.address,
                 namecCustomer: action.payload.result.data.customer.name,
-
+                taxCode: action.payload.result.data.customer.taxCode
             };
 
             //   state.message = action.payload.message;
@@ -125,7 +186,7 @@ export const banHangSlice = createSlice({
             console.log("getDonBanHang.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(postDonBanHang.pending, (state) => {
@@ -145,7 +206,93 @@ export const banHangSlice = createSlice({
             console.log("postDonBanHang.rejected", action)
             state.isFetching = false;
             state.isError = true;
+            state.message = action.error.message;
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        builder.addCase(getListChungTuBan.pending, (state) => {
+            console.log("getListChungTuBan.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getListChungTuBan.fulfilled, (state, action) => {
+            console.log("getListChungTuBan.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessGetListChungTuBan = true;
+        
+            state.listChungTuBanData = action.payload.result.data.map(item => { return { ...item, key: item.id } });
             //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getListChungTuBan.rejected, (state, action) => {
+            console.log("getListChungTuBan.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
+
+        builder.addCase(getChungTuBan.pending, (state) => {
+            console.log("getChungTuBan.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getChungTuBan.fulfilled, (state, action) => {
+            console.log("getChungTuBan.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessGetChungTuBan = true;
+            state.chungTuBanData =
+            {
+                ...action.payload.result.data,
+                key: action.payload.result.data.id,
+                salesperson: action.payload.result.data.salesperson.name,
+                address: action.payload.result.data.customer.address,
+                namecCustomer: action.payload.result.data.customer.name,
+
+            };
+
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getChungTuBan.rejected, (state, action) => {
+            console.log("getChungTuBan.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
+
+        builder.addCase(postChungTuBan.pending, (state) => {
+            console.log("postChungTuBan.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(postChungTuBan.fulfilled, (state, action) => {
+            console.log("postChungTuBan.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessPostChungTuBan = true;
+            state.chungTuBanData = action.payload;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(postChungTuBan.rejected, (state, action) => {
+            console.log("postChungTuBan.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
         })
 
     }

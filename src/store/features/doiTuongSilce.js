@@ -380,7 +380,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListSupplier.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(getSupplier.pending, (state) => {
@@ -401,7 +401,7 @@ export const doiTuongSlice = createSlice({
             console.log("getSupplier.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(postSupplier.pending, (state) => {
@@ -421,7 +421,7 @@ export const doiTuongSlice = createSlice({
             console.log("postSupplier.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
 
@@ -449,7 +449,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListSupplierGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(getSupplierGroup.pending, (state) => {
@@ -469,7 +469,7 @@ export const doiTuongSlice = createSlice({
             console.log("getSupplierGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(postSupplierGroup.pending, (state) => {
@@ -489,7 +489,7 @@ export const doiTuongSlice = createSlice({
             console.log("postSupplierGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
 
@@ -516,7 +516,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListCustomerGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(getCustomerGroup.pending, (state) => {
@@ -536,7 +536,7 @@ export const doiTuongSlice = createSlice({
             console.log("getCustomerGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(postCustomerGroup.pending, (state) => {
@@ -556,7 +556,7 @@ export const doiTuongSlice = createSlice({
             console.log("postCustomerGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
 
@@ -587,7 +587,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListCustomer.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(getCustomer.pending, (state) => {
@@ -608,7 +608,7 @@ export const doiTuongSlice = createSlice({
             console.log("getCustomer.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(postCustomer.pending, (state) => {
@@ -628,7 +628,7 @@ export const doiTuongSlice = createSlice({
             console.log("postCustomer.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
 
@@ -686,7 +686,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListProductGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(getProductGroup.pending, (state) => {
@@ -706,7 +706,7 @@ export const doiTuongSlice = createSlice({
             console.log("getProductGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(postProductGroup.pending, (state) => {
@@ -726,7 +726,7 @@ export const doiTuongSlice = createSlice({
             console.log("postProductGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
 
@@ -757,7 +757,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListProduct.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(getProduct.pending, (state) => {
@@ -778,7 +778,7 @@ export const doiTuongSlice = createSlice({
             console.log("getProduct.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            //   state.message = action.payload.message;
+            state.message = action.error.message;
         })
 
         builder.addCase(postProduct.pending, (state) => {
@@ -798,7 +798,7 @@ export const doiTuongSlice = createSlice({
             console.log("postProduct.rejected", action)
             state.isFetching = false;
             state.isError = true;
-              state.message = action.payload.error;
+            state.message = action.error.message;
         })
 
 

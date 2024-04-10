@@ -1,226 +1,274 @@
 import React from 'react'
-import { Form, Input, DatePicker, Flex, Table } from "antd";
+import { Form, Input, DatePicker, Flex, Table, Select } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
-const dateFormat = "YYYY/MM/DD";
+const dateFormat = "YYYY-MM-DD";
 dayjs.extend(customParseFormat);
 
-const columns = [
-    {
-        title: "Mã hàng",
-        dataIndex: "mahang",
-    },
-    {
-        title: "Tên hàng",
-        dataIndex: "tenhang",
-    },
-    {
-        title: "ĐVT",
-        dataIndex: "dvt",
-    },
-    {
-        title: "Số lượng",
-        dataIndex: "soluong",
-    },
-    {
-        title: "Đơn giá",
-        dataIndex: "dongia",
-    },
-    {
-        title: "Thành tiền",
-        dataIndex: "thanhtien",
-    },
 
-    {
-        title: "% thuế GTGT",
-        dataIndex: "phantramthuegtgt",
-    },
-    {
-        title: "Tiền thuế GTGT",
-        dataIndex: "tienthuegtgt",
-    },
-];
-const data = [
-    {
-        key: "1",
-        mahang: "VT00001",
-        tenhang: 'Bàn phím',
-        dvt: 'Cái',
-        soluong: 100,
-        dongia: 2200000,
-        thanhtien: 220000000,
-        phantramthuegtgt: 10,
-        tienthuegtgt: 22000000,
+const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) => {
+    const columsFilter = columns
+    // .filter(item=> (item.dataIndex!=="phantramthuegtgt"&&item.dataIndex!=="tienthuegtgt"))
 
-    },
-    {
-        key: "2",
-        mahang: "VT00002",
-        tenhang: 'Màn hình',
-        dvt: 'Cái',
-        soluong: 100,
-        soluongdaban: 0,
-        soluongdaxuat: 0,
-        dongia: 5500000,
-        thanhtien: 550000000,
-        phantramthuegtgt: 10,
-        tienthuegtgt: 55000000,
-
-    },
-];
-
-
-// rowSelection object indicates the need for row selection
-const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-        console.log(
-            `selectedRowKeys: ${selectedRowKeys}`,
-            "selectedRows: ",
-            selectedRows
-        );
-    },
-};
-
-const HoaDon = () => {
     return (
-        <div>
-            <Form labelCol={{ span: 10 }} className='mb-4'>
+        <Form
+            form={form}
+            // labelCol={{ span: 10 }}
+            className='mb-4'
+            labelCol={{
+                flex: '150px',
+            }}
+            labelAlign="left"
+            labelWrap
+            onFinish={onFinish}
+        >
+            <Flex gap={100} justify='center' className='w-[100%] align-left'>
+                <Flex vertical gap={5} className='w-[50%]'>
+                    <Form.Item
+                        label="Tên khách hàng"
+                        name='namecCustomer'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <Input
+                            disabled={true}
 
-                <Flex gap={200}>
-                    <Flex vertical gap={5}>
-                        <Form.Item label="Tên khách hàng">
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Mã số thuế"
+                        name='taxCode'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <Input
+                            disabled={true}
+
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Địa chỉ"
+                        name='address'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <Input
+                            disabled={disabled}
+                        />
+                    </Form.Item>
+
+                    {/* <Form.Item
+                            label="Mã số thuế"
+                            name="code"
+                        >
                             <Input
-                                className='!w-[400px]'
-                                disabled defaultValue="SIÊU THỊ CÀ MAU" />
-                        </Form.Item>
-
-                        <Form.Item label="Địa chỉ">
-                            <Input
-                                className='!w-[400px]'
-                                disabled
-                                defaultValue="1-2 Bãy Thiện, Thành phố Cà Mau, Tỉnh Cà Mau, Việt Nam"
-                            />
-                        </Form.Item>
-
-                        <Form.Item label="Mã số thuế">
-                            <Input
-                                className='!w-[400px]'
-                                disabled defaultValue="2000106948-001" />
-                        </Form.Item>
-
-                        <Form.Item label="Người mua hàng">
-                            <Input className='!w-[400px]'
-                                disabled defaultValue="Nguyễn Văn A" />
-                        </Form.Item>
-
-                        {/* <Form.Item label="Người nhận">
-                            <Input className='!w-[400px]'
-                                disabled defaultValue="Nguyễn Tiến Dũng" />
-                        </Form.Item> */}
-
-                        <Form.Item label="Nhân viên bán hàng">
-                            <Input className='!w-[400px]'
-                                disabled defaultValue="Nguyễn Tiến Dũng" />
-                        </Form.Item>
-
-                        {/* <Form.Item label="Nội dung">
-                            <Input className='!w-[400px]'
-                                disabled defaultValue="..." />
-                        </Form.Item> */}
-                    </Flex>
-                    <Flex vertical gap={5}>
-                        {/* <Form.Item label="Số đơn hàng">
-                            <Input className='!w-[400px]' disabled defaultValue="ĐH00001" />
-                        </Form.Item>
-
-                        <Form.Item label="Ngày đặt hàng">
-                            <DatePicker
-                                className='!w-[400px]'
-                                disabled
-                                defaultValue={dayjs("2015/01/01", dateFormat)}
-                                format={dateFormat}
-                            />
-                        </Form.Item>
-
-                        <Form.Item label="Hạn giao hàng">
-                            <DatePicker
-                                className='!w-[400px]'
-                                disabled
-                                defaultValue={dayjs("2015/01/01", dateFormat)}
-                                format={dateFormat}
+                                disabled={disabled}
                             />
                         </Form.Item> */}
 
-                        <Form.Item label="Mẫu số hóa đơn">
-                            <Input className='!w-[400px]' disabled defaultValue="02GTTT3/001" />
-                        </Form.Item>
-
-                        <Form.Item label="Số hóa đơn">
-                            <Input className='!w-[400px]' disabled defaultValue="HĐ00001" />
-                        </Form.Item>
-
-                        <Form.Item label="Ngày hóa đơn">
-                            <DatePicker
-                                className='!w-[400px]'
-                                disabled
-                                defaultValue={dayjs("2015/01/01", dateFormat)}
-                                format={dateFormat}
-                            />
-                        </Form.Item>
-
-                        {/* <Form.Item label="Ngày chứng từ">
-                            <DatePicker
-                                className='!w-[400px]'
-                                disabled
-                                defaultValue={dayjs("2015/01/01", dateFormat)}
-                                format={dateFormat}
-                            />
-                        </Form.Item>
+                    {/* <Form.Item
+                        label="Người nhận hàng"
+                        name="namecCustomer"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <Input
+                            disabled={disabled}
+                        />
+                    </Form.Item> */}
 
 
-                        <Form.Item label="Hạn thanh toán">
-                            <DatePicker
-                                className='!w-[400px]'
-                                disabled
-                                defaultValue={dayjs("2015/01/01", dateFormat)}
-                                format={dateFormat}
-                            />
-                        </Form.Item> */}
+                    <Form.Item
+                        label="Nhân viên bán hàng"
+                        name='salesperson'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <Input
+                            disabled={true}
 
-                        <Form.Item label="Phương thức thanh toán">
-                            <Input className='!w-[400px]' disabled defaultValue="Tiền mặt" />
-                        </Form.Item>
-
-                        <Form.Item label="TK ngân hàng">
-                            <Input className='!w-[400px]'
-                                disabled defaultValue="" />
-                        </Form.Item>
-
-                        {/* <Form.Item label="Tình trạng đơn hàng">
-                            <Input className='!w-[400px]' disabled defaultValue="Chưa thực hiện" />
-                        </Form.Item>
-
-                        <Form.Item label="Tình trạng giao hàng">
-                            <Input className='!w-[400px]' disabled defaultValue="Chưa giao" />
-                        </Form.Item> */}
-
-                    </Flex>
+                        />
+                    </Form.Item>
                 </Flex>
-            </Form>
-            <div>
-                {/* <Divider /> */}
 
+                <Flex vertical gap={5} className='w-[50%]'>
+
+
+                    <Form.Item
+                        label="Ngày hạch toán"
+                        name="createdAt"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <DatePicker
+                            className='!w-full'
+                            disabled={true}
+                        // format={dateFormat}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Hạn giao hàng"
+                        name="paymentTerm"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <DatePicker
+                            className='!w-full'
+                            disabled={disabled}
+                        // format={dateFormat}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Tình trạng thanh toán"
+                        name="paymentStatus"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <Select
+                            disabled={true}
+                        >
+                            <Select.Option value={"NOT_PAID"}>Chưa thanh toán</Select.Option>
+                            <Select.Option value={"BEING_PAID"}>Thanh toán 1 phần</Select.Option>
+                            <Select.Option value={"PAID"}>Đã thanh toán</Select.Option>
+                        </Select>
+                    </Form.Item>
+
+                    {/* <Form.Item
+                        label="Ngày giao hàng"
+                        name="deliveryDate"
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <DatePicker
+                            className='!w-full'
+                        // format={dateFormat}
+                        />
+                    </Form.Item> */}
+
+                    {/* <Form.Item
+                        label="Phương thức thanh toán"
+                        name='paymentMethod'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Trường này là bắt buộc!',
+                            },
+                        ]}
+                    >
+                        <Select
+                            disabled={disabled}
+                        >
+                            <Select.Option value={"CASH"}>Tiền mặt</Select.Option>
+                            <Select.Option value={"TRANSFER"}>Tiền gửi</Select.Option>
+                        </Select>
+                    </Form.Item>
+
+                    {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
+                        <Form.Item
+                            label="Ngân hàng"
+                            name='bankName'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>
+                    }
+
+                    {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
+                        <Form.Item
+                            label="Chủ tài khoản"
+                            name='accountName'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>}
+                    {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
+                        <Form.Item
+                            label="Số tài khoản"
+                            name='accountNumber'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>
+                    } */}
+                </Flex>
+
+            </Flex>
+            <div>
                 <Table
-                    // rowSelection={{
-                    //     type: "checkbox",
-                    //     ...rowSelection,
-                    // }}
-                    columns={columns}
-                    dataSource={data}
+                    components={components}
+                    rowClassName={() => 'editable-row'}
+                    bordered
+                    dataSource={dataSource}
+                    columns={columsFilter}
+                    pagination={false}
                 />
             </div>
-        </div>
+        </Form>
     )
 }
 

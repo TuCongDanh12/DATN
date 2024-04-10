@@ -265,6 +265,22 @@ const EditNhaCungCap = ({ disabled = false }) => {
                         </Form.Item>
 
                         <Form.Item
+                            label="Tên nhà cung cấp"
+                            name='name'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>
+
+                        <Form.Item
                             label="Địa chỉ"
                             name='address'
                             rules={[
@@ -278,6 +294,23 @@ const EditNhaCungCap = ({ disabled = false }) => {
                                 disabled={disabled}
                             />
                         </Form.Item>
+
+                        <Form.Item
+                            label="Số điện thoại"
+                            name='phoneNumber'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>
+
 
                         <Form.Item
                             label="Email"
@@ -295,7 +328,24 @@ const EditNhaCungCap = ({ disabled = false }) => {
 
                             />
                         </Form.Item>
+                    </Flex>
 
+                    <Flex vertical gap={5} className='w-[50%]'>
+                    <Form.Item
+                            label="Tên người liên hệ"
+                            name='representative'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>
                         <Form.Item
                             label="Ngân hàng"
                             name='bankName'
@@ -327,56 +377,7 @@ const EditNhaCungCap = ({ disabled = false }) => {
 
                             />
                         </Form.Item>
-                    </Flex>
 
-                    <Flex vertical gap={5} className='w-[50%]'>
-                        <Form.Item
-                            label="Tên nhà cung cấp"
-                            name='name'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Số điện thoại"
-                            name='phoneNumber'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Tên người liên hệ"
-                            name='representative'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
 
                         <Form.Item
                             label="Số tài khoản"
@@ -393,6 +394,7 @@ const EditNhaCungCap = ({ disabled = false }) => {
 
                             />
                         </Form.Item>
+
 
                         <Form.Item
                             label="Mô tả"
