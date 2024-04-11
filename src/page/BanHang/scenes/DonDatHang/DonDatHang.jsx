@@ -26,8 +26,9 @@ import {
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
 import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
+import { VND } from "../../../../utils/func";
 const { RangePicker } = DatePicker;
-const KhachHang = () => {
+const DonDatHang = ({ radio = false }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -57,6 +58,12 @@ const KhachHang = () => {
   useEffect(() => {
     dispatch(getListDonBanHang());
     dispatch(getListProduct());
+    radio && setFilteredInfo({
+      "documentStatus": [
+        "UNDOCUMENTED",
+        "DOCUMENTING"
+      ]
+    });
   }, []);
 
   const [donbanhang, setDonbanhang] = useState([]);
@@ -105,16 +112,25 @@ const KhachHang = () => {
       });
       const dataConvertCurrent = listDonBanHangData.map(donBanHangData => {
         // console.log("donBanHangData", donBanHangData)
+        // console.log("listProductData", listProductData)
 
         let tong = 0;
-        donBanHangData.productOfDonBanHangs.forEach(product => {
-          const data = listProductData.filter(item => item.id === product.id);
-          tong += product.count * product.price;
-          tong += product.count * product.price * (data[0].productGroupInfo.tax / 100);
+        donBanHangData.productOfDonBanHangs.forEach(productOfDon => {
+          const data = listProductData.filter(item => item.id === productOfDon.product.id);
+          tong += productOfDon.count * productOfDon.price;
+          tong += productOfDon.count * productOfDon.price * (data[0].productGroupInfo.tax / 100);
         })
 
         let dathu = 0;
-        let chuathu = tong-dathu;
+        // donBanHangData.ctban.forEach(chungTuBan => {
+        //   chungTuBan.productOfCtban.forEach(productOfCt => {
+        //     const data = listProductData.filter(item => item.id === productOfCt.product.id);
+        //     dathu += productOfCt.count * productOfCt.price;
+        //     dathu += productOfCt.count * productOfCt.price * (data[0].productGroupInfo.tax / 100);
+        //   })
+        // })
+
+        let chuathu = tong - dathu;
 
         return {
           ...donBanHangData,
@@ -187,7 +203,7 @@ const KhachHang = () => {
     setOpen(false);
   };
 
-  const columns = [
+  let columns = [
     {
       title: "Ngày đặt hàng",
       dataIndex: "saleDate",
@@ -196,7 +212,7 @@ const KhachHang = () => {
       sorter: (a, b) =>
         moment(a.saleDate, "DD-MM-YYYY") - moment(b.saleDate, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "saleDate" ? sortedInfo.order : null,
-      // fixed: 'left',
+      fixed: 'left',
     },
     {
       title: "Khách hàng",
@@ -214,20 +230,23 @@ const KhachHang = () => {
       title: "Tổng",
       dataIndex: "tong",
       key: "tong",
+      render: (val, record) => VND.format(val),
       sorter: (a, b) => a.tong - b.tong,
       sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
     },
+    // {
+    //   title: "Đã lập chứng từ",
+    //   dataIndex: "dathu",
+    //   key: "dathu",
+    //   render: (val, record) => VND.format(val),
+    //   sorter: (a, b) => a.dathu - b.dathu,
+    //   sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
+    // },
     {
-      title: "Đã thu",
-      dataIndex: "dathu",
-      key: "dathu",
-      sorter: (a, b) => a.dathu - b.dathu,
-      sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
-    },
-    {
-      title: "Chưa thu",
+      title: "Chưa lập chứng từ",
       dataIndex: "chuathu",
       key: "chuathu",
+      render: (val, record) => VND.format(val),
       sorter: (a, b) => a.chuathu - b.chuathu,
       sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
     },
@@ -263,40 +282,41 @@ const KhachHang = () => {
       ],
       onFilter: (value, record) => record.documentStatus.indexOf(value) === 0,
       filteredValue: filteredInfo.documentStatus || null,
+      fixed: 'right',
     },
-    {
-      title: "Tình trạng giao hàng",
-      dataIndex: "deliveryStatus",
-      key: "deliveryStatus",
-      render: (val, record) => {
-        switch (val) {
-          case "NOT_DELIVERED":
-            return "Chưa giao";
-          case "DELIVERING":
-            return "Đang giao";
-          case "DELIVERED":
-            return "Đã giao đủ";
-          default:
-            return "Lỗi";
-        }
-      },
-      filters: [
-        {
-          value: "NOT_DELIVERED",
-          text: "Chưa giao",
-        },
-        {
-          value: "DELIVERING",
-          text: "Đang giao",
-        },
-        {
-          value: "DELIVERED",
-          text: "Đã giao đủ",
-        },
-      ],
-      onFilter: (value, record) => record.deliveryStatus.indexOf(value) === 0,
-      filteredValue: filteredInfo.deliveryStatus || null,
-    },
+    // {
+    //   title: "Tình trạng giao hàng",
+    //   dataIndex: "deliveryStatus",
+    //   key: "deliveryStatus",
+    //   render: (val, record) => {
+    //     switch (val) {
+    //       case "NOT_DELIVERED":
+    //         return "Chưa giao";
+    //       case "DELIVERING":
+    //         return "Đang giao";
+    //       case "DELIVERED":
+    //         return "Đã giao đủ";
+    //       default:
+    //         return "Lỗi";
+    //     }
+    //   },
+    //   filters: [
+    //     {
+    //       value: "NOT_DELIVERED",
+    //       text: "Chưa giao",
+    //     },
+    //     {
+    //       value: "DELIVERING",
+    //       text: "Đang giao",
+    //     },
+    //     {
+    //       value: "DELIVERED",
+    //       text: "Đã giao đủ",
+    //     },
+    //   ],
+    //   onFilter: (value, record) => record.deliveryStatus.indexOf(value) === 0,
+    //   filteredValue: filteredInfo.deliveryStatus || null,
+    // },
     {
       title: "Chức năng",
       dataIndex: "chucnang",
@@ -324,6 +344,10 @@ const KhachHang = () => {
     },
   ];
 
+  if (radio) {
+    columns = columns.filter(item => item.dataIndex !== "chucnang");
+  }
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
@@ -336,10 +360,10 @@ const KhachHang = () => {
     },
   };
 
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
+  // const onSelectChange = (newSelectedRowKeys) => {
+  //   console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+  //   setSelectedRowKeys(newSelectedRowKeys);
+  // };
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
@@ -362,7 +386,7 @@ const KhachHang = () => {
 
   return (
     <div className="m-4">
-      <div className="px-[20px] w-full flex justify-between py-7 bg-white">
+      <div className={`px-[20px] w-full flex justify-between pb-7 ${!radio && "bg-white py-7"}`}>
         <div className="flex gap-[5px] items-center">
           <Form form={form} layout="inline" onFinish={onFinish}>
             <RangePicker
@@ -410,17 +434,27 @@ const KhachHang = () => {
               setValueRangepicker([]);
               setFilterday([]);
               setSelectedRowKeys([]);
+              radio && setFilteredInfo({
+                "documentStatus": [
+                  "UNDOCUMENTED",
+                  "DOCUMENTING"
+                ]
+              });
             }}
           />
         </div>
 
-        <Button
-          className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
-          type="link"
-          onClick={() => navigate("/ban-hang/chung-tu-ban-hang/them", { state: { id: selectedRowKeys.join(",") } })}
-        >
-          Lập chứng từ bán hàng
-        </Button>
+        {
+          radio &&
+          <Button
+            className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
+            type="link"
+            disabled={!selectedRowKeys.length}
+            onClick={() => navigate(`/ban-hang/chung-tu-ban-hang/them/${selectedRowKeys}`, { state: { id: selectedRowKeys } })}
+          >
+            Lập chứng từ bán hàng
+          </Button>
+        }
 
         <Modal
           title=""
@@ -459,12 +493,57 @@ const KhachHang = () => {
         </Modal>
       </div>
 
-      <Table
+      {
+        radio ?
+          <Table
+            rowSelection={{
+              type: "radio",
+              ...rowSelection,
+            }}
+
+            columns={columns}
+            dataSource={donbanhang}
+            pagination={{
+              // total: listDonBanHangData.length,
+              defaultPageSize: 20,
+              // // pageSize: 20,
+              // defaultCurrent: 1,
+              position: ["bottomRight"],
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} of ${total} items`,
+            }}
+            onChange={onChange}
+            scroll={{
+              x: 1300,
+            }}
+            className="overflow-x-visible	overflow-y-visible"
+          /> :
+          <Table
+            columns={columns}
+            dataSource={donbanhang}
+            pagination={{
+              // total: listDonBanHangData.length,
+              defaultPageSize: 20,
+              // // pageSize: 20,
+              // defaultCurrent: 1,
+              position: ["bottomRight"],
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} of ${total} items`,
+            }}
+            onChange={onChange}
+            scroll={{
+              x: 1300,
+            }}
+            className="overflow-x-visible	overflow-y-visible"
+          />
+      }
+
+      {/* <Table
         rowSelection={{
-          type: "checkbox",
+          type: "radio",
           ...rowSelection,
         }}
-        scroll={{ x: 1500}}
+
         columns={columns}
         dataSource={donbanhang}
         pagination={{
@@ -479,9 +558,9 @@ const KhachHang = () => {
         onChange={onChange}
        
         className="overflow-x-visible	overflow-y-visible"
-      />
+      /> */}
     </div>
   );
 };
 
-export default KhachHang;
+export default DonDatHang;

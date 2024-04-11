@@ -146,55 +146,6 @@ const TimKiemThuTien = () => {
 
             </Flex>
 
-            <Flex gap={5} className='mb-5'>
-                <Select
-                    showSearch
-                    style={{
-                        width: 200,
-                    }}
-                    placeholder="Lọc"
-                    optionFilterProp="children"
-                    filterOption={(input, option) => (option?.label ?? '').includes(input)}
-                    filterSort={(optionA, optionB) =>
-                        (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
-                    }
-                    options={[
-                        {
-                            value: '1',
-                            label: 'Not Identified',
-                        },
-                        {
-                            value: '2',
-                            label: 'Closed',
-                        },
-                        {
-                            value: '3',
-                            label: 'Communicated',
-                        },
-                        {
-                            value: '4',
-                            label: 'Identified',
-                        },
-                        {
-                            value: '5',
-                            label: 'Resolved',
-                        },
-                        {
-                            value: '6',
-                            label: 'Cancelled',
-                        },
-                    ]}
-                />
-
-                <Search
-                    placeholder="Tìm kiếm"
-                    onSearch={onSearch}
-                    style={{
-                        width: 300,
-                    }}
-                />
-            </Flex>
-
             <Table
                 rowSelection={{
                     type: "checkbox",

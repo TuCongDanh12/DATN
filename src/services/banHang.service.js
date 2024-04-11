@@ -33,10 +33,49 @@ const postDonBanHang = ({ values }) => {
 };
 
 
+
+
+
+
+const getListChungTuBan = () => {
+    return axios.get(`${API_URL}/ctban`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+const getChungTuBan = ({ id }) => {
+    return axios.get(`${API_URL}/ctban/${id}`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+const postChungTuBan = ({ values }) => {
+    return axios.post(`${API_URL}/ctban`,
+        {
+            ...values
+        },
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+
 const banHangService = {
     getListDonBanHang,
     getDonBanHang,
     postDonBanHang,
+
+    getListChungTuBan,
+    getChungTuBan,
+    postChungTuBan,
 };
 
 export default banHangService;

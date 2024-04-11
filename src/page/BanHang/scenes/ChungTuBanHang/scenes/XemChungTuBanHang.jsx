@@ -1,13 +1,5 @@
 import React, { useState } from 'react'
-import MuahangChungtu from '../../../../../component/Chungtu/Muahang/chungtu'
 import { Button, Checkbox, Flex, Select, Table, Tabs } from 'antd'
-import ButtonExit from '../../../../../component/Button/button-exit';
-import ButtonConfirm from '../../../../../component/Button/button-confirm';
-import dayjs from "dayjs";
-import customParseFormat from "dayjs/plugin/customParseFormat";
-import FormPhieunhap from '../../../../../component/Form/Muahang/phieunhap';
-import FormHoadonMuahang from '../../../../../component/Form/Muahang/hoadon';
-import FormPhieuchi from '../../../../../component/Form/Muahang/phieuchi';
 import PhieuXuat from '../../../../../component/Form/BanHang/PhieuXuat';
 import PhieuThu from '../../../../../component/Form/BanHang/PhieuThu';
 import HoaDon from '../../../../../component/Form/BanHang/HoaDon';
@@ -18,17 +10,11 @@ import { useNavigate } from 'react-router-dom';
 const XemChungTuBanHang = () => {
     const navigate = useNavigate();
 
-    const [hoaDonChecked, setHoaDonChecked] = useState(true);
     const [phieuThuChecked, setPhieuThuChecked] = useState(true);
     const [selectedOption, setSelectedOption] = useState("Tiền mặt");
 
-    const onChangeHoaDon = (e) => {
-        console.log('checked = ', e.target.checked);
-        setHoaDonChecked(e.target.checked);
-    };
 
     const onChangePhieuThu = (e) => {
-        console.log('checked = ', e.target.checked);
         setPhieuThuChecked(e.target.checked);
     };
 
@@ -43,7 +29,7 @@ const XemChungTuBanHang = () => {
             label: "Phiếu thu",
             children: <PhieuThu />,
         },
-        hoaDonChecked && {
+        {
             key: "3",
             label: "Hóa đơn",
             children: <HoaDon />,
@@ -61,7 +47,7 @@ const XemChungTuBanHang = () => {
             label: "Phiếu thu",
             children: <PhieuThu tiengui={true} />,
         },
-        hoaDonChecked && {
+        {
             key: "3",
             label: "Hóa đơn",
             children: <HoaDon />,
@@ -105,9 +91,7 @@ const XemChungTuBanHang = () => {
                 <Checkbox checked={phieuThuChecked} onChange={onChangePhieuThu}>
                     Phiếu thu
                 </Checkbox>
-                <Checkbox checked={hoaDonChecked} onChange={onChangeHoaDon}>
-                    Hóa đơn
-                </Checkbox>
+
             </Flex>
 
             <Tabs
