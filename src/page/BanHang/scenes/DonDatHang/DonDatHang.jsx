@@ -157,6 +157,7 @@ const DonDatHang = ({ radio = false }) => {
   }, [isSuccessPostDonBanHang, isSuccessGetListDonBanHang, isError, isSuccessGetListProduct]);
 
   useEffect(() => {
+    console.log(searchText);
     if (searchText.trim() === "" && filterday.length === 0) {
       if (!dataConvert || (Array.isArray(dataConvert) && !dataConvert.length)) {
         setDonbanhang([]);
@@ -555,9 +556,7 @@ const DonDatHang = ({ radio = false }) => {
             `${range[0]}-${range[1]} of ${total} items`,
         }}
         onChange={onChange}
-        scroll={{
-          x: 1300,
-        }}
+       
         className="overflow-x-visible	overflow-y-visible"
       /> */}
     </div>

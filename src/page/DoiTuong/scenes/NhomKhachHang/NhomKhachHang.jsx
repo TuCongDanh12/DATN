@@ -21,11 +21,11 @@ const NhomKhachHang = () => {
   const [messageApi, contextHolderMes] = msg.useMessage();
 
   const [api, contextHolder] = notification.useNotification();
-
-  const [filteredInfo, setFilteredInfo] = useState({});
-  const [sortedInfo, setSortedInfo] = useState({});
-
-
+  const [customerGroupData, setCustomerGroupData] = useState([]);
+  const [searchText, setSearchText] = useState("");
+  const handleSearch = (value) => {
+    setSearchText(value);
+  };
   const {
     listCustomerGroupData,
     listSupplierGroupData,
@@ -77,6 +77,23 @@ const NhomKhachHang = () => {
     message
   ]);
 
+  useEffect(() => {
+    if (searchText.trim() === "") {
+      if (
+        !listCustomerGroupData ||
+        (Array.isArray(listCustomerGroupData) && !listCustomerGroupData.length)
+      ) {
+        setCustomerGroupData([]);
+      } else {
+        setCustomerGroupData(listCustomerGroupData);
+      }
+    } else {
+      const filteredData = listCustomerGroupData.filter((data) => {
+        return data.name.toLowerCase().includes(searchText.toLowerCase());
+      });
+      setCustomerGroupData(filteredData);
+    }
+  }, [searchText,customerGroupData]);
 
 
   const items = [
@@ -124,24 +141,15 @@ const NhomKhachHang = () => {
     {
       title: "Nhóm khách hàng",
       dataIndex: "name",
-      key: "name",
-      ellipsis: true,
       sorter: (a, b) => a.name.localeCompare(b.name),
-      sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
-
     },
     {
       title: "Số khách hàng trong nhóm",
       dataIndex: "size",
-      key: "size",
-      sorter: (a, b) => a.size - b.size,
-      sortOrder: sortedInfo.columnKey === "size" ? sortedInfo.order : null,
     },
     {
       title: "Ghi chú",
       dataIndex: "note",
-      key: "note",
-      ellipsis: true,
     },
     {
       title: "Chức năng",
@@ -188,15 +196,7 @@ const NhomKhachHang = () => {
 
   const onChange = (pagination, filters, sorter, extra) => {
     console.log('params', pagination, filters, sorter, extra);
-    setFilteredInfo(filters);
-    setSortedInfo(sorter);
   };
-
-  const clearAll = () => {
-    setFilteredInfo({});
-    setSortedInfo({});
-  };
-
   return (
     <div className='m-4'>
       <div className='px-[20px] w-full flex justify-between py-7 bg-white'>
@@ -206,14 +206,7 @@ const NhomKhachHang = () => {
             layout='inline'
             onFinish={onFinish}
           >
-            <Form.Item
-              name='type'
-              className='w-[200px] !me-[5px]'
-            >
-              <Select placeholder='Tìm kiếm theo'>
-                <Select.Option value="nhacungcap">Nhà cung cấp</Select.Option>
-              </Select>
-            </Form.Item>
+            
             <Form.Item
               name='keyword'
               className='w-[300px] !me-0'
@@ -221,6 +214,8 @@ const NhomKhachHang = () => {
               <Input
                 className='rounded-tr-none rounded-br-none'
                 placeholder="Nhập từ khóa"
+                value={searchText}
+                onChange={(e) => handleSearch(e.target.value)}
               />
             </Form.Item>
 
@@ -245,7 +240,6 @@ const NhomKhachHang = () => {
                 content: 'Loading...',
               });
               form.resetFields();
-              clearAll();
             }}
           />
         </div>
@@ -358,7 +352,7 @@ const NhomKhachHang = () => {
         //     ...rowSelection,
         // }}
         columns={columns}
-        dataSource={listCustomerGroupData}
+        dataSource={customerGroupData}
         pagination={{
           total: listCustomerGroupData.length,
           defaultPageSize: 20,
