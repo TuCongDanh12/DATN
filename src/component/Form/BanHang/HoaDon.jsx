@@ -12,16 +12,7 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) =
     // .filter(item=> (item.dataIndex!=="phantramthuegtgt"&&item.dataIndex!=="tienthuegtgt"))
 
     return (
-        <Form
-            form={form}
-            // labelCol={{ span: 10 }}
-            className='mb-4'
-            labelCol={{
-                flex: '150px',
-            }}
-            labelAlign="left"
-            labelWrap
-            onFinish={onFinish}
+        <div
         >
             <Flex gap={100} justify='center' className='w-[100%] align-left'>
                 <Flex vertical gap={5} className='w-[50%]'>
@@ -135,7 +126,7 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) =
                     </Form.Item>
 
                     <Form.Item
-                        label="Hạn giao hàng"
+                        label="Hạn thanh toán"
                         name="paymentTerm"
                         rules={[
                             {
@@ -268,7 +259,7 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) =
                     pagination={false}
                 />
             </div>
-        </Form>
+        </div>
     )
 }
 

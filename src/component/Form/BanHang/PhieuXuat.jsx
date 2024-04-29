@@ -1,27 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Form, Input, DatePicker, Flex, Table,Select } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useSelector, useDispatch } from 'react-redux';
+import { doiTuongSelector } from '../../../store/features/doiTuongSilce';
+import { banHangSelector, getListEmployeeWarehouseKeeper } from '../../../store/features/banHangSlice';
 
 const dateFormat = "YYYY/MM/DD";
 dayjs.extend(customParseFormat);
 
 
 const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish }) => {
+    const dispatch = useDispatch();
+
     const columsFilter = columns
-    // .filter(item=> (item.dataIndex!=="phantramthuegtgt"&&item.dataIndex!=="tienthuegtgt"))
+    .filter(item=> (item.dataIndex!=="phantramthuegtgt"&&item.dataIndex!=="tienthuegtgt"))
+
+    const { 
+        isSuccessGetListEmployeeWarehouseKeeper,
+        listEmployeeWarehouseKeeperData
+    } = useSelector(banHangSelector);
+
+    useEffect(() => {
+        dispatch(getListEmployeeWarehouseKeeper());
+    }, []);
 
     return (
-        <Form
-            form={form}
-            // labelCol={{ span: 10 }}
-            className='mb-4'
-            labelCol={{
-                flex: '150px',
-            }}
-            labelAlign="left"
-            labelWrap
-            onFinish={onFinish}
+        <div
         >
             <Flex gap={100} justify='center' className='w-[100%] align-left'>
                 <Flex vertical gap={5} className='w-[50%]'>
@@ -144,6 +149,7 @@ const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish }
                     >
                         <DatePicker
                             className='!w-full'
+                            disabled={disabled}
                         // format={dateFormat}
                         />
                     </Form.Item>
@@ -162,7 +168,9 @@ const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish }
                         <Select
                             disabled={disabled}
                         >
-                            <Select.Option value={"1"}>Tôm</Select.Option>
+                            {listEmployeeWarehouseKeeperData.map(employee=>
+                            <Select.Option value={employee.id} key={employee.key}>{employee.name}</Select.Option>
+                            )}
                         </Select>
                     </Form.Item>
 
@@ -188,7 +196,7 @@ const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish }
                     pagination={false}
                 />
             </div>
-        </Form>
+        </div>
     )
 }
 

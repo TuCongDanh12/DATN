@@ -3,8 +3,7 @@ import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } fro
 import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { banHangSelector, getDonBanHang } from '../../../../../../store/features/banHangSlice';
-import { clearState, doiTuongSelector, getListProduct } from './../../../../../../store/features/doiTuongSilce';
+import { clearState, banHangSelector, getDonBanHang } from '../../../../../../store/features/banHangSlice';
 import { VND } from '../../../../../../utils/func';
 
 const EditableContext = React.createContext(null);
@@ -108,7 +107,6 @@ const EditDonDatHang = ({ disabled = false }) => {
 
     useEffect(() => {
         dispatch(getDonBanHang({ id: params.id }));
-        dispatch(getListProduct());
     }, []);
 
     useEffect(() => {
@@ -153,46 +151,36 @@ const EditDonDatHang = ({ disabled = false }) => {
     }, [donBanHangData]);
 
 
-    const {
-        listProductData,
-        isSuccessGetListProduct,
-        isSuccessPostProduct,
-    } = useSelector(doiTuongSelector);
-
     const [productOfDonBanHangs, setProductOfDonBanHangs] = useState([]);
 
     // console.log("listProductData", listProductData);
     useEffect(() => {
-        if (isSuccessGetListProduct && isSuccessGetDonBanHang) {
+        if ( isSuccessGetDonBanHang) {
             const products = donBanHangData.productOfDonBanHangs.map(product => {
-                console.log("product", product)
-                const data = listProductData.filter(item => item.id === product.id);
-                console.log("data", data);
 
                 let soluongdaban = 0;
-                // donBanHangData.ctban.forEach(chungtuban => {
-                //     chungtuban.productOfCtban.forEach(productOfCtbanItem => {
-                //         if (productOfCtbanItem.product.id === product.id) {
-                //             console.log("...", productOfCtbanItem.count)
-                //             soluongdaban += productOfCtbanItem.count;
-                //         }
-                //     })
-                // })
-
+                donBanHangData.ctban.forEach(chungtuban => {
+                    chungtuban.productOfCtban.forEach(productOfCtbanItem => {
+                        if (productOfCtbanItem.product.id === product.product.id) {
+                            console.log("...", productOfCtbanItem.count)
+                            soluongdaban += productOfCtbanItem.count;
+                        }
+                    })
+                })
 
                 return {
                     ...product,
                     key: product.id,
-                    id: product.id,
-                    productName: data[0].name,
-                    unit: data[0].unit,
+                    id: product.product.id,
+                    productName: product.product.name,
+                    unit: product.product.unit,
                     count: product.count,
                     soluongdaban: soluongdaban,
                     // soluongdaxuat: 1,
                     price: product.price,
                     thanhtien: product.price * product.count,
-                    phantramthuegtgt: data[0].productGroupInfo.tax,
-                    tienthuegtgt: product.count * product.price * (data[0].productGroupInfo.tax / 100)
+                    phantramthuegtgt: product.product.productGroup.tax,
+                    tienthuegtgt: product.count * product.price * (product.product.productGroup.tax / 100)
                 }
             })
 
@@ -203,7 +191,7 @@ const EditDonDatHang = ({ disabled = false }) => {
             setProductOfDonBanHangs(products);
             dispatch(clearState());
         }
-    }, [isSuccessGetListProduct, isSuccessGetDonBanHang]);
+    }, [isSuccessGetDonBanHang]);
 
 
     const nameValue = Form.useWatch('id', form);

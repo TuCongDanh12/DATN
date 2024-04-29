@@ -380,7 +380,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListSupplier.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            state.message = action.error.message;
+            // state.message = action.error.message;
         })
 
         builder.addCase(getSupplier.pending, (state) => {
@@ -449,7 +449,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListSupplierGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            state.message = action.error.message;
+            // state.message = action.error.message;
         })
 
         builder.addCase(getSupplierGroup.pending, (state) => {
@@ -516,7 +516,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListCustomerGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            state.message = action.error.message;
+            // state.message = action.error.message;
         })
 
         builder.addCase(getCustomerGroup.pending, (state) => {
@@ -587,7 +587,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListCustomer.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            state.message = action.error.message;
+            // state.message = action.error.message;
         })
 
         builder.addCase(getCustomer.pending, (state) => {
@@ -686,7 +686,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListProductGroup.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            state.message = action.error.message;
+            // state.message = action.error.message;
         })
 
         builder.addCase(getProductGroup.pending, (state) => {
@@ -757,7 +757,7 @@ export const doiTuongSlice = createSlice({
             console.log("getListProduct.rejected", action)
             state.isFetching = false;
             state.isError = true;
-            state.message = action.error.message;
+            // state.message = action.error.message;
         })
 
         builder.addCase(getProduct.pending, (state) => {

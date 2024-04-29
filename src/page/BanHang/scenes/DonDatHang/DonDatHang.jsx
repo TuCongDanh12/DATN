@@ -25,7 +25,6 @@ import {
   getListDonBanHang,
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
-import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
 import { VND } from "../../../../utils/func";
 const { RangePicker } = DatePicker;
 const DonDatHang = ({ radio = false }) => {
@@ -57,7 +56,6 @@ const DonDatHang = ({ radio = false }) => {
 
   useEffect(() => {
     dispatch(getListDonBanHang());
-    dispatch(getListProduct());
     radio && setFilteredInfo({
       "documentStatus": [
         "UNDOCUMENTED",
@@ -88,12 +86,6 @@ const DonDatHang = ({ radio = false }) => {
     }
   };
 
-  const {
-    listProductData,
-    isSuccessGetListProduct,
-    isSuccessPostProduct,
-  } = useSelector(doiTuongSelector);
-
   useEffect(() => {
     if (isSuccessPostDonBanHang) {
       api.success({
@@ -103,7 +95,7 @@ const DonDatHang = ({ radio = false }) => {
       });
 
       dispatch(clearState());
-    } else if (isSuccessGetListDonBanHang && isSuccessGetListProduct) {
+    } else if (isSuccessGetListDonBanHang) {
       messageApi.open({
         key: "updatable",
         type: "success",
@@ -111,24 +103,19 @@ const DonDatHang = ({ radio = false }) => {
         duration: 2,
       });
       const dataConvertCurrent = listDonBanHangData.map(donBanHangData => {
-        // console.log("donBanHangData", donBanHangData)
-        // console.log("listProductData", listProductData)
-
         let tong = 0;
         donBanHangData.productOfDonBanHangs.forEach(productOfDon => {
-          const data = listProductData.filter(item => item.id === productOfDon.product.id);
-          tong += productOfDon.count * productOfDon.price;
-          tong += productOfDon.count * productOfDon.price * (data[0].productGroupInfo.tax / 100);
+          tong += productOfDon.count * productOfDon.price* (1 + productOfDon.product.productGroup.tax/100);
         })
 
         let dathu = 0;
-        // donBanHangData.ctban.forEach(chungTuBan => {
-        //   chungTuBan.productOfCtban.forEach(productOfCt => {
-        //     const data = listProductData.filter(item => item.id === productOfCt.product.id);
-        //     dathu += productOfCt.count * productOfCt.price;
-        //     dathu += productOfCt.count * productOfCt.price * (data[0].productGroupInfo.tax / 100);
-        //   })
-        // })
+        donBanHangData.ctban.forEach(chungTuBan => {
+          chungTuBan.productOfCtban.forEach(productOfCt => {
+            dathu += productOfCt.count * productOfCt.price;
+            const data = donBanHangData.productOfDonBanHangs.filter(item => item.product.id === productOfCt.product.id);
+            dathu += productOfCt.count * productOfCt.price * (data[0].product.productGroup.tax / 100);
+          })
+        })
 
         let chuathu = tong - dathu;
 
@@ -140,7 +127,7 @@ const DonDatHang = ({ radio = false }) => {
         }
       })
 
-      console.log("dataConvertCurrent", dataConvertCurrent)
+      // console.log("dataConvertCurrent", dataConvertCurrent)
       setDataConvert(dataConvertCurrent);
       setDonbanhang(dataConvertCurrent);
       dispatch(clearState());
@@ -154,7 +141,7 @@ const DonDatHang = ({ radio = false }) => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostDonBanHang, isSuccessGetListDonBanHang, isError, isSuccessGetListProduct]);
+  }, [isSuccessPostDonBanHang, isSuccessGetListDonBanHang, isError]);
 
   useEffect(() => {
     console.log(searchText);
@@ -194,7 +181,11 @@ const DonDatHang = ({ radio = false }) => {
     if (e.key === "xoa") {
       setDataSelected(record);
       setOpen(true);
-    } else {
+    }
+    else if(e.key === "lap-chung-tu-ban-hang"){
+      navigate(`/ban-hang/chung-tu-ban-hang/them/${record.key}`, { state: { id: record.key } });
+    }
+    else {
       navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
     }
   };

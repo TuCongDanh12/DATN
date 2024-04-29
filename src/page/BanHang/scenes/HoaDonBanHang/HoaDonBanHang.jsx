@@ -28,7 +28,7 @@ import moment from "moment/moment";
 import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
 import { VND } from "../../../../utils/func";
 const { RangePicker } = DatePicker;
-const HoaDonBanHang = () => {
+const HoaDonBanHang = ({ checkbox = false }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -57,7 +57,13 @@ const HoaDonBanHang = () => {
 
   useEffect(() => {
     dispatch(getListChungTuBan());
-    // dispatch(getListProduct());
+    dispatch(getListProduct());
+    checkbox && setFilteredInfo({
+      "paymentStatus": [
+        "NOT_PAID",
+        "BEING_PAID"
+      ]
+    });
   }, []);
 
   const [chungTuBan, setChungTuBan] = useState([]);
@@ -143,6 +149,7 @@ const HoaDonBanHang = () => {
   }, [isSuccessPostChungTuBan, isSuccessGetListChungTuBan, isError, isSuccessGetListProduct]);
 
   useEffect(() => {
+    console.log(searchText);
     if (searchText.trim() === "" && filterday.length === 0) {
       if (!dataConvert || (Array.isArray(dataConvert) && !dataConvert.length)) {
         setChungTuBan([]);
@@ -188,7 +195,7 @@ const HoaDonBanHang = () => {
     setOpen(false);
   };
 
-  const columns = [
+  let columns = [
     {
       title: "Ngày hóa đơn",
       dataIndex: "createdAt",
@@ -328,6 +335,10 @@ const HoaDonBanHang = () => {
     },
   ];
 
+  if (checkbox) {
+    columns = columns.filter(item => item.dataIndex !== "chucnang");
+  }
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
@@ -340,10 +351,10 @@ const HoaDonBanHang = () => {
     },
   };
 
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
+  // const onSelectChange = (newSelectedRowKeys) => {
+  //   console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+  //   setSelectedRowKeys(newSelectedRowKeys);
+  // };
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
@@ -366,7 +377,7 @@ const HoaDonBanHang = () => {
 
   return (
     <div className="m-4">
-      <div className="px-[20px] w-full flex justify-between py-7 bg-white">
+      <div className={`px-[20px] w-full flex justify-between pb-7 ${!checkbox && "bg-white py-7"}`}>
         <div className="flex gap-[5px] items-center">
           <Form form={form} layout="inline" onFinish={onFinish}>
             <RangePicker
@@ -414,19 +425,29 @@ const HoaDonBanHang = () => {
               setValueRangepicker([]);
               setFilterday([]);
               setSelectedRowKeys([]);
+              checkbox && setFilteredInfo({
+                "paymentStatus": [
+                  "NOT_PAID",
+                  "BEING_PAID"
+                ]
+              });
             }}
           />
         </div>
 
-        {/* <Button
-          className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
-          type="link"
-          onClick={() => navigate("/ban-hang/chung-tu-ban-hang/tim-kiem")}
-        >
-          <Add />Thêm
-        </Button> */}
+        {
+          checkbox &&
+          <Button
+            className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
+            type="link"
+            disabled={!selectedRowKeys.length}
+            onClick={() => navigate(`/ban-hang/chung-tu-ban-hang/them/${selectedRowKeys}`, { state: { id: selectedRowKeys } })}
+          >
+            Lập chứng từ bán hàng
+          </Button>
+        }
 
-        {/* <Modal
+        <Modal
           title=""
           centered
           open={open}
@@ -460,14 +481,60 @@ const HoaDonBanHang = () => {
               Xác nhận
             </Button>
           </div>
-        </Modal> */}
+        </Modal>
       </div>
 
-      <Table
-        // rowSelection={{
-        //   type: "checkbox",
-        //   ...rowSelection,
-        // }}
+      {
+        checkbox ?
+          <Table
+            rowSelection={{
+              type: "checkbox",
+              ...rowSelection,
+            }}
+
+            columns={columns}
+            dataSource={chungTuBan}
+            pagination={{
+              // total: listChungTuBanData.length,
+              defaultPageSize: 20,
+              // // pageSize: 20,
+              // defaultCurrent: 1,
+              position: ["bottomRight"],
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} of ${total} items`,
+            }}
+            onChange={onChange}
+            scroll={{
+              x: 1300,
+            }}
+            className="overflow-x-visible	overflow-y-visible"
+          /> :
+          <Table
+            columns={columns}
+            dataSource={chungTuBan}
+            pagination={{
+              // total: listChungTuBanData.length,
+              defaultPageSize: 20,
+              // // pageSize: 20,
+              // defaultCurrent: 1,
+              position: ["bottomRight"],
+              showTotal: (total, range) =>
+                `${range[0]}-${range[1]} of ${total} items`,
+            }}
+            onChange={onChange}
+            scroll={{
+              x: 1300,
+            }}
+            className="overflow-x-visible	overflow-y-visible"
+          />
+      }
+
+      {/* <Table
+        rowSelection={{
+          type: "checkbox",
+          ...rowSelection,
+        }}
+
         columns={columns}
         dataSource={chungTuBan}
         pagination={{
@@ -480,11 +547,9 @@ const HoaDonBanHang = () => {
             `${range[0]}-${range[1]} of ${total} items`,
         }}
         onChange={onChange}
-        scroll={{
-          x: 1300,
-        }}
+       
         className="overflow-x-visible	overflow-y-visible"
-      />
+      /> */}
     </div>
   );
 };

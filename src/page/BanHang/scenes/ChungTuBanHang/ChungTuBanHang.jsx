@@ -25,7 +25,6 @@ import {
   getListChungTuBan,
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
-import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
 import { VND } from "../../../../utils/func";
 const { RangePicker } = DatePicker;
 const ChungTuBanHang = () => {
@@ -52,12 +51,11 @@ const ChungTuBanHang = () => {
     message,
 
     listChungTuBanData,
-    chungTuBanData,
+    // chungTuBanData,
   } = useSelector(banHangSelector);
 
   useEffect(() => {
     dispatch(getListChungTuBan());
-    // dispatch(getListProduct());
   }, []);
 
   const [chungTuBan, setChungTuBan] = useState([]);
@@ -82,11 +80,6 @@ const ChungTuBanHang = () => {
     }
   };
 
-  const {
-    listProductData,
-    isSuccessGetListProduct,
-    isSuccessPostProduct,
-  } = useSelector(doiTuongSelector);
 
   useEffect(() => {
     if (isSuccessPostChungTuBan) {
@@ -97,7 +90,7 @@ const ChungTuBanHang = () => {
       });
 
       dispatch(clearState());
-    } else if (isSuccessGetListChungTuBan && isSuccessGetListProduct) {
+    } else if (isSuccessGetListChungTuBan) {
       messageApi.open({
         key: "updatable",
         type: "success",
@@ -109,9 +102,8 @@ const ChungTuBanHang = () => {
 
         let tong = 0;
         chungTuBanData.productOfCtban.forEach(productOfCt => {
-          const data = listProductData.filter(item => item.id === productOfCt.product.id);
           tong += productOfCt.count * productOfCt.price;
-          tong += productOfCt.count * productOfCt.price * (data[0].productGroupInfo.tax / 100);
+          tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
         })
         //continue ...
         let dathu = 0;
@@ -140,7 +132,7 @@ const ChungTuBanHang = () => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostChungTuBan, isSuccessGetListChungTuBan, isError, isSuccessGetListProduct]);
+  }, [isSuccessPostChungTuBan, isSuccessGetListChungTuBan, isError]);
 
   useEffect(() => {
     if (searchText.trim() === "" && filterday.length === 0) {
@@ -167,10 +159,10 @@ const ChungTuBanHang = () => {
       key: "xem",
       label: <Link className="!text-black">Xem</Link>,
     },
-    {
-      key: "chinh-sua",
-      label: <Link className="!text-black">Chỉnh sửa</Link>,
-    },
+    // {
+    //   key: "chinh-sua",
+    //   label: <Link className="!text-black">Chỉnh sửa</Link>,
+    // },
   ];
 
   const handleDropdownItemClick = (e, record) => {

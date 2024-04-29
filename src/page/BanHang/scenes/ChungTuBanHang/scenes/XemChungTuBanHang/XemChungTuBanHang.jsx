@@ -98,7 +98,7 @@ const EditableCell = ({
 };
 
 
-const XemHoaDonBanHang = ({ disabled = false }) => {
+const XemChungTuBanHang = ({ disabled = false }) => {
     const dispatch = useDispatch();
     const params = useParams();
     console.log("params", params)
@@ -117,6 +117,7 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
     useEffect(() => {
         dispatch(getChungTuBan({ id: params.id }));
     }, []);
+
 
     const [productOfChungTuBans, setProductOfChungTuBans] = useState([]);
 
@@ -514,7 +515,7 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-4">
-                Hóa đơn bán hàng {nameValue || chungTuBanData.id}
+                Chứng từ bán hàng {nameValue || chungTuBanData.id}
             </h1>
 
 
@@ -551,14 +552,33 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                 onFinish={onFinish}
             >
 
-                <HoaDon
-                    components={components}
-                    dataSource={productOfChungTuBans}
-                    columns={columns}
+                <Flex gap={50}>
+                    {/* <Form.Item
+                        label="Phương thức thanh toán"
+                        name='paymentMethod'
+                        labelCol={{
+                            flex: '200px',
+                        }}
+                        className='!m-0 !p-0'
+                    >
+                        <Select
+                            disabled={disabled}
+                            className="!w-[200px]"
+                        >
+                            <Select.Option value={"CASH"}>Tiền mặt</Select.Option>
+                            <Select.Option value={"TRANSFER"}>Tiền gửi</Select.Option>
+                        </Select>
+                    </Form.Item> */}
 
-                    form={form}
-                    disabled={disabled}
-                    onFinish={onFinish}
+                    <Checkbox checked={phieuThuChecked} onChange={onChangePhieuThu}>
+                        Lập kèm phiếu thu
+                    </Checkbox>
+                </Flex>
+
+
+                <Tabs
+                    defaultActiveKey="1"
+                    items={renderItems()}
                 />
 
                 <div className='flex justify-end'>
@@ -633,4 +653,4 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
     )
 }
 
-export default XemHoaDonBanHang
+export default XemChungTuBanHang
