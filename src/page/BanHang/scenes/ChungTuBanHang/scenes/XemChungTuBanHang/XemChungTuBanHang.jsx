@@ -285,9 +285,9 @@ const XemChungTuBanHang = ({ disabled = false }) => {
 
     const handleSave = (row) => {
         console.log("row", row);
-        row.thanhtien= row.price*row.count;
-        row.tienthuegtgt = row.price*row.count*(row.phantramthuegtgt/100);
-        
+        row.thanhtien = row.price * row.count;
+        row.tienthuegtgt = row.price * row.count * (row.phantramthuegtgt / 100);
+
         const newData = [...productOfChungTuBans];
         const index = newData.findIndex((item) => row.key === item.key);
         const item = newData[index];
@@ -334,15 +334,15 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                 month = '' + (d.getMonth() + 1),
                 day = '' + d.getDate(),
                 year = d.getFullYear();
-        
-            if (month.length < 2) 
+
+            if (month.length < 2)
                 month = '0' + month;
-            if (day.length < 2) 
+            if (day.length < 2)
                 day = '0' + day;
-        
+
             return [year, month, day].join('-');
         }
-        
+
         let dataConvert = {
             "deliveryDate": formatDate(values.deliveryDate.$d),
             "warehouseKeeperId": values.warehouseKeeperId,
@@ -364,7 +364,7 @@ const XemChungTuBanHang = ({ disabled = false }) => {
 
         // console.log("dayjs(values.deliveryDate, dateFormat)",dayjs(new Date(values.deliveryDate.$d).toISOString().slice(0, 10), dateFormat))
 
-        dispatch(postChungTuBan({values:dataConvert}));
+        dispatch(postChungTuBan({ values: dataConvert }));
         navigate(-2);
     };
 
@@ -469,9 +469,9 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                 receiver: chungTuBanData.namecCustomer,
                 salesperson: chungTuBanData?.donBanHang?.salesperson?.name,
                 paymentMethod: "CASH",
-                paymentTerm: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
-                createdAt: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
-                deliveryDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat)
+                paymentTerm: dayjs(chungTuBanData.paymentTerm, dateFormat),
+                createdAt: dayjs(chungTuBanData.createdAt, dateFormat),
+                deliveryDate: dayjs(chungTuBanData.deliveryDate, dateFormat)
             };
 
             switch (chungTuBanData.documentStatus) {

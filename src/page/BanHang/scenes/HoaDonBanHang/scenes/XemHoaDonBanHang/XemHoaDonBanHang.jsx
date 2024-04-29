@@ -468,9 +468,9 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                 receiver: chungTuBanData.namecCustomer,
                 salesperson: chungTuBanData?.donBanHang?.salesperson?.name,
                 paymentMethod: "CASH",
-                paymentTerm: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
-                createdAt: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
-                deliveryDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat)
+                paymentTerm: dayjs(chungTuBanData.paymentTerm, dateFormat),
+                createdAt: dayjs(chungTuBanData.createdAt, dateFormat),
+                deliveryDate: dayjs(chungTuBanData.deliveryDate, dateFormat)
             };
 
             switch (chungTuBanData.documentStatus) {
