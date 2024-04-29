@@ -68,6 +68,17 @@ const postChungTuBan = ({ values }) => {
 };
 
 
+
+const getListEmployeeWarehouseKeeper = () => {
+    return axios.get(`${API_URL}/employee/warehouse-keeper`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+
 const banHangService = {
     getListDonBanHang,
     getDonBanHang,
@@ -76,6 +87,8 @@ const banHangService = {
     getListChungTuBan,
     getChungTuBan,
     postChungTuBan,
+
+    getListEmployeeWarehouseKeeper
 };
 
 export default banHangService;

@@ -22,8 +22,7 @@ import BaoCao from './page/BaoCao/BaoCao';
 import ThongBao from './page/ThongBao/ThongBao';
 import HoTro from './page/HoTro/HoTro';
 import CaiDat from './page/CaiDat/CaiDat';
-import XemDonDatHang from './page/BanHang/scenes/DonDatHang/scenes/XemDonDatHang/XemDonDatHang';
-import XemChungTuBanHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/XemChungTuBanHang";
+import XemChungTuBanHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/XemChungTuBanHang/XemChungTuBanHang";
 import XemHoaDonBanHang from "./page/BanHang/scenes/HoaDonBanHang/scenes/XemHoaDonBanHang/XemHoaDonBanHang";
 import TimKiemThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/TimKiemThuTien";
 import ThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/ThuTien";
@@ -55,6 +54,7 @@ import EditSanPham from "./page/DoiTuong/scenes/SanPham/scenes/EditSanPham/EditS
 import EditDonDatHang from "./page/BanHang/scenes/DonDatHang/scenes/EditDonDatHang/EditDonDatHang";
 import ThemChungTuBanHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/ThemChungTuBanHang/ThemChungTuBanHang";
 import TimKiemDonDatHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/TimKiemDonDatHang/TimKiemDonDatHang";
+import TimKiemHoaDonBanHang from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/TimKiemHoaDonBanHang/TimKiemHoaDonBanHang";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -152,13 +152,16 @@ function App() {
 
                 <Route path="ban-hang/don-dat-hang/xem/:id" element={<EditDonDatHang disabled={true} />} />
                
-                <Route path="ban-hang/chung-tu-ban-hang/xem/:id" element={<XemChungTuBanHang />} />
+                <Route path="ban-hang/chung-tu-ban-hang/xem/:id" element={<XemChungTuBanHang disabled={true} />} />
+                <Route path="ban-hang/chung-tu-ban-hang/chinh-sua/:id" element={<XemChungTuBanHang  />} />
                 <Route path="ban-hang/chung-tu-ban-hang/tim-kiem" element={<TimKiemDonDatHang />} />
                 <Route path="ban-hang/chung-tu-ban-hang/them/:id" element={<ThemChungTuBanHang />} />
                
                 <Route path="ban-hang/hoa-don-ban-hang/xem/:id" element={<XemHoaDonBanHang disabled={true} />} />
                 
-                <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem" element={<TimKiemThuTien />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/tim-kiem" element={<TimKiemHoaDonBanHang />} />
+
+
                 <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThuTien />} />
                 <Route path="ban-hang/thu-tien-theo-hoa-don/xem" element={<ThuTien />} />
                 <Route path="/tien-mat" element={<TienMat />} />

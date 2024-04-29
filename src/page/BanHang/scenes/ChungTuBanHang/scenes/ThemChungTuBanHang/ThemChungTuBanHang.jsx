@@ -117,49 +117,40 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
 
     useEffect(() => {
         dispatch(getDonBanHang({ id: params.id }));
-        dispatch(getListProduct());
     }, []);
 
 
-
-    const {
-        listProductData,
-        isSuccessGetListProduct,
-        isSuccessPostProduct,
-    } = useSelector(doiTuongSelector);
 
     const [productOfDonBanHangs, setProductOfDonBanHangs] = useState([]);
 
     // console.log("listProductData", listProductData);
     useEffect(() => {
-        if (isSuccessGetListProduct && isSuccessGetDonBanHang) {
+        if ( isSuccessGetDonBanHang) {
             const products = donBanHangData.productOfDonBanHangs.map(product => {
-                console.log("product", product)
-                const data = listProductData.filter(item => item.id === product.id);
-                console.log("data", data);
 
                 let soluongdaban = 0;
-                // donBanHangData.ctban.forEach(chungtuban => {
-                //     chungtuban.productOfCtban.forEach(productOfCtbanItem => {
-                //         if (productOfCtbanItem.product.id === product.id) {
-                //             soluongdaban += productOfCtbanItem.count;
-                //         }
-                //     })
-                // })
+                donBanHangData.ctban.forEach(chungtuban => {
+                    chungtuban.productOfCtban.forEach(productOfCtbanItem => {
+                        if (productOfCtbanItem.product.id === product.product.id) {
+                            console.log("...", productOfCtbanItem.count)
+                            soluongdaban += productOfCtbanItem.count;
+                        }
+                    })
+                })
 
                 return {
                     ...product,
                     key: product.id,
-                    id: product.id,
-                    productName: data[0].name,
-                    unit: data[0].unit,
+                    id: product.product.id,
+                    productName: product.product.name,
+                    unit: product.product.unit,
                     count: product.count - soluongdaban,
                     soluongchuadat: product.count - soluongdaban,
                     // soluongdaxuat: 1,
                     price: product.price,
                     thanhtien: product.price * product.count,
-                    phantramthuegtgt: data[0].productGroupInfo.tax,
-                    tienthuegtgt: product.count * product.price * (data[0].productGroupInfo.tax / 100)
+                    phantramthuegtgt: product.product.productGroup.tax,
+                    tienthuegtgt: product.count * product.price * (product.product.productGroup.tax / 100)
                 }
             })
 
@@ -170,7 +161,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
             setProductOfDonBanHangs(products);
             dispatch(clearState());
         }
-    }, [isSuccessGetListProduct, isSuccessGetDonBanHang]);
+    }, [ isSuccessGetDonBanHang]);
 
 
     const nameValue = Form.useWatch('id', form);
@@ -337,13 +328,27 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
         // values.deliveryDate = `${values.deliveryDate.$y}-${values.deliveryDate.$M + 1}-${values.deliveryDate.$D}`;
         console.log('Received values of form: ', values);
         console.log(productOfDonBanHangs);
+
+        function formatDate(date) {
+            var d = new Date(date),
+                month = '' + (d.getMonth() + 1),
+                day = '' + d.getDate(),
+                year = d.getFullYear();
+        
+            if (month.length < 2) 
+                month = '0' + month;
+            if (day.length < 2) 
+                day = '0' + day;
+        
+            return [year, month, day].join('-');
+        }
         
         let dataConvert = {
-            "deliveryDate": values.deliveryDate,
+            "deliveryDate": formatDate(values.deliveryDate.$d),
             "warehouseKeeperId": values.warehouseKeeperId,
             "content": values.content,
             "receiver": values.receiver,
-            "paymentTerm": values.paymentTerm,
+            "paymentTerm": formatDate(values.paymentTerm.$d),
             "donBanHangId": donBanHangData.id,
             "products": productOfDonBanHangs.map(product => {
                 return {
@@ -354,13 +359,13 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
 
         };
 
-        console.log("dataConvert",dataConvert)
+        // console.log("dataConvert",dataConvert)
         // "deliveryDate": `${values.deliveryDate.$y}-${values.deliveryDate.$M + 1}-${values.deliveryDate.$D}`,
 
         // console.log("dayjs(values.deliveryDate, dateFormat)",dayjs(new Date(values.deliveryDate.$d).toISOString().slice(0, 10), dateFormat))
 
         dispatch(postChungTuBan({values:dataConvert}));
-
+        navigate(-2);
     };
 
 
@@ -497,7 +502,6 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                     data.deliveryStatus = "Lỗi";
                     break;
             }
-
 
             form.setFieldsValue({
                 ...data
