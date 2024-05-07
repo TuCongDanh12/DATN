@@ -55,6 +55,7 @@ import EditDonDatHang from "./page/BanHang/scenes/DonDatHang/scenes/EditDonDatHa
 import ThemChungTuBanHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/ThemChungTuBanHang/ThemChungTuBanHang";
 import TimKiemDonDatHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/TimKiemDonDatHang/TimKiemDonDatHang";
 import TimKiemHoaDonBanHang from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/TimKiemHoaDonBanHang/TimKiemHoaDonBanHang";
+import ThemThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/ThemThuTien/ThemThuTien";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -162,7 +163,7 @@ function App() {
                 <Route path="ban-hang/thu-tien-theo-hoa-don/tim-kiem" element={<TimKiemHoaDonBanHang />} />
 
 
-                <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThuTien />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThemThuTien />} />
                 <Route path="ban-hang/thu-tien-theo-hoa-don/xem" element={<ThuTien />} />
                 <Route path="/tien-mat" element={<TienMat />} />
                 <Route path="/tien-gui" element={<TienGui />} />
