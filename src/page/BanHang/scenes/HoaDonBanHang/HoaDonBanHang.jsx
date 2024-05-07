@@ -23,6 +23,7 @@ import {
   banHangSelector,
   clearState,
   getListChungTuBan,
+  hoaDonSelected,
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
 import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
@@ -53,6 +54,8 @@ const HoaDonBanHang = ({ checkbox = false }) => {
 
     listChungTuBanData,
     chungTuBanData,
+    listHoaDonSelected,
+    isErrorHoaDonSelected
   } = useSelector(banHangSelector);
 
   useEffect(() => {
@@ -104,12 +107,12 @@ const HoaDonBanHang = ({ checkbox = false }) => {
 
       dispatch(clearState());
     } else if (isSuccessGetListChungTuBan && isSuccessGetListProduct) {
-      messageApi.open({
-        key: "updatable",
-        type: "success",
-        content: "Tải dữ liệu thành công!",
-        duration: 2,
-      });
+      // messageApi.open({
+      //   key: "updatable",
+      //   type: "success",
+      //   content: "Tải dữ liệu thành công!",
+      //   duration: 2,
+      // });
       const dataConvertCurrent = listChungTuBanData.map(chungTuBanData => {
         console.log("chungTuBanData", chungTuBanData)
 
@@ -246,6 +249,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       title: "Tình trạng thanh toán",
       dataIndex: "paymentStatus",
       key: "paymentStatus",
+      fixed: "right",
       render: (val, record) => {
         switch (val) {
           case "NOT_PAID":
@@ -339,10 +343,42 @@ const HoaDonBanHang = ({ checkbox = false }) => {
     columns = columns.filter(item => item.dataIndex !== "chucnang");
   }
 
+  // useEffect(() => {
+  //   if (isErrorHoaDonSelected) {
+  //     api.error({
+  //       message: "Chỉ thu tiền các hóa đơn của 1 khách hàng!",
+  //       placement: "bottomLeft",
+  //       duration: 2,
+  //     });
+
+  //     dispatch(clearState());
+  //   } 
+  // }, [isErrorHoaDonSelected]);
+
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      setSelectedRowKeys(selectedRowKeys);
+      if (selectedRows.length >= 2 && selectedRows[0].donBanHang.customer.id === selectedRows[selectedRows.length - 1].donBanHang.customer.id) {
+        setSelectedRowKeys(selectedRowKeys);
+        dispatch(hoaDonSelected(selectedRows));
+      }
+      else if (selectedRows.length === 1) {
+        setSelectedRowKeys(selectedRowKeys);
+        dispatch(hoaDonSelected(selectedRows));
+      }
+      else if(selectedRows.length === 0){
+        setSelectedRowKeys([]);
+        dispatch(hoaDonSelected([]));
+      }
+      else {
+        api.error({
+          message: "Chỉ thu tiền các hóa đơn của 1 khách hàng!",
+          placement: "bottomLeft",
+          duration: 2,
+        });
+      }
+
+      console.log("listHoaDonSelected", listHoaDonSelected);
       console.log(
         `selectedRowKeys: ${selectedRowKeys}`,
         "selectedRows: ",
@@ -436,15 +472,20 @@ const HoaDonBanHang = ({ checkbox = false }) => {
         </div>
 
         {
-          checkbox &&
-          <Button
-            className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
-            type="link"
-            disabled={!selectedRowKeys.length}
-            onClick={() => navigate(`/ban-hang/chung-tu-ban-hang/them/${selectedRowKeys}`, { state: { id: selectedRowKeys } })}
-          >
-            Lập chứng từ bán hàng
-          </Button>
+          checkbox ?
+            <Button
+              className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
+              type="link"
+              disabled={!selectedRowKeys.length}
+              onClick={() => {
+
+                navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
+              }}
+            >
+              Thu tiền
+            </Button>
+            :
+            <></>
         }
 
         <Modal

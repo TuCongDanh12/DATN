@@ -137,6 +137,8 @@ const initialState = {
     chungTuBanData: {},
 
     listEmployeeWarehouseKeeperData: [],
+
+    listHoaDonSelected: [],
 };
 
 
@@ -161,6 +163,18 @@ export const banHangSlice = createSlice({
             state.message = "";
             return state;
         },
+
+        hoaDonSelected: (state, action) =>{
+            // state.listHoaDonSelected.forEach(hoaDon=>{
+            //     if(hoaDon.donBanHang.customer.id!==action.payload){
+            //         state.isErrorHoaDonSelected = true;
+            //         return state;
+            //     }
+            // })
+            // state.listHoaDonSelected = [...state.listHoaDonSelected, action.payload];
+            state.listHoaDonSelected = action.payload;
+            return state;
+        }
     },
 
     extraReducers: (builder) => {
@@ -360,6 +374,6 @@ export const banHangSlice = createSlice({
     }
 });
 
-export const { clearState } = banHangSlice.actions;
+export const { clearState, hoaDonSelected } = banHangSlice.actions;
 
 export const banHangSelector = (state) => state.banHang;
