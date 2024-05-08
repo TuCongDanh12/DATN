@@ -107,6 +107,7 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
 
         return {
           ...chungTuBanData,
+          sohoadon: chungTuBanData.id,
           makhachhang: chungTuBanData.donBanHang.customer.id,
           customer: chungTuBanData.donBanHang.customer.name,
           tong,
@@ -179,19 +180,18 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
   };
 
   let columns = [
-    {
-      title: "Mã khách hàng",
-      dataIndex: "makhachhang",
-      key: "makhachhang",
-      sorter: (a, b) => a.makhachhang - b.makhachhang,
-      sortOrder: sortedInfo.columnKey === "makhachhang" ? sortedInfo.order : null,
-      ellipsis: true,
-      width: "7%",
-    },
-    {
-      title: "Khách hàng",
-      dataIndex: "customer",
-      key: "customer",
+    // {
+    //   title: "Khách hàng",
+    //   dataIndex: "customer",
+    //   key: "customer",
+    //   ellipsis: true,
+    // },
+        {
+      title: "ID hóa đơn",
+      dataIndex: "sohoadon",
+      key: "sohoadon",
+      sorter: (a, b) => a.sohoadon - b.sohoadon,
+      sortOrder: sortedInfo.columnKey === "sohoadon" ? sortedInfo.order : null,
       ellipsis: true,
     },
     {
@@ -549,7 +549,7 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
             return (
               <>
                 <Table.Summary.Row>
-                  <Table.Summary.Cell index={0} colSpan={4} className="font-bold">Tên khách hàng: {pageData[0].customer} ({pageData.length})</Table.Summary.Cell>
+                  <Table.Summary.Cell index={0} colSpan={3} className="font-bold">Tên khách hàng: {pageData[0].customer} - ID: {pageData[0].makhachhang}</Table.Summary.Cell>
                   <Table.Summary.Cell index={1}>
                     <Text className="font-bold">{VND.format(totalTong)}</Text>
                   </Table.Summary.Cell>
