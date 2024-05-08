@@ -172,9 +172,13 @@ const ThemThuTien = ({ disabled = false }) => {
                 // receiver: donBanHangData.namecCustomer,
                 paymentMethod: "CASH",
                 address: listHoaDonSelected[0].donBanHang.customer.address,
+                salespersonID: "sss",
+                submitter: "",
+                bankAccountId: "sss",
                 createdAt: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
+                receiveDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 taxCode: listHoaDonSelected[0].donBanHang.customer.taxCode,
-                namecCustomer:listHoaDonSelected[0].donBanHang.customer.name
+                namecCustomer: listHoaDonSelected[0].donBanHang.customer.name
                 // paymentTerm: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 // deliveryDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat)
             };
@@ -423,13 +427,33 @@ const ThemThuTien = ({ disabled = false }) => {
                             ]}
                         >
                             <Input
-                                disabled={disabled}
+                                disabled={true}
                             />
                         </Form.Item>
 
-                        {/* <Form.Item
+
+                        <Form.Item
+                            label="Phương thức thanh toán"
+                            name='paymentMethod'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Select
+                                disabled={disabled}
+                            >
+                                <Select.Option value={"CASH"}>Tiền mặt</Select.Option>
+                                <Select.Option value={"TRANSFER"}>Tiền gửi</Select.Option>
+                            </Select>
+                        </Form.Item>
+
+
+                        <Form.Item
                             label="Nhân viên bán hàng"
-                            name='salesperson'
+                            name='salespersonID'
                             rules={[
                                 {
                                     required: true,
@@ -441,7 +465,7 @@ const ThemThuTien = ({ disabled = false }) => {
                                 disabled={true}
 
                             />
-                        </Form.Item> */}
+                        </Form.Item>
                     </Flex>
 
                     <Flex vertical gap={5} className='w-[50%]'>
@@ -464,9 +488,10 @@ const ThemThuTien = ({ disabled = false }) => {
                             />
                         </Form.Item>
 
+
                         <Form.Item
-                            label="Phương thức thanh toán"
-                            name='paymentMethod'
+                            label="Ngày chứng từ"
+                            name="receiveDate"
                             rules={[
                                 {
                                     required: true,
@@ -474,12 +499,11 @@ const ThemThuTien = ({ disabled = false }) => {
                                 },
                             ]}
                         >
-                            <Select
+                            <DatePicker
+                                className='!w-full'
                                 disabled={disabled}
-                            >
-                                <Select.Option value={"CASH"}>Tiền mặt</Select.Option>
-                                <Select.Option value={"TRANSFER"}>Tiền gửi</Select.Option>
-                            </Select>
+                            // format={dateFormat}
+                            />
                         </Form.Item>
 
                         {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
@@ -518,7 +542,7 @@ const ThemThuTien = ({ disabled = false }) => {
                         {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
                             <Form.Item
                                 label="Số tài khoản"
-                                name='accountNumber'
+                                name='bankAccountId'
                                 rules={[
                                     {
                                         required: true,
@@ -532,6 +556,29 @@ const ThemThuTien = ({ disabled = false }) => {
                                 />
                             </Form.Item>
                         }
+
+
+
+                        {Form.useWatch('paymentMethod', form) === "CASH" &&
+                            <Form.Item
+                            label="Người nộp"
+                            name='submitter'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>
+                        }
+
+
+                        
                     </Flex>
 
                 </Flex>
