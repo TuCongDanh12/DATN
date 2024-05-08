@@ -66,12 +66,12 @@ const NhomNhaCungCap = () => {
       dispatch(clearState());
       dispatch(getListSupplierGroup());
     } else if (isSuccessGetListSupplierGroup) {
-      messageApi.open({
-        key: "updatable",
-        type: "success",
-        content: "Tải dữ liệu thành công!",
-        duration: 2,
-      });
+      // messageApi.open({
+      //   key: "updatable",
+      //   type: "success",
+      //   content: "Tải dữ liệu thành công!",
+      //   duration: 2,
+      // });
 
       dispatch(clearState());
     }

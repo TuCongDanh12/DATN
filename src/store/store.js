@@ -3,6 +3,7 @@ import { authenticationSlice } from "./features/authenticationSlice";
 import { muahangSlice } from "./features/muahangSlice";
 import { doiTuongSlice } from "./features/doiTuongSilce";
 import { banHangSlice } from "./features/banHangSlice";
+import { congNoSlice } from "./features/congNoSlice";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     muahang: muahangSlice.reducer,
     doiTuong: doiTuongSlice.reducer,
     banHang: banHangSlice.reducer,
+    congNo: congNoSlice.reducer,
   },
 });
 

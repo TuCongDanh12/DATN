@@ -60,7 +60,6 @@ const HoaDonBanHang = ({ checkbox = false }) => {
 
   useEffect(() => {
     dispatch(getListChungTuBan());
-    dispatch(getListProduct());
     checkbox && setFilteredInfo({
       "paymentStatus": [
         "NOT_PAID",
@@ -91,12 +90,6 @@ const HoaDonBanHang = ({ checkbox = false }) => {
     }
   };
 
-  const {
-    listProductData,
-    isSuccessGetListProduct,
-    isSuccessPostProduct,
-  } = useSelector(doiTuongSelector);
-
   useEffect(() => {
     if (isSuccessPostChungTuBan) {
       api.success({
@@ -106,7 +99,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       });
 
       dispatch(clearState());
-    } else if (isSuccessGetListChungTuBan && isSuccessGetListProduct) {
+    } else if (isSuccessGetListChungTuBan) {
       // messageApi.open({
       //   key: "updatable",
       //   type: "success",
@@ -118,9 +111,8 @@ const HoaDonBanHang = ({ checkbox = false }) => {
 
         let tong = 0;
         chungTuBanData.productOfCtban.forEach(productOfCt => {
-          const data = listProductData.filter(item => item.id === productOfCt.product.id);
           tong += productOfCt.count * productOfCt.price;
-          tong += productOfCt.count * productOfCt.price * (data[0].productGroupInfo.tax / 100);
+          tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
         })
         //continue ...
         let dathu = 0;
@@ -149,7 +141,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostChungTuBan, isSuccessGetListChungTuBan, isError, isSuccessGetListProduct]);
+  }, [isSuccessPostChungTuBan, isSuccessGetListChungTuBan, isError]);
 
   useEffect(() => {
     console.log(searchText);
