@@ -12,6 +12,7 @@ import {
   message as msg,
   notification,
   DatePicker,
+  Typography,
 } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { SiMicrosoftexcel } from "react-icons/si";
@@ -22,12 +23,18 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   banHangSelector,
   clearState,
-  getListDonBanHang,
+  getListChungTuBan,
+  hoaDonSelected,
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
+import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
 import { VND } from "../../../../utils/func";
+import { congNoSelector, getListCongNo } from './../../../../store/features/congNoSlice';
+const { Text } = Typography;
+
+
 const { RangePicker } = DatePicker;
-const DonDatHang = ({ radio = false }) => {
+const ChiTietNoPhaiThu = ({ checkbox = false }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -44,27 +51,19 @@ const DonDatHang = ({ radio = false }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const {
-    isSuccessGetListDonBanHang,
-    isSuccessPostDonBanHang,
+    isSuccessGetListCongNo,
 
     isError,
     message,
 
-    listDonBanHangData,
-    donBanHangData,
-  } = useSelector(banHangSelector);
+    listCongNo,
+  } = useSelector(congNoSelector);
 
   useEffect(() => {
-    dispatch(getListDonBanHang());
-    radio && setFilteredInfo({
-      "documentStatus": [
-        "UNDOCUMENTED",
-        "DOCUMENTING"
-      ]
-    });
+    dispatch(getListCongNo());
   }, []);
 
-  const [donbanhang, setDonbanhang] = useState([]);
+  const [chungTuBan, setChungTuBan] = useState([]);
   const [dataConvert, setDataConvert] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterday, setFilterday] = useState([]);
@@ -87,49 +86,38 @@ const DonDatHang = ({ radio = false }) => {
   };
 
   useEffect(() => {
-    if (isSuccessPostDonBanHang) {
-      api.success({
-        message: "Thêm dữ liệu thành công!",
-        placement: "bottomLeft",
-        duration: 2,
-      });
-
-      dispatch(clearState());
-    } else if (isSuccessGetListDonBanHang) {
+    if (isSuccessGetListCongNo) {
       // messageApi.open({
       //   key: "updatable",
       //   type: "success",
       //   content: "Tải dữ liệu thành công!",
       //   duration: 2,
       // });
-      const dataConvertCurrent = listDonBanHangData.map(donBanHangData => {
+      const dataConvertCurrent = listCongNo.map(congNo => congNo.map(chungTuBanData => {
+        console.log("chungTuBanData", chungTuBanData)
+
         let tong = 0;
-        donBanHangData.productOfDonBanHangs.forEach(productOfDon => {
-          tong += productOfDon.count * productOfDon.price* (1 + productOfDon.product.productGroup.tax/100);
+        chungTuBanData.productOfCtban.forEach(productOfCt => {
+          tong += productOfCt.count * productOfCt.price;
+          tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
         })
-
+        //continue ...
         let dathu = 0;
-        donBanHangData.ctban.forEach(chungTuBan => {
-          chungTuBan.productOfCtban.forEach(productOfCt => {
-            dathu += productOfCt.count * productOfCt.price;
-            const data = donBanHangData.productOfDonBanHangs.filter(item => item.product.id === productOfCt.product.id);
-            dathu += productOfCt.count * productOfCt.price * (data[0].product.productGroup.tax / 100);
-          })
-        })
-
         let chuathu = tong - dathu;
 
         return {
-          ...donBanHangData,
+          ...chungTuBanData,
+          makhachhang: chungTuBanData.donBanHang.customer.id,
+          customer: chungTuBanData.donBanHang.customer.name,
           tong,
           dathu,
           chuathu
         }
-      })
+      }))
 
-      // console.log("dataConvertCurrent", dataConvertCurrent)
+      console.log("dataConvertCurrent", dataConvertCurrent)
       setDataConvert(dataConvertCurrent);
-      setDonbanhang(dataConvertCurrent);
+      setChungTuBan(dataConvertCurrent);
       dispatch(clearState());
     }
     else if (isError) {
@@ -141,28 +129,28 @@ const DonDatHang = ({ radio = false }) => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostDonBanHang, isSuccessGetListDonBanHang, isError]);
+  }, [isSuccessGetListCongNo, isError]);
 
-  useEffect(() => {
-    console.log(searchText);
-    if (searchText.trim() === "" && filterday.length === 0) {
-      if (!dataConvert || (Array.isArray(dataConvert) && !dataConvert.length)) {
-        setDonbanhang([]);
-      } else {
-        setDonbanhang(dataConvert);
-      }
-    } else {
-      const filteredData = dataConvert.filter((data) => {
-        const saleDateMoment = moment(data.saleDate);
-        return (
-          data.customer.toLowerCase().includes(searchText.toLowerCase()) &&
-          (!filterday[0] || saleDateMoment.valueOf() >= filterday[0]) &&
-          (!filterday[1] || saleDateMoment.valueOf() <= filterday[1])
-        );
-      });
-      setDonbanhang(filteredData);
-    }
-  }, [searchText, dataConvert, filterday]);
+  // useEffect(() => {
+  //   console.log(searchText);
+  //   if (searchText.trim() === "" && filterday.length === 0) {
+  //     if (!dataConvert || (Array.isArray(dataConvert) && !dataConvert.length)) {
+  //       setChungTuBan([]);
+  //     } else {
+  //       setChungTuBan(dataConvert);
+  //     }
+  //   } else {
+  //     const filteredData = dataConvert.filter((data) => {
+  //       const createdAtMoment = moment(data.createdAt);
+  //       return (
+  //         data.customer.toLowerCase().includes(searchText.toLowerCase()) &&
+  //         (!filterday[0] || createdAtMoment.valueOf() >= filterday[0]) &&
+  //         (!filterday[1] || createdAtMoment.valueOf() <= filterday[1])
+  //       );
+  //     });
+  //     setChungTuBan(filteredData);
+  //   }
+  // }, [searchText, dataConvert, filterday]);
 
   const items = [
     {
@@ -170,8 +158,8 @@ const DonDatHang = ({ radio = false }) => {
       label: <Link className="!text-black">Xem</Link>,
     },
     {
-      key: "lap-chung-tu-ban-hang",
-      label: <Link className="!text-black">Lập chứng từ bán hàng</Link>,
+      key: "thu-tien",
+      label: <Link className="!text-black">Thu tiền</Link>,
     },
   ];
 
@@ -181,11 +169,7 @@ const DonDatHang = ({ radio = false }) => {
     if (e.key === "xoa") {
       setDataSelected(record);
       setOpen(true);
-    }
-    else if(e.key === "lap-chung-tu-ban-hang"){
-      navigate(`/ban-hang/chung-tu-ban-hang/them/${record.key}`, { state: { id: record.key } });
-    }
-    else {
+    } else {
       navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
     }
   };
@@ -196,14 +180,13 @@ const DonDatHang = ({ radio = false }) => {
 
   let columns = [
     {
-      title: "Ngày đặt hàng",
-      dataIndex: "saleDate",
-      key: "saleDate",
-      render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
-      sorter: (a, b) =>
-        moment(a.saleDate, "DD-MM-YYYY") - moment(b.saleDate, "DD-MM-YYYY"),
-      sortOrder: sortedInfo.columnKey === "saleDate" ? sortedInfo.order : null,
-      fixed: 'left',
+      title: "Mã khách hàng",
+      dataIndex: "makhachhang",
+      key: "makhachhang",
+      sorter: (a, b) => a.makhachhang - b.makhachhang,
+      sortOrder: sortedInfo.columnKey === "makhachhang" ? sortedInfo.order : null,
+      ellipsis: true,
+      width: "7%",
     },
     {
       title: "Khách hàng",
@@ -212,69 +195,90 @@ const DonDatHang = ({ radio = false }) => {
       ellipsis: true,
     },
     {
-      title: "Nội dung",
-      dataIndex: "content",
-      key: "content",
-      ellipsis: true,
+      title: "Ngày hóa đơn",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+      sorter: (a, b) =>
+        moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
+      sortOrder: sortedInfo.columnKey === "createdAt" ? sortedInfo.order : null,
+      // fixed: 'left',
     },
+
     {
-      title: "Tổng",
+      title: "Hạn thanh toán",
+      dataIndex: "paymentTerm",
+      key: "paymentTerm",
+      render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+      sorter: (a, b) =>
+        moment(a.paymentTerm, "DD-MM-YYYY") - moment(b.paymentTerm, "DD-MM-YYYY"),
+      sortOrder: sortedInfo.columnKey === "paymentTerm" ? sortedInfo.order : null,
+      // fixed: 'left',
+    },
+    // {
+    //   title: "Nội dung",
+    //   dataIndex: "content",
+    //   key: "content",
+    //   ellipsis: true,
+    // },
+    {
+      title: "Giá trị hóa đơn",
       dataIndex: "tong",
       key: "tong",
       render: (val, record) => VND.format(val),
       sorter: (a, b) => a.tong - b.tong,
       sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
     },
-    // {
-    //   title: "Đã lập chứng từ",
-    //   dataIndex: "dathu",
-    //   key: "dathu",
-    //   render: (val, record) => VND.format(val),
-    //   sorter: (a, b) => a.dathu - b.dathu,
-    //   sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
-    // },
     {
-      title: "Chưa lập chứng từ",
+      title: "Đã thu",
+      dataIndex: "dathu",
+      key: "dathu",
+      render: (val, record) => VND.format(val),
+      sorter: (a, b) => a.dathu - b.dathu,
+      sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
+    },
+    {
+      title: "Chưa thu",
       dataIndex: "chuathu",
       key: "chuathu",
       render: (val, record) => VND.format(val),
       sorter: (a, b) => a.chuathu - b.chuathu,
       sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
     },
-    {
-      title: "Tình trạng",
-      dataIndex: "documentStatus",
-      key: "documentStatus",
-      render: (val, record) => {
-        switch (val) {
-          case "UNDOCUMENTED":
-            return "Chưa thực hiện";
-          case "DOCUMENTING":
-            return "Đang thực hiện";
-          case "DOCUMENTED":
-            return "Hoàn thành";
-          default:
-            return "Lỗi";
-        }
-      },
-      filters: [
-        {
-          value: "UNDOCUMENTED",
-          text: "Chưa thực hiện",
-        },
-        {
-          value: "DOCUMENTING",
-          text: "Đang thực hiện",
-        },
-        {
-          value: "DOCUMENTED",
-          text: "Hoàn thành",
-        },
-      ],
-      onFilter: (value, record) => record.documentStatus.indexOf(value) === 0,
-      filteredValue: filteredInfo.documentStatus || null,
-      fixed: 'right',
-    },
+    // {
+    //   title: "Tình trạng thanh toán",
+    //   dataIndex: "paymentStatus",
+    //   key: "paymentStatus",
+    //   fixed: "right",
+    //   render: (val, record) => {
+    //     switch (val) {
+    //       case "NOT_PAID":
+    //         return "Chưa thanh toán";
+    //       case "BEING_PAID":
+    //         return "Thanh toán 1 phần";
+    //       case "PAID":
+    //         return "Đã thanh toán";
+    //       default:
+    //         return "Lỗi";
+    //     }
+    //   },
+    //   filters: [
+    //     {
+    //       value: "NOT_PAID",
+    //       text: "Chưa thanh toán",
+    //     },
+    //     {
+    //       value: "BEING_PAID",
+    //       text: "Thanh toán 1 phần",
+    //     },
+    //     {
+    //       value: "PAID",
+    //       text: "Đã thanh toán",
+    //     },
+    //   ],
+    //   onFilter: (value, record) => record.paymentStatus.indexOf(value) === 0,
+    //   filteredValue: filteredInfo.paymentStatus || null,
+    // },
     // {
     //   title: "Tình trạng giao hàng",
     //   dataIndex: "deliveryStatus",
@@ -308,41 +312,72 @@ const DonDatHang = ({ radio = false }) => {
     //   onFilter: (value, record) => record.deliveryStatus.indexOf(value) === 0,
     //   filteredValue: filteredInfo.deliveryStatus || null,
     // },
-    {
-      title: "Chức năng",
-      dataIndex: "chucnang",
-      fixed: "right",
-      width: "10%",
-      render: (_, record) => (
-        <Space size="middle">
-          <Dropdown
-            menu={{
-              onClick: (e) => handleDropdownItemClick(e, record),
-              items: items,
-            }}
-          >
-            <Link
-              to={`xem/${record.key}`}
-              state={{ id: record.key }}
-              className="!text-black"
-            >
-              Xem
-              <DownOutlined />
-            </Link>
-          </Dropdown>
-        </Space>
-      ),
-    },
+    // {
+    //   title: "Chức năng",
+    //   dataIndex: "chucnang",
+    //   fixed: "right",
+    //   width: "10%",
+    //   render: (_, record) => (
+    //     <Space size="middle">
+    //       <Dropdown
+    //         menu={{
+    //           onClick: (e) => handleDropdownItemClick(e, record),
+    //           items: items,
+    //         }}
+    //       >
+    //         <Link
+    //           to={`xem/${record.key}`}
+    //           state={{ id: record.key }}
+    //           className="!text-black"
+    //         >
+    //           Xem
+    //           <DownOutlined />
+    //         </Link>
+    //       </Dropdown>
+    //     </Space>
+    //   ),
+    // },
   ];
 
-  if (radio) {
+  if (checkbox) {
     columns = columns.filter(item => item.dataIndex !== "chucnang");
   }
+
+  // useEffect(() => {
+  //   if (isErrorHoaDonSelected) {
+  //     api.error({
+  //       message: "Chỉ thu tiền các hóa đơn của 1 khách hàng!",
+  //       placement: "bottomLeft",
+  //       duration: 2,
+  //     });
+
+  //     dispatch(clearState());
+  //   } 
+  // }, [isErrorHoaDonSelected]);
 
   const rowSelection = {
     selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
-      setSelectedRowKeys(selectedRowKeys);
+      if (selectedRows.length >= 2 && selectedRows[0].donBanHang.customer.id === selectedRows[selectedRows.length - 1].donBanHang.customer.id) {
+        setSelectedRowKeys(selectedRowKeys);
+        dispatch(hoaDonSelected(selectedRows));
+      }
+      else if (selectedRows.length === 1) {
+        setSelectedRowKeys(selectedRowKeys);
+        dispatch(hoaDonSelected(selectedRows));
+      }
+      else if (selectedRows.length === 0) {
+        setSelectedRowKeys([]);
+        dispatch(hoaDonSelected([]));
+      }
+      else {
+        api.error({
+          message: "Chỉ thu tiền các hóa đơn của 1 khách hàng!",
+          placement: "bottomLeft",
+          duration: 2,
+        });
+      }
+
       console.log(
         `selectedRowKeys: ${selectedRowKeys}`,
         "selectedRows: ",
@@ -377,7 +412,7 @@ const DonDatHang = ({ radio = false }) => {
 
   return (
     <div className="m-4">
-      <div className={`px-[20px] w-full flex justify-between pb-7 ${!radio && "bg-white py-7"}`}>
+      <div className={`px-[20px] w-full flex justify-between pb-7 ${!checkbox && "bg-white py-7"}`}>
         <div className="flex gap-[5px] items-center">
           <Form form={form} layout="inline" onFinish={onFinish}>
             <RangePicker
@@ -414,7 +449,7 @@ const DonDatHang = ({ radio = false }) => {
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {
-              dispatch(getListDonBanHang());
+              dispatch(getListChungTuBan());
               messageApi.open({
                 key: "updatable",
                 type: "loading",
@@ -425,10 +460,10 @@ const DonDatHang = ({ radio = false }) => {
               setValueRangepicker([]);
               setFilterday([]);
               setSelectedRowKeys([]);
-              radio && setFilteredInfo({
-                "documentStatus": [
-                  "UNDOCUMENTED",
-                  "DOCUMENTING"
+              checkbox && setFilteredInfo({
+                "paymentStatus": [
+                  "NOT_PAID",
+                  "BEING_PAID"
                 ]
               });
             }}
@@ -436,15 +471,20 @@ const DonDatHang = ({ radio = false }) => {
         </div>
 
         {
-          radio &&
-          <Button
-            className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
-            type="link"
-            disabled={!selectedRowKeys.length}
-            onClick={() => navigate(`/ban-hang/chung-tu-ban-hang/them/${selectedRowKeys}`, { state: { id: selectedRowKeys } })}
-          >
-            Lập chứng từ bán hàng
-          </Button>
+          checkbox ?
+            <Button
+              className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
+              type="link"
+              disabled={!selectedRowKeys.length}
+              onClick={() => {
+
+                navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
+              }}
+            >
+              Thu tiền
+            </Button>
+            :
+            <></>
         }
 
         <Modal
@@ -484,74 +524,49 @@ const DonDatHang = ({ radio = false }) => {
         </Modal>
       </div>
 
-      {
-        radio ?
-          <Table
-            rowSelection={{
-              type: "radio",
-              ...rowSelection,
-            }}
+      {chungTuBan.map((ctb, index) =>
+        <Table
+        key={index}
+          columns={columns}
+          dataSource={ctb}
+          onChange={onChange}
+          scroll={{
+            x: 1300,
+          }}
+          className="overflow-x-visible	overflow-y-visible mb-3"
 
-            columns={columns}
-            dataSource={donbanhang}
-            pagination={{
-              // total: listDonBanHangData.length,
-              defaultPageSize: 20,
-              // // pageSize: 20,
-              // defaultCurrent: 1,
-              position: ["bottomRight"],
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} of ${total} items`,
-            }}
-            onChange={onChange}
-            scroll={{
-              x: 1300,
-            }}
-            className="overflow-x-visible	overflow-y-visible"
-          /> :
-          <Table
-            columns={columns}
-            dataSource={donbanhang}
-            pagination={{
-              // total: listDonBanHangData.length,
-              defaultPageSize: 20,
-              // // pageSize: 20,
-              // defaultCurrent: 1,
-              position: ["bottomRight"],
-              showTotal: (total, range) =>
-                `${range[0]}-${range[1]} of ${total} items`,
-            }}
-            onChange={onChange}
-            scroll={{
-              x: 1300,
-            }}
-            className="overflow-x-visible	overflow-y-visible"
-          />
-      }
-
-      {/* <Table
-        rowSelection={{
-          type: "radio",
-          ...rowSelection,
-        }}
-
-        columns={columns}
-        dataSource={donbanhang}
-        pagination={{
-          // total: listDonBanHangData.length,
-          defaultPageSize: 20,
-          // // pageSize: 20,
-          // defaultCurrent: 1,
-          position: ["bottomRight"],
-          showTotal: (total, range) =>
-            `${range[0]}-${range[1]} of ${total} items`,
-        }}
-        onChange={onChange}
-       
-        className="overflow-x-visible	overflow-y-visible"
-      /> */}
+          pagination={false}
+          bordered
+          summary={(pageData) => {
+            let totalTong = 0;
+            let totalDaThu = 0;
+            let totalChuaThu = 0;
+            pageData.forEach(({ tong, dathu, chuathu }) => {
+              totalTong += tong;
+              totalDaThu += dathu;
+              totalChuaThu += chuathu;
+            });
+            return (
+              <>
+                <Table.Summary.Row>
+                  <Table.Summary.Cell index={0} colSpan={4} className="font-bold">Tên khách hàng: {pageData[0].customer} ({pageData.length})</Table.Summary.Cell>
+                  <Table.Summary.Cell index={1}>
+                    <Text className="font-bold">{VND.format(totalTong)}</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell index={2}>
+                    <Text className="font-bold">{VND.format(totalDaThu)}</Text>
+                  </Table.Summary.Cell>
+                  <Table.Summary.Cell index={3}>
+                    <Text className="font-bold">{VND.format(totalChuaThu)}</Text>
+                  </Table.Summary.Cell>
+                </Table.Summary.Row>
+              </>
+            );
+          }}
+        />
+      )}
     </div>
   );
 };
 
-export default DonDatHang;
+export default ChiTietNoPhaiThu;

@@ -48,12 +48,12 @@ const NhomSanPham = () => {
       dispatch(getListProductGroup());
     }
     else if (isSuccessGetListProductGroup) {
-      messageApi.open({
-        key: 'updatable',
-        type: 'success',
-        content: 'Tải dữ liệu thành công!',
-        duration: 2,
-      });
+      // messageApi.open({
+      //   key: 'updatable',
+      //   type: 'success',
+      //   content: 'Tải dữ liệu thành công!',
+      //   duration: 2,
+      // });
 
       dispatch(clearState());
     }

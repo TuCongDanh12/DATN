@@ -57,7 +57,6 @@ const ThuTienTheoHoaDon = () => {
 
   useEffect(() => {
     dispatch(getListChungTuBan());
-    dispatch(getListProduct());
   }, []);
 
   const [chungTuBan, setChungTuBan] = useState([]);
@@ -82,11 +81,6 @@ const ThuTienTheoHoaDon = () => {
     }
   };
 
-  const {
-    listProductData,
-    isSuccessGetListProduct,
-    isSuccessPostProduct,
-  } = useSelector(doiTuongSelector);
 
   useEffect(() => {
     if (isSuccessPostChungTuBan) {
@@ -97,21 +91,20 @@ const ThuTienTheoHoaDon = () => {
       });
 
       dispatch(clearState());
-    } else if (isSuccessGetListChungTuBan && isSuccessGetListProduct) {
-      messageApi.open({
-        key: "updatable",
-        type: "success",
-        content: "Tải dữ liệu thành công!",
-        duration: 2,
-      });
+    } else if (isSuccessGetListChungTuBan ) {
+      // messageApi.open({
+      //   key: "updatable",
+      //   type: "success",
+      //   content: "Tải dữ liệu thành công!",
+      //   duration: 2,
+      // });
       const dataConvertCurrent = listChungTuBanData.map(chungTuBanData => {
         console.log("chungTuBanData", chungTuBanData)
 
         let tong = 0;
         chungTuBanData.productOfCtban.forEach(productOfCt => {
-          const data = listProductData.filter(item => item.id === productOfCt.product.id);
           tong += productOfCt.count * productOfCt.price;
-          tong += productOfCt.count * productOfCt.price * (data[0].productGroupInfo.tax / 100);
+          tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
         })
         //continue ...
         let dathu = 0;
@@ -140,7 +133,7 @@ const ThuTienTheoHoaDon = () => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostChungTuBan, isSuccessGetListChungTuBan, isError, isSuccessGetListProduct]);
+  }, [isSuccessPostChungTuBan, isSuccessGetListChungTuBan, isError]);
 
   useEffect(() => {
     if (searchText.trim() === "" && filterday.length === 0) {

@@ -56,6 +56,8 @@ import ThemChungTuBanHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/Them
 import TimKiemDonDatHang from "./page/BanHang/scenes/ChungTuBanHang/scenes/TimKiemDonDatHang/TimKiemDonDatHang";
 import TimKiemHoaDonBanHang from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/TimKiemHoaDonBanHang/TimKiemHoaDonBanHang";
 import ThemThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/ThemThuTien/ThemThuTien";
+import TongHopNoPhaiThu from "./page/CongNo/scenes/TongHopNoPhaiThu/TongHopNoPhaiThu";
+import ChiTietNoPhaiThu from "./page/CongNo/scenes/ChiTietNoPhaiThu/ChiTietNoPhaiThu";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -152,14 +154,14 @@ function App() {
                 </Route>
 
                 <Route path="ban-hang/don-dat-hang/xem/:id" element={<EditDonDatHang disabled={true} />} />
-               
+
                 <Route path="ban-hang/chung-tu-ban-hang/xem/:id" element={<XemChungTuBanHang disabled={true} />} />
-                <Route path="ban-hang/chung-tu-ban-hang/chinh-sua/:id" element={<XemChungTuBanHang  />} />
+                <Route path="ban-hang/chung-tu-ban-hang/chinh-sua/:id" element={<XemChungTuBanHang />} />
                 <Route path="ban-hang/chung-tu-ban-hang/tim-kiem" element={<TimKiemDonDatHang />} />
                 <Route path="ban-hang/chung-tu-ban-hang/them/:id" element={<ThemChungTuBanHang />} />
-               
+
                 <Route path="ban-hang/hoa-don-ban-hang/xem/:id" element={<XemHoaDonBanHang disabled={true} />} />
-                
+
                 <Route path="ban-hang/thu-tien-theo-hoa-don/tim-kiem" element={<TimKiemHoaDonBanHang />} />
 
 
@@ -167,7 +169,15 @@ function App() {
                 <Route path="ban-hang/thu-tien-theo-hoa-don/xem" element={<ThuTien />} />
                 <Route path="/tien-mat" element={<TienMat />} />
                 <Route path="/tien-gui" element={<TienGui />} />
-                <Route path="/cong-no" element={<CongNo />} />
+
+
+                <Route path="/cong-no" element={<CongNo />}>
+                  <Route path="tong-hop-no-phai-thu" element={<TongHopNoPhaiThu />} />
+                  <Route path="chi-tiet-no-phai-thu" element={<ChiTietNoPhaiThu />} />
+                  <Route path="bao-cao" element={<HoaDonBanHang />} />
+                </Route>
+
+
                 <Route path="/bao-cao" element={<BaoCao />} />
                 <Route path="/thong-bao" element={<ThongBao />} />
                 <Route path="/ho-tro" element={<HoTro />} />
