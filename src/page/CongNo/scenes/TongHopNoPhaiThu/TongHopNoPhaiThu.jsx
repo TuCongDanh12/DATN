@@ -188,7 +188,6 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
             sorter: (a, b) => a.makhachhang - b.makhachhang,
             sortOrder: sortedInfo.columnKey === "makhachhang" ? sortedInfo.order : null,
             ellipsis: true,
-            width: "7%",
         },
         {
             title: "Khách hàng",
@@ -196,27 +195,27 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
             key: "customer",
             ellipsis: true,
         },
-        {
-            title: "Ngày hóa đơn",
-            dataIndex: "createdAt",
-            key: "createdAt",
-            render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
-            sorter: (a, b) =>
-                moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
-            sortOrder: sortedInfo.columnKey === "createdAt" ? sortedInfo.order : null,
-            // fixed: 'left',
-        },
+        // {
+        //     title: "Ngày hóa đơn",
+        //     dataIndex: "createdAt",
+        //     key: "createdAt",
+        //     render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+        //     sorter: (a, b) =>
+        //         moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
+        //     sortOrder: sortedInfo.columnKey === "createdAt" ? sortedInfo.order : null,
+        //     // fixed: 'left',
+        // },
 
-        {
-            title: "Hạn thanh toán",
-            dataIndex: "paymentTerm",
-            key: "paymentTerm",
-            render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
-            sorter: (a, b) =>
-                moment(a.paymentTerm, "DD-MM-YYYY") - moment(b.paymentTerm, "DD-MM-YYYY"),
-            sortOrder: sortedInfo.columnKey === "paymentTerm" ? sortedInfo.order : null,
-            // fixed: 'left',
-        },
+        // {
+        //     title: "Hạn thanh toán",
+        //     dataIndex: "paymentTerm",
+        //     key: "paymentTerm",
+        //     render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+        //     sorter: (a, b) =>
+        //         moment(a.paymentTerm, "DD-MM-YYYY") - moment(b.paymentTerm, "DD-MM-YYYY"),
+        //     sortOrder: sortedInfo.columnKey === "paymentTerm" ? sortedInfo.order : null,
+        //     // fixed: 'left',
+        // },
         // {
         //   title: "Nội dung",
         //   dataIndex: "content",
@@ -224,7 +223,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         //   ellipsis: true,
         // },
         {
-            title: "Giá trị hóa đơn",
+            title: "Tổng",
             dataIndex: "tong",
             key: "tong",
             render: (val, record) => VND.format(val),
