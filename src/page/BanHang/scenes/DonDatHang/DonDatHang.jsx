@@ -105,15 +105,15 @@ const DonDatHang = ({ radio = false }) => {
       const dataConvertCurrent = listDonBanHangData.map(donBanHangData => {
         let tong = 0;
         donBanHangData.productOfDonBanHangs.forEach(productOfDon => {
-          tong += productOfDon.count * productOfDon.price* (1 + productOfDon.product.productGroup.tax/100);
+          tong += productOfDon.count * productOfDon.price * (1 + productOfDon.product.productGroup.tax / 100);
         })
 
         let dathu = 0;
         donBanHangData.ctban.forEach(chungTuBan => {
           chungTuBan.productOfCtban.forEach(productOfCt => {
-            dathu += productOfCt.count * productOfCt.price;
             const data = donBanHangData.productOfDonBanHangs.filter(item => item.product.id === productOfCt.product.id);
-            dathu += productOfCt.count * productOfCt.price * (data[0].product.productGroup.tax / 100);
+            dathu += productOfCt.count * data[0].price;
+            dathu += productOfCt.count * data[0].price * (data[0].product.productGroup.tax / 100);
           })
         })
 
@@ -182,7 +182,7 @@ const DonDatHang = ({ radio = false }) => {
       setDataSelected(record);
       setOpen(true);
     }
-    else if(e.key === "lap-chung-tu-ban-hang"){
+    else if (e.key === "lap-chung-tu-ban-hang") {
       navigate(`/ban-hang/chung-tu-ban-hang/them/${record.key}`, { state: { id: record.key } });
     }
     else {
@@ -195,6 +195,14 @@ const DonDatHang = ({ radio = false }) => {
   };
 
   let columns = [
+    {
+      title: "ID đơn hàng",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a, b) => a.id - b.id,
+      sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
+      ellipsis: true,
+    },
     {
       title: "Ngày đặt hàng",
       dataIndex: "saleDate",

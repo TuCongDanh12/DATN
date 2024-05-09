@@ -297,6 +297,98 @@ export const postProduct = createAsyncThunk(
 
 
 
+
+
+
+
+
+export const getListBankAccount = createAsyncThunk(
+    "doiTuong/getListBankAccount",
+    async (thunkAPI) => {
+        try {
+            const response = await doiTuongService.getListBankAccount();
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const getBankAccount = createAsyncThunk(
+    "doiTuong/getBankAccount",
+    async ({ id }, thunkAPI) => {
+        try {
+            const response = await doiTuongService.getBankAccount({ id });
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const postBankAccount = createAsyncThunk(
+    "doiTuong/postBankAccount",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await doiTuongService.postBankAccount({values});
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+
+
+
+
+
+
+
+
+
+export const getListAccountant = createAsyncThunk(
+    "doiTuong/getListAccountant",
+    async (thunkAPI) => {
+        try {
+            const response = await doiTuongService.getListAccountant();
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+
+
+
+
+
+
+export const getListSalesperson = createAsyncThunk(
+    "doiTuong/getListSalesperson",
+    async (thunkAPI) => {
+        try {
+            const response = await doiTuongService.getListSalesperson();
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+
 const initialState = {
     isFetching: false,
     isSuccess: false,
@@ -316,6 +408,13 @@ const initialState = {
     isSuccessGetListProductGroup: false,
     isSuccessPostProductGroup: false,
 
+    isSuccessGetListBankAccount: false,
+    isSuccessPostBankAccount: false,
+
+    isSuccessGetListAccountant: false,
+
+    isSuccessGetListSalesperson: false,
+    
     isError: false,
     message: "",
     listSupplierData: [],
@@ -332,6 +431,13 @@ const initialState = {
     productData: {},
     listProductGroupData: [],
     productGroupData: {},
+
+    listBankAccountData: [],
+    bankAccountData: {},
+
+    listAccountantData: [],
+
+    listSalespersonData: [],
 };
 
 export const doiTuongSlice = createSlice({
@@ -355,6 +461,9 @@ export const doiTuongSlice = createSlice({
             state.isSuccessPostProduct = false;
             state.isSuccessGetListProductGroup = false;
             state.isSuccessPostProductGroup = false;
+
+            state.isSuccessGetListBankAccount = false;
+            state.isSuccessPostBankAccount = false;
 
             state.isFetching = false;
             state.message = "";
@@ -801,6 +910,136 @@ export const doiTuongSlice = createSlice({
             state.message = action.error.message;
         })
 
+
+
+
+
+
+
+
+
+
+
+
+
+        builder.addCase(getListBankAccount.pending, (state) => {
+            console.log("getListBankAccount.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getListBankAccount.fulfilled, (state, action) => {
+            console.log("getListBankAccount.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessGetListBankAccount = true;
+            state.listBankAccountData = action.payload.result.data.map(item=>{return {...item, key: item.id}});
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getListBankAccount.rejected, (state, action) => {
+            console.log("getListBankAccount.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            // state.message = action.error.message;
+        })
+
+        builder.addCase(getBankAccount.pending, (state) => {
+            console.log("getBankAccount.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getBankAccount.fulfilled, (state, action) => {
+            console.log("getBankAccount.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccess = true;
+            state.bankAccountData = {...action.payload.result.data, key: action.payload.result.data.id};
+
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getBankAccount.rejected, (state, action) => {
+            console.log("getBankAccount.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
+
+        builder.addCase(postBankAccount.pending, (state) => {
+            console.log("postBankAccount.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(postBankAccount.fulfilled, (state, action) => {
+            console.log("postBankAccount.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessPostBankAccount = true;
+            state.ankAccountData = action.payload;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(postBankAccount.rejected, (state, action) => {
+            console.log("postBankAccount.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
+
+
+
+
+
+
+
+
+
+
+        builder.addCase(getListAccountant.pending, (state) => {
+            console.log("getListAccountant.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getListAccountant.fulfilled, (state, action) => {
+            console.log("getListAccountant.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessGetListAccountant = true;
+            state.listAccountantData = action.payload.result.data.map(item=>{return {...item, key: item.id}});
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getListAccountant.rejected, (state, action) => {
+            console.log("getListAccountant.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            // state.message = action.error.message;
+        })
+
+
+
+
+
+
+
+
+
+
+        builder.addCase(getListSalesperson.pending, (state) => {
+            console.log("getListSalesperson.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getListSalesperson.fulfilled, (state, action) => {
+            console.log("getListSalesperson.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessGetListSalesperson = true;
+            state.listSalespersonData = action.payload.result.data.map(item=>{return {...item, key: item.id}});
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getListSalesperson.rejected, (state, action) => {
+            console.log("getListBankAccount.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            // state.message = action.error.message;
+        })
 
     },
 });
