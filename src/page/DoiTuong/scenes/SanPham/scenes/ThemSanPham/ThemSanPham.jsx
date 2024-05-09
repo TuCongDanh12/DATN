@@ -280,6 +280,41 @@ const ThemSanPham = ({ disabled = true }) => {
                         </Form.Item>
 
                         <Form.Item
+                            label="Đơn vị tính"
+                            name='unit'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Select
+                                disabled={disabled}
+                            >
+                                <Select.Option value={"CAI"}>Cái</Select.Option>
+                                <Select.Option value={"CAY"}>Cây</Select.Option>
+                                <Select.Option value={"CHAI"}>Chai</Select.Option>
+                                <Select.Option value={"CHUC"}>Chục</Select.Option>
+                                <Select.Option value={"CUON"}>Cuộn</Select.Option>
+                                <Select.Option value={"GOI"}>Gói</Select.Option>
+                                <Select.Option value={"HOP"}>Hộp</Select.Option>
+                                <Select.Option value={"HU"}>Hủ</Select.Option>
+                                <Select.Option value={"KG"}>Kg</Select.Option>
+                                <Select.Option value={"LOC"}>Lốc</Select.Option>
+                                <Select.Option value={"LON"}>Lon</Select.Option>
+                                <Select.Option value={"THUNG"}>Thùng</Select.Option>
+                                {/* <Select.Option value={"TON"}>Ton</Select.Option> */}
+                                <Select.Option value={"VIEN"}>Viên</Select.Option>
+                            </Select>
+                        </Form.Item>
+
+
+                    </Flex>
+                    
+
+                    <Flex vertical gap={5} className='w-[50%]'>
+                    <Form.Item
                             label="Giá mua"
                             name='priceReceived'
                             rules={[
@@ -314,40 +349,7 @@ const ThemSanPham = ({ disabled = true }) => {
                                 disabled={disabled}
                             />
                         </Form.Item>
-
-
-                    </Flex>
-
-                    <Flex vertical gap={5} className='w-[50%]'>
-                        <Form.Item
-                            label="Đơn vị tính"
-                            name='unit'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Select
-                                disabled={disabled}
-                            >
-                                <Select.Option value={"CAI"}>Cái</Select.Option>
-                                <Select.Option value={"CAY"}>Cây</Select.Option>
-                                <Select.Option value={"CHAI"}>Chai</Select.Option>
-                                <Select.Option value={"CHUC"}>Chục</Select.Option>
-                                <Select.Option value={"CUON"}>Cuộn</Select.Option>
-                                <Select.Option value={"GOI"}>Gói</Select.Option>
-                                <Select.Option value={"HOP"}>Hộp</Select.Option>
-                                <Select.Option value={"HU"}>Hủ</Select.Option>
-                                <Select.Option value={"KG"}>Kg</Select.Option>
-                                <Select.Option value={"LOC"}>Lốc</Select.Option>
-                                <Select.Option value={"LON"}>Lon</Select.Option>
-                                <Select.Option value={"THUNG"}>Thùng</Select.Option>
-                                {/* <Select.Option value={"TON"}>Ton</Select.Option> */}
-                                <Select.Option value={"VIEN"}>Viên</Select.Option>
-                            </Select>
-                        </Form.Item>
+                        
 
                         {/* <Form.Item
                             label="Số dư"

@@ -58,6 +58,7 @@ import TimKiemHoaDonBanHang from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes
 import ThemThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/ThemThuTien/ThemThuTien";
 import TongHopNoPhaiThu from "./page/CongNo/scenes/TongHopNoPhaiThu/TongHopNoPhaiThu";
 import ChiTietNoPhaiThu from "./page/CongNo/scenes/ChiTietNoPhaiThu/ChiTietNoPhaiThu";
+import TaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/TaiKhoanNganHang";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -104,7 +105,7 @@ function App() {
                   <Route path="san-pham" element={<SanPham />} />
                   <Route path="nhom-san-pham" element={<NhomSanPham />} />
                   <Route path="tai-chinh" element={<TaiChinh />} />
-
+                  <Route path="tai-khoan-ngan-hang" element={<TaiKhoanNganHang />} />
                 </Route>
                 <Route path="doi-tuong/nha-cung-cap/them" element={<ThemNhaCungCap disabled={false} />} />
                 <Route path="doi-tuong/nha-cung-cap/xem/:id" element={<EditNhaCungCap disabled={true} />} />

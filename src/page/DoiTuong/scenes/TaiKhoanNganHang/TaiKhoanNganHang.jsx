@@ -1,60 +1,50 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import { Table, Dropdown, Space, Select, Button, Modal, Form, Input, message as msg, notification } from "antd";
+import { Table, Dropdown, Space, Select, Button, Modal, Form, Input, message as msg, notification, InputNumber } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { TfiReload } from 'react-icons/tfi';
 import { Add } from '@mui/icons-material';
 import { MdOutlineSearch } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-import { clearState, doiTuongSelector, getListProduct } from '../../../../store/features/doiTuongSilce';
+import { clearState, doiTuongSelector, getListBankAccount, getListSupplier, getListSupplierGroup, postBankAccount, postSupplierGroup } from '../../../../store/features/doiTuongSilce';
 
-const SanPham = () => {
+const TaiKhoanNganHang = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [form] = Form.useForm();
+    const [formAddNhomSanPham] = Form.useForm();
     const [open, setOpen] = useState(false);
+    const [openAddNhomSanPham, setOpenAddNhomSanPham] = useState(false);
     const [dataSelected, setDataSelected] = useState({});
 
     const [messageApi, contextHolderMes] = msg.useMessage();
 
     const [api, contextHolder] = notification.useNotification();
-
     const [filteredInfo, setFilteredInfo] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
 
     const {
-        listProductData,
-        isSuccessGetListProduct,
-        isSuccessPostProduct,
+        listBankAccountData,
+        isSuccessPostBankAccount,
         isError,
         message
     } = useSelector(doiTuongSelector);
 
     useEffect(() => {
-        dispatch(getListProduct());
+        dispatch(getListBankAccount());
     }, []);
 
     useEffect(() => {
-        if (isSuccessPostProduct) {
+        if (isSuccessPostBankAccount) {
             api.success({
                 message: 'Thêm dữ liệu thành công!',
                 placement: 'bottomLeft',
                 duration: 2
             });
-            dispatch(getListProduct());
-            dispatch(clearState());
-
-        }
-        else if (isSuccessGetListProduct) {
-            // messageApi.open({
-            //     key: 'updatable',
-            //     type: 'success',
-            //     content: 'Tải dữ liệu thành công!',
-            //     duration: 2,
-            // });
 
             dispatch(clearState());
+            dispatch(getListBankAccount());
         }
         if (isError) {
             api.error({
@@ -66,16 +56,21 @@ const SanPham = () => {
             dispatch(clearState());
         }
 
-    }, [isSuccessGetListProduct, isSuccessPostProduct, isError]);
+    }, [
+        isSuccessPostBankAccount,
+        isError,
+        message
+    ]);
+
 
 
     const items = [
-        {
-            key: "xem",
-            label: (<Link className="!text-black">
-                Xem
-            </Link>),
-        },
+        // {
+        //     key: "xem",
+        //     label: (<Link className="!text-black">
+        //         Xem
+        //     </Link>),
+        // },
         {
             key: "chinh-sua",
             label: (<Link className="!text-black">
@@ -98,161 +93,65 @@ const SanPham = () => {
             setOpen(true);
         }
         else {
-            navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+            // navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+            setDataSelected(record);
+            setOpenAddNhomSanPham(true);
         }
     };
+
+    console.log("dataSelected", dataSelected)
+
+    useEffect(() => {
+        formAddNhomSanPham.setFieldsValue({
+            ...dataSelected
+        });
+    }, [dataSelected]);
 
     const handleCancel = () => {
         setOpen(false);
     };
 
+    const handleCancelAddNhomSanPham = () => {
+        setOpenAddNhomSanPham(false);
+    }
+
     const columns = [
         {
-            title: "ID sản phẩm",
-            dataIndex: "id",
-            key: "id",
-            sorter: (a, b) => a.id - b.id,
-            sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
-            ellipsis: true,
-          },
-        {
-            title: "Sản phẩm",
-            dataIndex: "name",
-            key: "name",
-            sorter: (a, b) => a.name.localeCompare(b.name),
-            sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
+            title: "Số tài khoản",
+            dataIndex: "accountNumber",
+            key: "accountNumber",
+            sorter: (a, b) => a.accountNumber - b.accountNumber,
+            sortOrder: sortedInfo.columnKey === "accountNumber" ? sortedInfo.order : null,
             ellipsis: true,
         },
         {
-            title: "Giá mua",
-            dataIndex: "priceReceived",
-            key: "priceReceived",
-            sorter: (a, b) => a.priceReceived - b.priceReceived,
-            sortOrder: sortedInfo.columnKey === "priceReceived" ? sortedInfo.order : null,
-        },
-        {
-            title: "Giá bán",
-            dataIndex: "priceDelivery",
-            key: "priceDelivery",
-            sorter: (a, b) => a.priceDelivery - b.priceDelivery,
-            sortOrder: sortedInfo.columnKey === "priceDelivery" ? sortedInfo.order : null,
-        },
-        {
-            title: "Đơn vị tính",
-            dataIndex: "unit",
-            key: "unit",
-            render: (val, record) => {
-                switch (val) {
-                    case "CAI":
-                        return "Cái";
-                    case "CAY":
-                        return "Cây";
-                    case "CHAI":
-                        return "Chai";
-                    case "CHUC":
-                        return "Chục";
-                    case "CUON":
-                        return "Cuộn";
-                    case "GOI":
-                        return "Gói";
-                    case "HOP":
-                        return "Hộp";
-                    case "HU":
-                        return "Hủ";
-                    case "KG":
-                        return "Kg";
-                    case "LOC":
-                        return "Lốc";
-                    case "LON":
-                        return "Lon";
-                    case "THUNG":
-                        return "Thùng";
-                    case "VIEN":
-                        return "Viên";
-                    default:
-                        return "Lỗi";
-                }
-            },
-            filters: [
-                {
-                    value: "CAI",
-                    text: "Cái",
-                },
-                {
-                    value: "CAY",
-                    text: "Cây",
-                },
-                {
-                    value: "CHAI",
-                    text: "Chai",
-                },
-                {
-                    value: "CHUC",
-                    text: "Chục",
-                },
-                {
-                    value: "CUON",
-                    text: "Cuộn",
-                },
-                {
-                    value: "GOI",
-                    text: "Gói",
-                },
-                {
-                    value: "HOP",
-                    text: "Hộp",
-                },
-                {
-                    value: "HU",
-                    text: "Hủ",
-                },
-                {
-                    value: "KG",
-                    text: "Kg",
-                },
-                {
-                    value: "LOC",
-                    text: "Lốc",
-                },
-                {
-                    value: "LON",
-                    text: "Lon",
-                },
-                {
-                    value: "THUNG",
-                    text: "Thùng",
-                },
-                {
-                    value: "VIEN",
-                    text: "Viên",
-                },
-                {
-                    value: "LON",
-                    text: "Lon",
-                },
-            ],
-            onFilter: (value, record) => record.unit.indexOf(value) === 0,
-            filteredValue: filteredInfo.unit || null,
-
-        },
-        // {
-        //     title: "% thuế GTGT",
-        //     dataIndex: "tax",
-        //     // sorter: (a, b) => a.name.localeCompare(b.name),
-        // },
-        {
-            title: "Số dư",
-            dataIndex: "xxx",
-            key: "xxx",
-            sorter: (a, b) => a.xxx - b.xxx,
-            sortOrder: sortedInfo.columnKey === "xxx" ? sortedInfo.order : null,
-            // sorter: (a, b) => a.name.localeCompare(b.name),
-        },
-        {
-            title: "Mô tả",
-            dataIndex: "description",
-            key: "description",
+            title: "Tên ngân hàng",
+            dataIndex: "bankName",
+            key: "bankName",
+            sorter: (a, b) => a.bankName.localeCompare(b.bankName),
+            sortOrder: sortedInfo.columnKey === "bankName" ? sortedInfo.order : null,
             ellipsis: true,
+        },
+        {
+            title: "Chi nhánh",
+            dataIndex: "branch",
+            key: "branch",
+            sorter: (a, b) => a.branch.localeCompare(b.branch),
+            sortOrder: sortedInfo.columnKey === "branch" ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
+            title: "Chủ tài khoản",
+            dataIndex: "accountName",
+            key: "accountName",
+            sorter: (a, b) => a.accountName.localeCompare(b.accountName),
+            sortOrder: sortedInfo.columnKey === "accountName" ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
+            title: "Ghi chú",
+            dataIndex: "note",
+            key: "note",
         },
         {
             title: "Chức năng",
@@ -265,8 +164,8 @@ const SanPham = () => {
                             onClick: (e) => handleDropdownItemClick(e, record),
                             items: items,
                         }}>
-                        <Link to={`xem/${record.key}`} state={{ id: record.key }} className="!text-black">
-                            Xem
+                        <Link className="!text-black">
+                            Chỉnh sửa
                             <DownOutlined />
                         </Link>
                     </Dropdown>
@@ -289,6 +188,13 @@ const SanPham = () => {
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
     };
+
+    const onFinishAddNhomSanPham = (values) => {
+        console.log('Received values of form: ', values);
+        dispatch(postBankAccount({ values }));
+        formAddNhomSanPham.resetFields();
+    };
+
 
     const onChange = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);
@@ -342,7 +248,7 @@ const SanPham = () => {
                     <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' />
                     <TfiReload size={30} className='p-2 bg-white border border-black cursor-pointer'
                         onClick={() => {
-                            dispatch(getListProduct());
+                            dispatch(getListBankAccount());
                             messageApi.open({
                                 key: 'updatable',
                                 type: 'loading',
@@ -350,7 +256,6 @@ const SanPham = () => {
                             });
                             form.resetFields();
                             clearAll();
-
                         }}
                     />
                 </div>
@@ -358,7 +263,7 @@ const SanPham = () => {
                 <Button
                     className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1'
                     type='link'
-                    onClick={() => navigate("them")}
+                    onClick={() => setOpenAddNhomSanPham(true)}
                 >
                     <Add />Thêm
                 </Button>
@@ -371,7 +276,7 @@ const SanPham = () => {
                     footer=''
                     onCancel={handleCancel}
                 >
-                    <div className='m-8 mt-10 text-center'>Bạn muốn xóa khách hàng<br /> <strong>"{dataSelected.name}"</strong>?</div>
+                    <div className='m-8 mt-10 text-center'>Bạn muốn xóa số tài khoản<br /> <strong>"{dataSelected.accountNumber}"</strong>?</div>
 
                     <div className='flex justify-end gap-2 mb-0'>
                         <Button
@@ -395,6 +300,108 @@ const SanPham = () => {
                         </Button>
                     </div>
                 </Modal>
+
+                <Modal
+                    title="TẠO MỚI TÀI KHOẢN NGÂN HÀNG"
+                    centered
+                    open={openAddNhomSanPham}
+                    width={700}
+                    footer=''
+                    onCancel={handleCancelAddNhomSanPham}
+                >
+                    <Form
+                        form={formAddNhomSanPham}
+                        layout='horizontal'
+                        onFinish={onFinishAddNhomSanPham}
+                        labelCol={{
+                            flex: '200px',
+                        }}
+                        labelAlign="left"
+                        className='mt-4'
+                    >
+                        <Form.Item
+                            label="Số tài khoản"
+                            name='accountNumber'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Tên ngân hàng"
+                            name='bankName'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Chi nhánh"
+                            name='branch'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Chủ tài khoản"
+                            name='accountName'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                            />
+                        </Form.Item>
+                        
+                        <Form.Item
+                            label="Ghi chú"
+                            name='note'
+                        >
+                            <Input
+                            />
+                        </Form.Item>
+
+                        <Form.Item className='flex justify-end gap-2 mt-6 mb-0'>
+
+                            <Button
+                                className='bg-[#FF7742] font-bold text-white mr-2'
+                                htmlType="reset"
+                                onClick={() => setOpenAddNhomSanPham(false)}
+                            >
+                                Hủy
+                            </Button>
+                            <Button
+                                className='!bg-[#67CDBB] font-bold text-white'
+                                htmlType="submit"
+                                onClick={() => setOpenAddNhomSanPham(false)}
+                            >
+                                Xác nhận
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </Modal>
             </div>
 
             <Table
@@ -403,20 +410,18 @@ const SanPham = () => {
                 //     ...rowSelection,
                 // }}
                 columns={columns}
-                dataSource={listProductData}
+                dataSource={listBankAccountData}
                 pagination={{
-                    total: listProductData.length,
+                    total: listBankAccountData.length,
                     defaultPageSize: 20,
                     // pageSize: 20,
-                    defaultCurrent: 1,
                     position: ['bottomRight'],
-                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                    showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
                 }}
                 onChange={onChange}
-
             />
         </div>
     )
 }
 
-export default SanPham
+export default TaiKhoanNganHang

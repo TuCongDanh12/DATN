@@ -53,9 +53,13 @@ const DoiTuong = () => {
       content: "Sản phẩm"
     },
     {
-      url: 'tai-chinh',
-      content: "Tài chính"
+      url: 'tai-khoan-ngan-hang',
+      content: "Tài khoản ngân hàng"
     },
+    // {
+    //   url: 'tai-chinh',
+    //   content: "Tài chính"
+    // },
   ]
   return (
     <div>

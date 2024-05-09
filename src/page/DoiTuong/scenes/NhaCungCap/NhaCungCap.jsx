@@ -131,6 +131,14 @@ const NhaCungCap = () => {
 
   const columns = [
     {
+      title: "ID nhà cung cấp",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a, b) => a.id - b.id,
+      // sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
       title: "Nhà cung cấp",
       dataIndex: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),

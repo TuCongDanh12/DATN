@@ -119,6 +119,14 @@ const NhomSanPham = () => {
 
   const columns = [
     {
+      title: "ID nhóm sản phẩm",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a, b) => a.id - b.id,
+      sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
       title: "Nhóm sản phẩm",
       dataIndex: "name",
       key: "name",
