@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Tabs, Form, Input, Flex, Table, Button, InputNumber, Select, Checkbox, DatePicker } from "antd";
+import { Tabs, Form, Input, Flex, Table, Button, InputNumber, Select, Checkbox, DatePicker, Typography } from "antd";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { banHangSelector, getDonBanHang, postChungTuBan } from '../../../../../../store/features/banHangSlice';
-import { clearState, doiTuongSelector, getListProduct } from './../../../../../../store/features/doiTuongSilce';
+import { banHangSelector, getDonBanHang, postChungTuBan, postPhieuThuTienGui, postPhieuThuTienMat } from '../../../../../../store/features/banHangSlice';
+import { clearState, doiTuongSelector, getListAccountant, getListBankAccount, getListProduct, getListSalesperson } from './../../../../../../store/features/doiTuongSilce';
 import { VND } from '../../../../../../utils/func';
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import moment from 'moment';
+const { Text } = Typography;
 
 const dateFormat = "YYYY-MM-DD";
 dayjs.extend(customParseFormat);
@@ -114,8 +115,19 @@ const ThemThuTien = ({ disabled = false }) => {
 
     console.log("listHoaDonSelected", listHoaDonSelected);
 
-
     const [dataHoaDonSelected, setDataHoaDonSelected] = useState([]);
+
+    const {
+        listBankAccountData,
+        listAccountantData,
+        listSalespersonData,
+    } = useSelector(doiTuongSelector);
+
+    useEffect(() => {
+        dispatch(getListBankAccount());
+        // dispatch(getListAccountant());
+        dispatch(getListSalesperson());
+    }, []);
 
     const [filteredInfo, setFilteredInfo] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
@@ -158,7 +170,7 @@ const ThemThuTien = ({ disabled = false }) => {
             const convertData = listHoaDonSelected.map(hoaDon => {
                 return {
                     ...hoaDon,
-                    xxx: hoaDon.chuathu
+                    sothanhtoan: hoaDon.chuathu
                 }
             })
 
@@ -172,9 +184,9 @@ const ThemThuTien = ({ disabled = false }) => {
                 // receiver: donBanHangData.namecCustomer,
                 paymentMethod: "CASH",
                 address: listHoaDonSelected[0].donBanHang.customer.address,
-                salespersonID: "sss",
-                submitter: "",
-                bankAccountId: "sss",
+                salespersonID: listHoaDonSelected[0].donBanHang.salesperson.id,
+                submitter: listHoaDonSelected[0].donBanHang.customer.name,
+                bankAccountId: "",
                 createdAt: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 receiveDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 taxCode: listHoaDonSelected[0].donBanHang.customer.taxCode,
@@ -249,8 +261,8 @@ const ThemThuTien = ({ disabled = false }) => {
         // },
         {
             title: "Số thanh toán",
-            dataIndex: "xxx",
-            key: "xxx",
+            dataIndex: "sothanhtoan",
+            key: "sothanhtoan",
             render: (val, record) => VND.format(val),
             editable: true,
         },
@@ -300,7 +312,7 @@ const ThemThuTien = ({ disabled = false }) => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: ['xxx'].includes(col.dataIndex) ? 'number' : 'text',
+                inputType: ['sothanhtoan'].includes(col.dataIndex) ? 'number' : 'text',
                 editable: col.editable,
                 dataIndex: col.dataIndex,
                 title: col.title,
@@ -330,24 +342,51 @@ const ThemThuTien = ({ disabled = false }) => {
             return [year, month, day].join('-');
         }
 
-        let dataConvert = {
-            // "deliveryDate": formatDate(values.deliveryDate.$d),
-            "warehouseKeeperId": values.warehouseKeeperId,
-            "content": values.content,
-            "receiver": values.receiver,
-            // "paymentTerm": formatDate(values.paymentTerm.$d),
-            // "donBanHangId": donBanHangData.id,
-            "products": dataHoaDonSelected.map(product => {
-                return {
-                    productId: product.id,
-                    count: product.count
-                }
-            })
+        if (values.paymentMethod === "CASH") {
+            let dataConvert = {
+                "receiveDate": formatDate(values.receiveDate.$d),
+                "content": "Nội dung",
+                "submitter": values.submitter,
+                "customerId": dataHoaDonSelected[0].donBanHang.customer.id,
+                "salespersonID": values.salespersonID,
+                "chungTuDto": dataHoaDonSelected.map(hoaDon => {
+                    return {
+                        "money": hoaDon.sothanhtoan,
+                        "content": hoaDon.content,
+                        "ctbanId": hoaDon.id
+                    }
+                })
+            }
 
-        };
+            console.log("dataConvert", dataConvert)
 
-        dispatch(postChungTuBan({ values: dataConvert }));
-        navigate(-2);
+            dispatch(postPhieuThuTienMat({ values: dataConvert }));
+            navigate(-2);
+
+        }
+        else {
+            let dataConvert = {
+                "receiveDate": formatDate(values.receiveDate.$d),
+                "content": "Nội dung",
+                "submitter": values.submitter,
+                "customerId": dataHoaDonSelected[0].donBanHang.customer.id,
+                "salespersonID": values.salespersonID,
+                "chungTuDto": dataHoaDonSelected.map(hoaDon => {
+                    return {
+                        "money": hoaDon.sothanhtoan,
+                        "content": hoaDon.content,
+                        "ctbanId": hoaDon.id
+                    }
+                }),
+                "bankAccountId": values.bankAccountId
+            }
+
+            console.log("dataConvert", dataConvert)
+
+            dispatch(postPhieuThuTienGui({ values: dataConvert }));
+            navigate(-2);
+        }
+
     };
 
 
@@ -364,7 +403,7 @@ const ThemThuTien = ({ disabled = false }) => {
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-4">
-                Phiếu thu tiền
+            Phiếu thu tiền {Form.useWatch('paymentMethod', form) === "CASH"?"mặt":"gửi"}
                 {/* {nameValue || donBanHangData.id} */}
             </h1>
 
@@ -451,7 +490,7 @@ const ThemThuTien = ({ disabled = false }) => {
                         </Form.Item>
 
 
-                        <Form.Item
+                        {/* <Form.Item
                             label="Nhân viên bán hàng"
                             name='salespersonID'
                             rules={[
@@ -465,10 +504,149 @@ const ThemThuTien = ({ disabled = false }) => {
                                 disabled={true}
 
                             />
-                        </Form.Item>
+                        </Form.Item> */}
+
+                        {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
+                            <Form.Item
+                                label="Số tài khoản"
+                                name='bankAccountId'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Trường này là bắt buộc!',
+                                    },
+                                ]}
+                            >
+                                <Select
+                                    disabled={disabled}
+                                    onChange={(value) => {
+                                        const dataFilter = listBankAccountData.filter(item => item.accountNumber === value);
+                                        console.log("dataFilter", dataFilter)
+
+                                        const data = {
+                                            accountName: dataFilter[0]?.accountName,
+                                            bankName: dataFilter[0]?.bankName,
+                                            branch: dataFilter[0]?.branch
+                                        };
+
+                                        console.log("dataa", data)
+
+                                        form.setFieldsValue({
+                                            ...data
+                                        });
+                                    }}
+                                >
+                                    {
+                                        listBankAccountData.map(item => <Select.Option value={item.accountNumber} key={item.id}>{item.accountNumber}</Select.Option>)
+                                    }
+                                </Select>
+                            </Form.Item>}
                     </Flex>
 
                     <Flex vertical gap={5} className='w-[50%]'>
+                        {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
+                            <Form.Item
+                                label="Tên ngân hàng"
+                                name='bankName'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Trường này là bắt buộc!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    disabled={disabled}
+                                />
+                            </Form.Item>
+                        }
+
+                        {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
+                            <Form.Item
+                                label="Chi nhánh"
+                                name='branch'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Trường này là bắt buộc!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    disabled={disabled}
+                                />
+                            </Form.Item>
+                        }
+
+
+                        {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
+                            <Form.Item
+                                label="Chủ tài khoản"
+                                name='accountName'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Trường này là bắt buộc!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    disabled={disabled}
+
+                                />
+                            </Form.Item>}
+
+
+
+
+
+
+
+
+
+
+                        {Form.useWatch('paymentMethod', form) === "CASH" &&
+                            <Form.Item
+                                label="Người nộp"
+                                name='submitter'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Trường này là bắt buộc!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    disabled={disabled}
+
+                                />
+                            </Form.Item>
+                        }
+
+
+                        {Form.useWatch('paymentMethod', form) === "CASH" &&
+                            <Form.Item
+                                label="Người nhận"
+                                name='salespersonID'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Trường này là bắt buộc!',
+                                    },
+                                ]}
+                            >
+                                <Select
+                                    disabled={disabled}
+                                >
+                                    {/* {
+                                        listAccountantData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
+                                    } */}
+                                    {
+                                        listSalespersonData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
+                                    }
+                                </Select>
+                            </Form.Item>}
+
 
 
                         <Form.Item
@@ -505,80 +683,6 @@ const ThemThuTien = ({ disabled = false }) => {
                             // format={dateFormat}
                             />
                         </Form.Item>
-
-                        {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
-                            <Form.Item
-                                label="Ngân hàng"
-                                name='bankName'
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Trường này là bắt buộc!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    disabled={disabled}
-                                />
-                            </Form.Item>
-                        }
-
-                        {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
-                            <Form.Item
-                                label="Chủ tài khoản"
-                                name='accountName'
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Trường này là bắt buộc!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    disabled={disabled}
-
-                                />
-                            </Form.Item>}
-                        {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
-                            <Form.Item
-                                label="Số tài khoản"
-                                name='bankAccountId'
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Trường này là bắt buộc!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    disabled={disabled}
-
-                                />
-                            </Form.Item>
-                        }
-
-
-
-                        {Form.useWatch('paymentMethod', form) === "CASH" &&
-                            <Form.Item
-                            label="Người nộp"
-                            name='submitter'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-                        }
-
-
-                        
                     </Flex>
 
                 </Flex>
@@ -589,38 +693,45 @@ const ThemThuTien = ({ disabled = false }) => {
                         bordered
                         dataSource={dataHoaDonSelected}
                         columns={columns}
-                        pagination={false}
                         onChange={onChange}
+
+                        pagination={false}
+                        summary={(pageData) => {
+                            let totalTong = 0;
+                            let totalChuaThu = 0;
+                            let totalSoThanhToan = 0;
+                            pageData.forEach(({ tong, sothanhtoan, chuathu }) => {
+                                totalTong += tong;
+                                totalChuaThu += chuathu;
+                                totalSoThanhToan += sothanhtoan;
+                            });
+                            return (
+                                <>
+                                    <Table.Summary.Row>
+                                        <Table.Summary.Cell index={0} colSpan={2} className="font-bold">Tổng</Table.Summary.Cell>
+                                        <Table.Summary.Cell index={1}>
+                                            <Text className="font-bold">{VND.format(totalTong)}</Text>
+                                        </Table.Summary.Cell>
+                                        <Table.Summary.Cell index={2}>
+                                            <Text className="font-bold">{VND.format(totalChuaThu)}</Text>
+                                        </Table.Summary.Cell>
+                                        <Table.Summary.Cell index={3}>
+                                            <Text className="font-bold">{VND.format(totalSoThanhToan)}</Text>
+                                        </Table.Summary.Cell>
+                                    </Table.Summary.Row>
+                                </>
+                            );
+                        }}
                     />
                 </div>
 
                 <div className='flex justify-end'>
                     <div className='w-[300px] my-8'>
-                        {/* <div className='flex justify-between'>
-                            <p>Tổng tiền hàng</p>
-                            <p>
-                                {
-                                    VND.format(dataHoaDonSelected.map(product => product.thanhtien).reduce((total, currentValue) => {
-                                        return total + currentValue;
-                                    }, 0))
-                                }
-                            </p>
-                        </div>
-                        <div className='flex justify-between border-b border-zinc-950'>
-                            <p>Thuế GTGT</p>
-                            <p>
-                                {
-                                    VND.format(dataHoaDonSelected.map(product => product.tienthuegtgt).reduce((total, currentValue) => {
-                                        return total + currentValue;
-                                    }, 0))
-                                }
-                            </p>
-                        </div> */}
-                        <div className='flex justify-between font-bold text-xl'>
+                        {/* <div className='flex justify-between font-bold text-xl'>
                             <p>TỔNG</p>
                             <p>
                                 {
-                                    VND.format(dataHoaDonSelected.map(hoaDon => hoaDon.xxx).reduce((total, currentValue) => {
+                                    VND.format(dataHoaDonSelected.map(hoaDon => hoaDon.sothanhtoan).reduce((total, currentValue) => {
                                         return total + currentValue;
                                     }, 0)
                                         // +
@@ -630,7 +741,7 @@ const ThemThuTien = ({ disabled = false }) => {
                                     )
                                 }
                             </p>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 

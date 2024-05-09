@@ -192,6 +192,14 @@ const HoaDonBanHang = ({ checkbox = false }) => {
 
   let columns = [
     {
+      title: "ID hóa đơn",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a, b) => a.id - b.id,
+      sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
       title: "Ngày hóa đơn",
       dataIndex: "createdAt",
       key: "createdAt",

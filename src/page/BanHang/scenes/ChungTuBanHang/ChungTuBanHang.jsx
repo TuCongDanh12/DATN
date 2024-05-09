@@ -182,6 +182,14 @@ const ChungTuBanHang = () => {
 
   const columns = [
     {
+      title: "ID chứng từ",
+      dataIndex: "id",
+      key: "id",
+      sorter: (a, b) => a.id - b.id,
+      sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
+      ellipsis: true,
+    },
+    {
       title: "Ngày hạch toán",
       dataIndex: "createdAt",
       key: "createdAt",

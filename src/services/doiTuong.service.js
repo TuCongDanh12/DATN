@@ -203,6 +203,68 @@ const postProduct = ({ values }) => {
         });
 };
 
+
+
+
+
+
+const getListBankAccount = () => {
+    return axios.get(`${API_URL}/bank-account`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+const getBankAccount = ({ id }) => {
+    return axios.get(`${API_URL}/bank-account/${id}`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+const postBankAccount = ({ values }) => {
+    return axios.post(`${API_URL}/bank-account`,
+        {
+            ...values
+        },
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+
+
+
+
+
+const getListAccountant = () => {
+    return axios.get(`${API_URL}/employee/accountant`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+
+
+
+
+const getListSalesperson = () => {
+    return axios.get(`${API_URL}/employee/salesperson`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
 const doiTuongService = {
     getListSupplier,
     getSupplier,
@@ -227,6 +289,14 @@ const doiTuongService = {
     getListProduct,
     getProduct,
     postProduct,
+
+    getListBankAccount,
+    getBankAccount,
+    postBankAccount,
+
+    getListAccountant,
+
+    getListSalesperson,
 };
 
 export default doiTuongService;

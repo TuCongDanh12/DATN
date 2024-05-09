@@ -166,7 +166,7 @@ function App() {
 
 
                 <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThemThuTien />} />
-                <Route path="ban-hang/thu-tien-theo-hoa-don/xem" element={<ThuTien />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/xem/:id" element={<ThemThuTien disabled={true} />} />
                 <Route path="/tien-mat" element={<TienMat />} />
                 <Route path="/tien-gui" element={<TienGui />} />
 

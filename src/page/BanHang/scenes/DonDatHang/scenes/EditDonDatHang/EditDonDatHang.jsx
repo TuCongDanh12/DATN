@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } from "antd";
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
 import { clearState, banHangSelector, getDonBanHang } from '../../../../../../store/features/banHangSlice';
@@ -155,7 +155,7 @@ const EditDonDatHang = ({ disabled = false }) => {
 
     // console.log("listProductData", listProductData);
     useEffect(() => {
-        if ( isSuccessGetDonBanHang) {
+        if (isSuccessGetDonBanHang) {
             const products = donBanHangData.productOfDonBanHangs.map(product => {
 
                 let soluongdaban = 0;
@@ -538,6 +538,23 @@ const EditDonDatHang = ({ disabled = false }) => {
                     </Flex>
 
                 </Flex>
+
+
+                <div className='flex justify-start'>
+                    <div className='w-[300px] mb-8'>
+                        {donBanHangData?.ctban&&<div className='flex justify-between'>
+                            <p>Tham chiếu đến chứng từ bán hàng:</p>
+                            <p>
+                                {
+                                    donBanHangData?.ctban?.map(ct=><span
+                                        className='px-2 text-[#1DA1F2] font-medium	cursor-pointer'
+                                        onClick={() => navigate(`/ban-hang/chung-tu-ban-hang/xem/${ct.id}`, { state: { id: ct.id } })}
+                                        >{ct.id}</span>)
+                                }
+                            </p>
+                        </div>}
+                    </div>
+                </div>
 
 
                 <div>
