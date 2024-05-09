@@ -123,6 +123,14 @@ const EditNhomSanPham = ({ disabled = false }) => {
     };
     const defaultColumns = [
         {
+            title: "ID sản phẩm",
+            dataIndex: "id",
+            key: "id",
+            sorter: (a, b) => a.id - b.id,
+            // sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
             title: "Sản phẩm",
             dataIndex: "name",
             sorter: (a, b) => a.name.localeCompare(b.name),

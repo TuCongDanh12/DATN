@@ -296,42 +296,11 @@ const EditKhachHang = ({ disabled = false }) => {
                             />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Số điện thoại"
-                            name='phone'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
 
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Email"
-                            name='email'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                placeholder="abc@gmail.com"
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
                     </Flex>
 
                     <Flex vertical gap={5} className='w-[50%]'>
-                        <Form.Item
+                        {/* <Form.Item
                             label="Ngân hàng"
                             name='bankName'
                             rules={[
@@ -374,6 +343,39 @@ const EditKhachHang = ({ disabled = false }) => {
                             ]}
                         >
                             <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item> */}
+
+                        <Form.Item
+                            label="Số điện thoại"
+                            name='phone'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            label="Email"
+                            name='email'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                placeholder="abc@gmail.com"
                                 disabled={disabled}
 
                             />
