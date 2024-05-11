@@ -280,11 +280,13 @@ const EditDonDatHang = ({ disabled = false }) => {
             title: "Đơn giá",
             dataIndex: "price",
             editable: !disabled,
+            render: (val, record) => VND.format(val),
         },
         {
             title: "Thành tiền",
             dataIndex: "thanhtien",
             editable: !disabled,
+            render: (val, record) => VND.format(val),
         },
         {
             title: "% thuế GTGT",
@@ -295,6 +297,7 @@ const EditDonDatHang = ({ disabled = false }) => {
             title: "Tiền thuế GTGT",
             dataIndex: "tienthuegtgt",
             editable: !disabled,
+            render: (val, record) => VND.format(val),
         },
         // {
         //     title: '',

@@ -14,7 +14,7 @@ const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish }
     const dispatch = useDispatch();
 
     const columsFilter = columns
-    .filter(item=> (item.dataIndex!=="phantramthuegtgt"&&item.dataIndex!=="tienthuegtgt"))
+    // .filter(item=> (item.dataIndex!=="phantramthuegtgt"&&item.dataIndex!=="tienthuegtgt"))
 
     const { 
         isSuccessGetListEmployeeWarehouseKeeper,
