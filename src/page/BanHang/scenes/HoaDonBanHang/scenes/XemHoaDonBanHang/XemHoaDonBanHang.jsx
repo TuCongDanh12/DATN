@@ -239,11 +239,15 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
             title: "Đơn giá",
             dataIndex: "price",
             editable: false,
+            render: (val, record) => VND.format(val),
+
         },
         {
             title: "Thành tiền",
             dataIndex: "thanhtien",
             editable: false,
+            render: (val, record) => VND.format(val),
+
         },
         {
             title: "% thuế GTGT",
@@ -254,6 +258,8 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
             title: "Tiền thuế GTGT",
             dataIndex: "tienthuegtgt",
             editable: false,
+            render: (val, record) => VND.format(val),
+
         },
         // {
         //     title: '',
