@@ -231,7 +231,7 @@ const EditSanPham = ({ disabled = false }) => {
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-8">
-                Khách hàng {nameValue || productData.name}
+                Sản phẩm {nameValue || productData.name}
             </h1>
             <Form
                 form={form}
