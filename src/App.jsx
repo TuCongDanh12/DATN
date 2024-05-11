@@ -59,6 +59,7 @@ import ThemThuTien from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/ThemThuT
 import TongHopNoPhaiThu from "./page/CongNo/scenes/TongHopNoPhaiThu/TongHopNoPhaiThu";
 import ChiTietNoPhaiThu from "./page/CongNo/scenes/ChiTietNoPhaiThu/ChiTietNoPhaiThu";
 import TaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/TaiKhoanNganHang";
+import Profile from "./page/Profile/Profile";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -183,6 +184,8 @@ function App() {
                 <Route path="/thong-bao" element={<ThongBao />} />
                 <Route path="/ho-tro" element={<HoTro />} />
                 <Route path="/cai-dat" element={<CaiDat />} />
+
+                <Route path="/profile" element={<Profile />} />
               </Routes>
             </main>
           </div>

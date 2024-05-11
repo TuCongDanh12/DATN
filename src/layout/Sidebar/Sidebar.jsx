@@ -207,22 +207,30 @@ const Sidebar = ({ toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed 
         </Menu>
 
         <SidebarFooter>
-          <Box paddingLeft={isCollapsed ? undefined : "10%"}>
-            <div className="side-menu-footer">
-              <div className="avatar">
-                <img src={"/assets/user.jpg"} alt="user" />
-              </div>
-              <div className="user-info">
-                <Typography variant="h5" color={colors.grey[100]} hidden={isCollapsed}>
-                  Vecfonds
-                </Typography>
-                <Typography variant="h5" color={colors.grey[100]} hidden={isCollapsed}>
-                  vecfonds@gmail.com
-                </Typography>
+          <Link
+            to="/profile"
+            title="Profile"
+            selected={selected}
+            onClick={() => setSelected("Profile")}
+            setSelected={setSelected}
+          >
+            <Box paddingLeft={isCollapsed ? undefined : "10%"}>
+              <div className="side-menu-footer">
+                <div className="avatar">
+                  <img src={"/assets/user.jpg"} alt="user" />
+                </div>
+                <div className="user-info">
+                  <Typography variant="h5" color={colors.grey[100]} hidden={isCollapsed}>
+                    Vecfonds
+                  </Typography>
+                  <Typography variant="h5" color={colors.grey[100]} hidden={isCollapsed}>
+                    vecfonds@gmail.com
+                  </Typography>
 
+                </div>
               </div>
-            </div>
-          </Box>
+            </Box>
+          </Link>
         </SidebarFooter>
 
 
