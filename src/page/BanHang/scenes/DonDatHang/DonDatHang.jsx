@@ -484,13 +484,13 @@ const DonDatHang = ({ radio = false }) => {
           {contextHolderMes}
           {contextHolder}
 
-          <label for="upload-photo">
+          {!radio && <label for="upload-photo">
             <SiMicrosoftexcel
               size={30}
               className="p-2 bg-white border border-black cursor-pointer"
             // onClick={readUploadFile}
             />
-          </label>
+          </label>}
 
           <TfiReload
             size={30}
