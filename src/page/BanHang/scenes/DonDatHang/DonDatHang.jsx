@@ -23,9 +23,12 @@ import {
   banHangSelector,
   clearState,
   getListDonBanHang,
+  postDonBanHang,
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
 import { VND } from "../../../../utils/func";
+import * as xlsx from 'xlsx';
+
 const { RangePicker } = DatePicker;
 const DonDatHang = ({ radio = false }) => {
   const dispatch = useDispatch();
@@ -95,6 +98,8 @@ const DonDatHang = ({ radio = false }) => {
       });
 
       dispatch(clearState());
+      dispatch(getListDonBanHang());
+
     } else if (isSuccessGetListDonBanHang) {
       // messageApi.open({
       //   key: "updatable",
@@ -383,6 +388,71 @@ const DonDatHang = ({ radio = false }) => {
     setSortedInfo({});
   };
 
+
+  //upload file excel
+  const readUploadFile = (e) => {
+    e.preventDefault();
+    if (e.target.files && e.target.files.length > 0) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const workbook = xlsx.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const json = xlsx.utils.sheet_to_json(worksheet);
+        console.log(json);
+
+        function ExcelDateToJSDate(date) {
+          return new Date(Math.round((date - 25569) * 86400 * 1000));
+        }
+
+        function formatDate(date) {
+          var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+
+          if (month.length < 2)
+            month = '0' + month;
+          if (day.length < 2)
+            day = '0' + day;
+
+          return [year, month, day].join('-');
+        }
+
+        const dataConvert = {
+          "saleDate": formatDate(ExcelDateToJSDate(json[0]["Ngày đơn hàng"])),
+          "content": json[0]["Nội dung"],
+          "paymentStatus": "NOT_PAID",
+          "deliveryStatus": "NOT_DELIVERED",
+          "documentStatus": "UNDOCUMENTED",
+          "deliveryTerm": "2021-11-01",
+          "salespersonId": json[0]["Mã nhân viên bán hàng"],
+          "customerId": json[0]["Mã khách hàng"],
+          "products": json.map(item => {
+            return {
+              "productId": item["Mã hàng"],
+              "count": item["Số lượng"]
+            }
+          })
+
+        }
+
+
+        console.log("dataConvert", dataConvert)
+        dispatch(postDonBanHang({ values: dataConvert }));
+
+        document.getElementById('upload-photo').value = null;
+      };
+      reader.onerror = (error) => {
+        console.error('Error reading the file:', error);
+      };
+      reader.readAsArrayBuffer(e.target.files[0]);
+    }
+  }
+
+
+
   return (
     <div className="m-4">
       <div className={`px-[20px] w-full flex justify-between pb-7 ${!radio && "bg-white py-7"}`}>
@@ -414,10 +484,14 @@ const DonDatHang = ({ radio = false }) => {
           {contextHolderMes}
           {contextHolder}
 
-          <SiMicrosoftexcel
-            size={30}
-            className="p-2 bg-white border border-black cursor-pointer"
-          />
+          <label for="upload-photo">
+            <SiMicrosoftexcel
+              size={30}
+              className="p-2 bg-white border border-black cursor-pointer"
+            // onClick={readUploadFile}
+            />
+          </label>
+
           <TfiReload
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
@@ -441,6 +515,9 @@ const DonDatHang = ({ radio = false }) => {
               });
             }}
           />
+          <input type="file" name="photo" id="upload-photo"
+            className="opacity-0 absolute z-[-1]"
+            onChange={readUploadFile} />
         </div>
 
         {

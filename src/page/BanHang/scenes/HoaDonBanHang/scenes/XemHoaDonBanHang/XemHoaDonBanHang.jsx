@@ -10,6 +10,8 @@ import HoaDon from '../../../../../../component/Form/BanHang/HoaDon';
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useReactToPrint } from 'react-to-print';
+import InHoaDonBanHang from '../../../../../../component/InHoaDonBanHang/InHoaDonBanHang';
 
 const dateFormat = "YYYY-MM-DD";
 dayjs.extend(customParseFormat);
@@ -113,6 +115,7 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
     } = useSelector(banHangSelector);
 
     console.log("chungTuBanData", chungTuBanData);
+
 
     useEffect(() => {
         dispatch(getChungTuBan({ id: params.id }));
@@ -290,9 +293,9 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
 
     const handleSave = (row) => {
         console.log("row", row);
-        row.thanhtien= row.price*row.count;
-        row.tienthuegtgt = row.price*row.count*(row.phantramthuegtgt/100);
-        
+        row.thanhtien = row.price * row.count;
+        row.tienthuegtgt = row.price * row.count * (row.phantramthuegtgt / 100);
+
         const newData = [...productOfChungTuBans];
         const index = newData.findIndex((item) => row.key === item.key);
         const item = newData[index];
@@ -339,15 +342,15 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                 month = '' + (d.getMonth() + 1),
                 day = '' + d.getDate(),
                 year = d.getFullYear();
-        
-            if (month.length < 2) 
+
+            if (month.length < 2)
                 month = '0' + month;
-            if (day.length < 2) 
+            if (day.length < 2)
                 day = '0' + day;
-        
+
             return [year, month, day].join('-');
         }
-        
+
         let dataConvert = {
             "deliveryDate": formatDate(values.deliveryDate.$d),
             "warehouseKeeperId": values.warehouseKeeperId,
@@ -369,7 +372,7 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
 
         // console.log("dayjs(values.deliveryDate, dateFormat)",dayjs(new Date(values.deliveryDate.$d).toISOString().slice(0, 10), dateFormat))
 
-        dispatch(postChungTuBan({values:dataConvert}));
+        dispatch(postChungTuBan({ values: dataConvert }));
         navigate(-2);
     };
 
@@ -516,13 +519,20 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
     }, [chungTuBanData]);
 
 
+    //Xuat file pdf, in file
+    const componentRef = useRef();
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+    });
+
+
 
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-4">
                 Hóa đơn bán hàng {nameValue || chungTuBanData.id}
             </h1>
-
 
             {/* <Flex gap={20}>
                 <Flex gap={5} align="center" justify="center">
@@ -609,9 +619,16 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                 {disabled ?
                     <div className='w-full flex justify-end mt-6 mb-0'>
                         <Button
-                            className='bg-[#FF7742] font-bold text-white'
+                            className='bg-[#46FF42] font-bold text-white mr-2'
                             type='link'
+                            onClick={handlePrint}
+                        >
+                            In hóa đơn
+                        </Button>
+                        <Button
+                            className='bg-[#FF7742] font-bold text-white'
                             onClick={() => navigate(-1)}
+                            type='link'
                         >
                             Thoát
                         </Button>
@@ -635,6 +652,21 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                     </Form.Item>
                 }
             </Form>
+
+            <div
+            // className='hidden'
+            >
+                <div ref={componentRef}>
+                    <InHoaDonBanHang
+                        form={form}
+                        components={components}
+                        dataSource={productOfChungTuBans}
+                        columns={columns}
+                        idHoaDon={chungTuBanData?.id}
+                        idCustomer={chungTuBanData?.donBanHang?.customer?.id}
+                    />
+                </div>
+            </div>
         </div>
     )
 }

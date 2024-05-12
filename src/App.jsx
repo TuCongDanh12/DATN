@@ -60,6 +60,7 @@ import TongHopNoPhaiThu from "./page/CongNo/scenes/TongHopNoPhaiThu/TongHopNoPha
 import ChiTietNoPhaiThu from "./page/CongNo/scenes/ChiTietNoPhaiThu/ChiTietNoPhaiThu";
 import TaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/TaiKhoanNganHang";
 import Profile from "./page/Profile/Profile";
+import InHoaDonBanHang from "./component/InHoaDonBanHang/InHoaDonBanHang";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -163,6 +164,7 @@ function App() {
                 <Route path="ban-hang/chung-tu-ban-hang/them/:id" element={<ThemChungTuBanHang />} />
 
                 <Route path="ban-hang/hoa-don-ban-hang/xem/:id" element={<XemHoaDonBanHang disabled={true} />} />
+                {/* <Route path="ban-hang/hoa-don-ban-hang/in" element={<InHoaDonBanHang />} /> */}
 
                 <Route path="ban-hang/thu-tien-theo-hoa-don/tim-kiem" element={<TimKiemHoaDonBanHang />} />
 

@@ -10,6 +10,9 @@ import HoaDon from '../../../../../../component/Form/BanHang/HoaDon';
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import InHoaDonBanHang from '../../../../../../component/InHoaDonBanHang/InHoaDonBanHang';
+import { useReactToPrint } from 'react-to-print';
+import InPhieuXuat from '../../../../../../component/InPhieuXuat/InPhieuXuat';
 
 const dateFormat = "YYYY-MM-DD";
 dayjs.extend(customParseFormat);
@@ -517,6 +520,18 @@ const XemChungTuBanHang = ({ disabled = false }) => {
     }, [chungTuBanData]);
 
 
+    //Xuat file pdf, in file
+    const componentRef = useRef();
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+    });
+
+    const componentRef2 = useRef();
+
+    const handlePrint2 = useReactToPrint({
+        content: () => componentRef2.current,
+    });
 
     return (
         <div className="m-6">
@@ -629,6 +644,20 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                 {disabled ?
                     <div className='w-full flex justify-end mt-6 mb-0'>
                         <Button
+                            className='bg-[#46FF42] font-bold text-white mr-2'
+                            type='link'
+                            onClick={handlePrint}
+                        >
+                            In phiếu xuất
+                        </Button>
+                        <Button
+                            className='bg-[#46FF42] font-bold text-white mr-2'
+                            type='link'
+                            onClick={handlePrint2}
+                        >
+                            In hóa đơn
+                        </Button>
+                        <Button
                             className='bg-[#FF7742] font-bold text-white'
                             type='link'
                             onClick={() => navigate(-1)}
@@ -655,6 +684,36 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                     </Form.Item>
                 }
             </Form>
+
+            <div
+            // className='hidden'
+            >
+                <div ref={componentRef}>
+                    <InPhieuXuat
+                        form={form}
+                        components={components}
+                        dataSource={productOfChungTuBans}
+                        columns={columns}
+                        idPhieuXuat={chungTuBanData?.id}
+                        idCustomer={chungTuBanData?.donBanHang?.customer?.id}
+                    />
+                </div>
+            </div>
+
+            <div
+            // className='hidden'
+            >
+                <div ref={componentRef2}>
+                    <InHoaDonBanHang
+                        form={form}
+                        components={components}
+                        dataSource={productOfChungTuBans}
+                        columns={columns}
+                        idHoaDon={chungTuBanData?.id}
+                        idCustomer={chungTuBanData?.donBanHang?.customer?.id}
+                    />
+                </div>
+            </div>
         </div>
     )
 }
