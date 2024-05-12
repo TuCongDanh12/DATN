@@ -396,10 +396,10 @@ const ThuTienTheoHoaDon = () => {
           {contextHolderMes}
           {contextHolder}
 
-          <SiMicrosoftexcel
+          {/* <SiMicrosoftexcel
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
-          />
+          /> */}
           <TfiReload
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"

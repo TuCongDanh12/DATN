@@ -121,6 +121,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
         return {
           ...chungTuBanData,
           customer: chungTuBanData.donBanHang.customer.name,
+          idCustomer: chungTuBanData.donBanHang.customer.id,
           tong,
           dathu,
           chuathu
@@ -208,6 +209,14 @@ const HoaDonBanHang = ({ checkbox = false }) => {
         moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "createdAt" ? sortedInfo.order : null,
       // fixed: 'left',
+    },
+    {
+      title: "ID khách hàng",
+      dataIndex: "idCustomer",
+      key: "idCustomer",
+      sorter: (a, b) => a.idCustomer - b.idCustomer,
+      sortOrder: sortedInfo.columnKey === "idCustomer" ? sortedInfo.order : null,
+      ellipsis: true,
     },
     {
       title: "Khách hàng",
@@ -340,7 +349,10 @@ const HoaDonBanHang = ({ checkbox = false }) => {
   ];
 
   if (checkbox) {
-    columns = columns.filter(item => item.dataIndex !== "chucnang");
+    columns = columns.filter(item => item.dataIndex !== "chucnang" && item.dataIndex !== "paymentStatus");
+  }
+  else {
+    columns = columns.filter(item => item.dataIndex !== "idCustomer");
   }
 
   // useEffect(() => {
@@ -366,7 +378,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
         setSelectedRowKeys(selectedRowKeys);
         dispatch(hoaDonSelected(selectedRows));
       }
-      else if(selectedRows.length === 0){
+      else if (selectedRows.length === 0) {
         setSelectedRowKeys([]);
         dispatch(hoaDonSelected([]));
       }
@@ -442,10 +454,10 @@ const HoaDonBanHang = ({ checkbox = false }) => {
           {contextHolderMes}
           {contextHolder}
 
-          <SiMicrosoftexcel
+          {/* <SiMicrosoftexcel
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
-          />
+          /> */}
           <TfiReload
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
