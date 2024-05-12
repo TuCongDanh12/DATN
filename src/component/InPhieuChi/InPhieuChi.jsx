@@ -1,11 +1,12 @@
 import { Form, Table, Typography } from 'antd'
 import React, { useState } from 'react'
 import { VND } from '../../utils/func';
+import moment from 'moment';
 
 const { Text } = Typography;
 
 
-const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish, idPhieuXuat, idCustomer }) => {
+const InPhieuChi = ({ components, dataSource, columns, form, disabled, onFinish, idPhieuXuat, idCustomer }) => {
     const dataSourceConvert = dataSource.map((data, index) => {
         return {
             ...data,
@@ -20,51 +21,33 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
             editable: false,
         },
         {
-            title: "Tên hàng",
-            dataIndex: "productName",
+            title: "Ngày hóa đơn",
+            dataIndex: "createdAt",
+            key: "createdAt",
+            render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+            sorter: (a, b) =>
+                moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
+            // fixed: 'left',
             editable: false,
         },
         {
-            title: "ĐVT",
-            dataIndex: "unit",
+            title: "Khách hàng",
+            dataIndex: "customer",
+            key: "customer",
+            ellipsis: true,
             editable: false,
-            render: (val, record) => {
-                switch (val) {
-                    case "CAI":
-                        return "Cái";
-                    case "CAY":
-                        return "Cây";
-                    case "CHAI":
-                        return "Chai";
-                    case "CHUC":
-                        return "Chục";
-                    case "CUON":
-                        return "Cuộn";
-                    case "GOI":
-                        return "Gói";
-                    case "HOP":
-                        return "Hộp";
-                    case "HU":
-                        return "Hủ";
-                    case "KG":
-                        return "Kg";
-                    case "LOC":
-                        return "Lốc";
-                    case "LON":
-                        return "Lon";
-                    case "THUNG":
-                        return "Thùng";
-                    case "VIEN":
-                        return "Viên";
-                    default:
-                        return "Lỗi";
-                }
-            },
         },
         {
-            title: "Số lượng",
-            dataIndex: "count",
-            editable: !disabled,
+            title: "Giá trị hóa đơn",
+            dataIndex: "tong",
+            key: "tong",
+            render: (val, record) => VND.format(val),
+        },
+        {
+            title: "Chưa thu",
+            dataIndex: "chuathu",
+            key: "chuathu",
+            render: (val, record) => VND.format(val),
         },
         // {
         //     title: "Số lượng chưa đặt",
@@ -77,42 +60,12 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
         //     editable: !disabled,
         // },
         {
-            title: "% thuế GTGT",
-            dataIndex: "phantramthuegtgt",
-            editable: false,
-        },
-        {
-            title: "Đơn giá",
-            dataIndex: "price",
-            editable: false,
+            title: "Số thanh toán",
+            dataIndex: "sothanhtoan",
+            key: "sothanhtoan",
             render: (val, record) => VND.format(val),
-
+            editable: true,
         },
-        {
-            title: "Thành tiền",
-            dataIndex: "thanhtien",
-            editable: false,
-            render: (val, record) => VND.format(val),
-
-        },
-        // {
-        //     title: "Tiền thuế GTGT",
-        //     dataIndex: "tienthuegtgt",
-        //     editable: false,
-        //     render: (val, record) => VND.format(val),
-
-        // },
-        // {
-        //     title: '',
-        //     dataIndex: 'operation',
-        //     width: '50px',
-        //     render: (_, record) =>
-        //         productOfChungTuBans.length >= 1 ? (
-        //             <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
-        //                 <RiDeleteBin6Line size={20} color='#1E1E1E' />
-        //             </Typography.Link>
-        //         ) : null,
-        // },
     ];
 
     function formatDate(date) {
@@ -247,7 +200,7 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
                     </div>
                 </div>
 
-                <h1 className="text-center font-bold text-2xl mt-2">PHIẾU XUẤT KHO BÁN HÀNG</h1>
+                <h1 className="text-center font-bold text-2xl mt-2">PHIẾU THU</h1>
 
                 <div className="grid grid-cols-2 mt-8">
                     <div>
@@ -267,10 +220,6 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
                         </p>
 
                         <p className="">
-                            Người nhận hàng: {Form.useWatch('receiver', form)}
-                        </p>
-
-                        <p className="">
                             Nội dung: {Form.useWatch('content', form)}
                         </p>
 
@@ -278,10 +227,10 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
 
                     <div className="text-right">
                         <p className="">
-                            ID phiếu xuất: {idPhieuXuat}
+                            ID phiếu thu: {idPhieuXuat}
                         </p>
                         <p>
-                            Ngày giao hàng: {formatDate(Form.useWatch('deliveryDate', form)?.$d)}
+                            Ngày chứng từ: {formatDate(Form.useWatch('receiveDate', form)?.$d)}
                             {/* Ngày hóa đơn: {Form.useWatch('createdAt', form).$D} */}
                             {/* {console.log("Form.useWatch('createdAt', form)", Form.useWatch('createdAt', form))} */}
                             {/* <br />
@@ -298,103 +247,40 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
                         bordered
                         dataSource={dataSourceConvert}
                         columns={defaultColumns}
+
                         pagination={false}
                         summary={(pageData) => {
-                            let totalCount = 0;
-                            let totalThanhtien = 0;
-                            let totalTienthuegtgt = 0;
-                            pageData.forEach(({ count, thanhtien, tienthuegtgt }) => {
-                                totalCount += count;
-                                totalThanhtien += thanhtien;
-                                totalTienthuegtgt += tienthuegtgt;
+                            let totalTong = 0;
+                            let totalChuaThu = 0;
+                            let totalSoThanhToan = 0;
+                            pageData.forEach(({ tong, sothanhtoan, chuathu }) => {
+                                totalTong += tong;
+                                totalChuaThu += chuathu;
+                                totalSoThanhToan += sothanhtoan;
                             });
-                            let tong = totalThanhtien + totalTienthuegtgt;
                             return (
                                 <>
-                                    {/* <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-bold" colSpan={3}>Tỷ lệ chiết khấu: {5}%</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={1} className="font-bold"></Table.Summary.Cell>
-                                        <Table.Summary.Cell index={2} className="font-bold"></Table.Summary.Cell>
+                                    <Table.Summary.Row>
+                                    <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={5}>Tổng tiền thanh toán</Table.Summary.Cell>
                                         <Table.Summary.Cell index={3}>
-                                            <Text className="font-bold" >{VND.format(totalCount)}</Text>
-                                        </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={4} className="font-bold"></Table.Summary.Cell>
-
-                                        <Table.Summary.Cell index={5} >
-                                            <Text className="font-bold">{VND.format(totalThanhtien)}</Text>
-                                        </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={6} className="font-bold"></Table.Summary.Cell>
-
-                                        <Table.Summary.Cell index={7}>
-                                            <Text className="font-bold">{VND.format(totalTienthuegtgt)}</Text>
-                                        </Table.Summary.Cell>
-                                    </Table.Summary.Row> */}
-                                    <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium" colSpan={3}>Tỷ lệ chiết khấu: {5}%</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={1} className="font-medium" colSpan={3}>Số tiền chiết khấu:</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={2} className="font-medium">{VND.format(totalThanhtien * (5 / 100))}</Table.Summary.Cell>
-                                        {/* <Table.Summary.Cell index={3}>
-                                            <Text className="font-bold" >{VND.format(totalCount)}</Text>
-                                        </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={4} className="font-bold"></Table.Summary.Cell>
-
-                                        <Table.Summary.Cell index={5} >
-                                            <Text className="font-bold">{VND.format(totalThanhtien)}</Text>
-                                        </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={6} className="font-bold"></Table.Summary.Cell>
-
-                                        <Table.Summary.Cell index={7}>
-                                            <Text className="font-bold">{VND.format(totalTienthuegtgt)}</Text>
-                                        </Table.Summary.Cell> */}
-                                    </Table.Summary.Row>
-
-                                    <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={6}>Cộng tiền hàng (đã trừ CK):</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={1} className="font-medium">
-                                            {/* {VND.format(tong)} */}
-                                            <Text className="font-medium">{VND.format(totalThanhtien - totalThanhtien * (5 / 100))}</Text>
+                                            <Text className="font-medium text-center">{VND.format(totalSoThanhToan)}</Text>
                                         </Table.Summary.Cell>
                                     </Table.Summary.Row>
-
+                                    
                                     <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={6}>Tiền thuế GTGT:</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={1} className="font-medium">
-                                            {/* {VND.format(tong)} */}
-                                            <Text className="font-medium">{VND.format(totalTienthuegtgt)}</Text>
-                                        </Table.Summary.Cell>
+                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={6}>Số tiền viết bằng chữ: {to_vietnamese(totalSoThanhToan)}</Table.Summary.Cell>
                                     </Table.Summary.Row>
-
-
-                                    <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={6}>Tổng tiền thanh toán</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={1} className="font-medium">
-                                            {/* {VND.format(tong)} */}
-                                            <Text className="font-medium">{VND.format(totalThanhtien - totalThanhtien * (5 / 100) + totalTienthuegtgt)}</Text>
-                                        </Table.Summary.Cell>
-                                    </Table.Summary.Row>
-
-                                    <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={7}>Số tiền viết bằng chữ: {to_vietnamese(totalThanhtien - totalThanhtien * (5 / 100) + totalTienthuegtgt)}</Table.Summary.Cell>
-                                    </Table.Summary.Row>
-
-
-
-                                    {/* <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-bold">Tổng</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={1} colSpan={7} className="font-bold text-center">
-                                            <Text className="font-bold">{VND.format(tong)}</Text>
-                                        </Table.Summary.Cell>
-                                    </Table.Summary.Row> */}
                                 </>
                             );
-                        }} />
+                        }}
+                    />
                 </div>
 
                 <div className='flex justify-between mt-4'>
                     <div className='w-[25%] text-center'>
                         <br />
                         <p className="font-bold text-gray-800">
-                            Người nhận hàng
+                            Người nộp
                         </p>
                         <p className="text-gray-500 text-sm">
                             (Ký và ghi rõ họ tên)
@@ -404,7 +290,7 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
                     <div className='w-[25%] text-center'>
                         <br />
                         <p className="font-bold text-gray-800">
-                            Thủ kho
+                            Thủ quỹ
                         </p>
                         <p className="text-gray-500 text-sm">
                             (Ký và ghi rõ họ tên)
@@ -440,4 +326,4 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
     )
 }
 
-export default InPhieuXuat
+export default InPhieuChi

@@ -545,7 +545,7 @@ const EditDonDatHang = ({ disabled = false }) => {
 
                 <div className='flex justify-start'>
                     <div className='w-[300px] mb-8'>
-                        {donBanHangData?.ctban&&<div className='flex justify-between'>
+                        {donBanHangData?.ctban?.length&&<div className='flex justify-between'>
                             <p>Tham chiếu đến chứng từ bán hàng:</p>
                             <p>
                                 {

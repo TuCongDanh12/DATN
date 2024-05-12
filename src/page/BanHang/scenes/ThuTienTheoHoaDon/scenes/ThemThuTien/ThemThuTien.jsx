@@ -9,6 +9,8 @@ import { VND } from '../../../../../../utils/func';
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import moment from 'moment';
+import InPhieuChi from '../../../../../../component/InPhieuChi/InPhieuChi';
+import { useReactToPrint } from 'react-to-print';
 const { Text } = Typography;
 
 const dateFormat = "YYYY-MM-DD";
@@ -177,7 +179,13 @@ const ThemThuTien = ({ disabled = false }) => {
             setDataHoaDonSelected(convertData);
 
 
+            let content = `${listHoaDonSelected[0].id}`;
 
+            if (listHoaDonSelected.length > 1) {
+                for (let i = 1; i < listHoaDonSelected.length; ++i) {
+                    content += `, ${listHoaDonSelected[i].id}`
+                }
+            }
 
             const data = {
                 // ...listHoaDonSelected[0].donBanHang,
@@ -190,7 +198,8 @@ const ThemThuTien = ({ disabled = false }) => {
                 createdAt: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 receiveDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 taxCode: listHoaDonSelected[0].donBanHang.customer.taxCode,
-                namecCustomer: listHoaDonSelected[0].donBanHang.customer.name
+                namecCustomer: listHoaDonSelected[0].donBanHang.customer.name,
+                content: `Thu tiền khách hàng ${listHoaDonSelected[0].donBanHang.customer.name} theo hóa đơn ${content}`
                 // paymentTerm: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 // deliveryDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat)
             };
@@ -345,7 +354,7 @@ const ThemThuTien = ({ disabled = false }) => {
         if (values.paymentMethod === "CASH") {
             let dataConvert = {
                 "receiveDate": formatDate(values.receiveDate.$d),
-                "content": "Nội dung",
+                "content": values.content,
                 "submitter": values.submitter,
                 "customerId": dataHoaDonSelected[0].donBanHang.customer.id,
                 "salespersonID": values.salespersonID,
@@ -367,7 +376,7 @@ const ThemThuTien = ({ disabled = false }) => {
         else {
             let dataConvert = {
                 "receiveDate": formatDate(values.receiveDate.$d),
-                "content": "Nội dung",
+                "content": values.content,
                 "submitter": values.submitter,
                 "customerId": dataHoaDonSelected[0].donBanHang.customer.id,
                 "salespersonID": values.salespersonID,
@@ -400,10 +409,20 @@ const ThemThuTien = ({ disabled = false }) => {
         setSortedInfo(sorter);
     };
 
+
+
+    //Xuat file pdf, in file
+    const componentRef = useRef();
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+    });
+
+
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-4">
-            Phiếu thu tiền {Form.useWatch('paymentMethod', form) === "CASH"?"mặt":"gửi"}
+                Phiếu thu tiền {Form.useWatch('paymentMethod', form) === "CASH" ? "mặt" : "gửi"}
                 {/* {nameValue || donBanHangData.id} */}
             </h1>
 
@@ -540,10 +559,8 @@ const ThemThuTien = ({ disabled = false }) => {
                                         listBankAccountData.map(item => <Select.Option value={item.accountNumber} key={item.id}>{item.accountNumber}</Select.Option>)
                                     }
                                 </Select>
-                            </Form.Item>}
-                    </Flex>
 
-                    <Flex vertical gap={5} className='w-[50%]'>
+                            </Form.Item>}
                         {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
                             <Form.Item
                                 label="Tên ngân hàng"
@@ -560,6 +577,27 @@ const ThemThuTien = ({ disabled = false }) => {
                                 />
                             </Form.Item>
                         }
+
+                        {Form.useWatch('paymentMethod', form) === "CASH" &&
+                            <Form.Item
+                                label="Người nộp"
+                                name='submitter'
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Trường này là bắt buộc!',
+                                    },
+                                ]}
+                            >
+                                <Input
+                                    disabled={disabled}
+
+                                />
+                            </Form.Item>
+                        }
+                    </Flex>
+
+                    <Flex vertical gap={5} className='w-[50%]'>
 
                         {Form.useWatch('paymentMethod', form) === "TRANSFER" &&
                             <Form.Item
@@ -607,25 +645,6 @@ const ThemThuTien = ({ disabled = false }) => {
 
                         {Form.useWatch('paymentMethod', form) === "CASH" &&
                             <Form.Item
-                                label="Người nộp"
-                                name='submitter'
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Trường này là bắt buộc!',
-                                    },
-                                ]}
-                            >
-                                <Input
-                                    disabled={disabled}
-
-                                />
-                            </Form.Item>
-                        }
-
-
-                        {Form.useWatch('paymentMethod', form) === "CASH" &&
-                            <Form.Item
                                 label="Người nhận"
                                 name='salespersonID'
                                 rules={[
@@ -646,6 +665,22 @@ const ThemThuTien = ({ disabled = false }) => {
                                     }
                                 </Select>
                             </Form.Item>}
+
+                        <Form.Item
+                            label="Nội dung"
+                            name='content'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item>
 
 
 
@@ -756,7 +791,13 @@ const ThemThuTien = ({ disabled = false }) => {
                         </Button>
                     </div> :
                     <Form.Item className='flex justify-end gap-2 mt-6 mb-0'>
-
+                        <Button
+                            className='bg-[#46FF42] font-bold text-white mr-2'
+                            type='link'
+                            onClick={handlePrint}
+                        >
+                            In phiếu thu
+                        </Button>
                         <Button
                             className='bg-[#FF7742] font-bold text-white mr-2'
                             htmlType="reset"
@@ -774,6 +815,21 @@ const ThemThuTien = ({ disabled = false }) => {
                     </Form.Item>
                 }
             </Form>
+
+            <div
+            // className='hidden'
+            >
+                <div ref={componentRef}>
+                    <InPhieuChi
+                        form={form}
+                        components={components}
+                        dataSource={dataHoaDonSelected}
+                        columns={columns}
+                        // idHoaDon={chungTuBanData?.id}
+                        idCustomer={listHoaDonSelected[0]?.donBanHang?.customer?.id}
+                    />
+                </div>
+            </div>
         </div>
     )
 }
