@@ -232,11 +232,11 @@ const InHoaDonBanHang = ({ components, dataSource, columns, form, disabled, onFi
                         <h2 
                         // className="font-bold"
                         >CÔNG TY CỔ PHẦN SAIGONSKY</h2>
-                        <p>
-                            Mã số thuế: 1234567889
-                        </p>
                         <p className="">
                             Địa chỉ: 208/18/55/42 đường 138, phường Tân Phú, quận 9, HCM
+                        </p>
+                        <p>
+                            Mã số thuế: 1234567889
                         </p>
                         <p className="">
                             Email: sales@tailwindcss.com
