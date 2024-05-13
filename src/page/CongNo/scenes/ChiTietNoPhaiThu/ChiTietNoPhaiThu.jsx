@@ -186,7 +186,7 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
     //   key: "customer",
     //   ellipsis: true,
     // },
-        {
+    {
       title: "ID hóa đơn",
       dataIndex: "sohoadon",
       key: "sohoadon",
@@ -441,11 +441,12 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
           {contextHolderMes}
           {contextHolder}
 
-          <SiMicrosoftexcel
+          {/* <SiMicrosoftexcel
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
-          />
+          /> */}
           <TfiReload
+            title="Cập nhật dữ liệu"
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {
@@ -526,7 +527,7 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
 
       {chungTuBan.map((ctb, index) =>
         <Table
-        key={index}
+          key={index}
           columns={columns}
           dataSource={ctb}
           onChange={onChange}
@@ -549,15 +550,15 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
             return (
               <>
                 <Table.Summary.Row>
-                  <Table.Summary.Cell index={0} colSpan={3} className="font-bold">Tên khách hàng: {pageData[0].customer} - ID: {pageData[0].makhachhang}</Table.Summary.Cell>
+                  <Table.Summary.Cell index={0} colSpan={3} className="font-medium">Tên khách hàng: {pageData[0].customer} - ID: {pageData[0].makhachhang}</Table.Summary.Cell>
                   <Table.Summary.Cell index={1}>
-                    <Text className="font-bold">{VND.format(totalTong)}</Text>
+                    <Text className="font-medium">{VND.format(totalTong)}</Text>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell index={2}>
-                    <Text className="font-bold">{VND.format(totalDaThu)}</Text>
+                    <Text className="font-medium">{VND.format(totalDaThu)}</Text>
                   </Table.Summary.Cell>
                   <Table.Summary.Cell index={3}>
-                    <Text className="font-bold">{VND.format(totalChuaThu)}</Text>
+                    <Text className="font-medium">{VND.format(totalChuaThu)}</Text>
                   </Table.Summary.Cell>
                 </Table.Summary.Row>
               </>

@@ -93,7 +93,7 @@ const NhomKhachHang = () => {
       });
       setCustomerGroupData(filteredData);
     }
-  }, [searchText,customerGroupData]);
+  }, [searchText, customerGroupData]);
 
 
   const items = [
@@ -214,7 +214,7 @@ const NhomKhachHang = () => {
             layout='inline'
             onFinish={onFinish}
           >
-            
+
             <Form.Item
               name='keyword'
               className='w-[300px] !me-0'
@@ -238,8 +238,10 @@ const NhomKhachHang = () => {
           {contextHolderMes}
           {contextHolder}
 
-          <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' />
-          <TfiReload size={30} className='p-2 bg-white border border-black cursor-pointer'
+          {/* <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' /> */}
+          <TfiReload
+            title="Cập nhật dữ liệu"
+            size={30} className='p-2 bg-white border border-black cursor-pointer'
             onClick={() => {
               dispatch(getListCustomerGroup());
               messageApi.open({
@@ -248,6 +250,7 @@ const NhomKhachHang = () => {
                 content: 'Loading...',
               });
               form.resetFields();
+              setSearchText("");
             }}
           />
         </div>

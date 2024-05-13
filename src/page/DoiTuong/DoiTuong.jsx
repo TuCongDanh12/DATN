@@ -28,14 +28,14 @@ const onChange = (key) => {
 const DoiTuong = () => {
   const titlez = "Đối tượng";
   const process = [
-    {
-      url: 'nhom-nha-cung-cap',
-      content: "Nhóm nhà cung cấp"
-    },
-    {
-      url: 'nha-cung-cap',
-      content: "Nhà cung cấp"
-    },
+    // {
+    //   url: 'nhom-nha-cung-cap',
+    //   content: "Nhóm nhà cung cấp"
+    // },
+    // {
+    //   url: 'nha-cung-cap',
+    //   content: "Nhà cung cấp"
+    // },
     {
       url: 'nhom-khach-hang',
       content: "Nhóm khách hàng"

@@ -200,12 +200,12 @@ const NhomSanPham = () => {
     console.log('params', pagination, filters, sorter, extra);
     setFilteredInfo(filters);
     setSortedInfo(sorter);
-};
+  };
 
-const clearAll = () => {
+  const clearAll = () => {
     setFilteredInfo({});
     setSortedInfo({});
-};
+  };
 
   return (
     <div className='m-4'>
@@ -245,8 +245,10 @@ const clearAll = () => {
           {contextHolderMes}
           {contextHolder}
 
-          <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' />
-          <TfiReload size={30} className='p-2 bg-white border border-black cursor-pointer'
+          {/* <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' /> */}
+          <TfiReload
+            title="Cập nhật dữ liệu"
+            size={30} className='p-2 bg-white border border-black cursor-pointer'
             onClick={() => {
               dispatch(getListProductGroup());
               messageApi.open({
@@ -256,6 +258,7 @@ const clearAll = () => {
               });
               form.resetFields();
               clearAll();
+              // setSearchText("");
             }}
           />
         </div>
