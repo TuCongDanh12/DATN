@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
     Table,
@@ -15,7 +15,7 @@ import {
     Typography,
 } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { SiMicrosoftexcel } from "react-icons/si";
+import { FaRegFilePdf } from "react-icons/fa6";
 import { TfiReload } from "react-icons/tfi";
 import { Add } from "@mui/icons-material";
 import { MdOutlineSearch } from "react-icons/md";
@@ -30,6 +30,8 @@ import moment from "moment/moment";
 import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
 import { VND } from "../../../../utils/func";
 import { congNoSelector, getListCongNo } from './../../../../store/features/congNoSlice';
+import InTongHopNoPhaiThu from "../../../../component/InTongHopNoPhaiThu/InTongHopNoPhaiThu";
+import { useReactToPrint } from "react-to-print";
 const { Text } = Typography;
 
 
@@ -182,7 +184,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
     let columns = [
         {
-            title: "Mã khách hàng",
+            title: "ID khách hàng",
             dataIndex: "makhachhang",
             key: "makhachhang",
             sorter: (a, b) => a.makhachhang - b.makhachhang,
@@ -411,6 +413,14 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         setSortedInfo({});
     };
 
+
+    //Xuat file pdf, in file
+    const componentRef = useRef();
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+    });
+
     return (
         <div className="m-4">
             <div className={`px-[20px] w-full flex justify-between pb-7 ${!checkbox && "bg-white py-7"}`}>
@@ -442,11 +452,14 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                     {contextHolderMes}
                     {contextHolder}
 
-                    <SiMicrosoftexcel
+                    <FaRegFilePdf
+                        title="Xuất file pdf"
+                        onClick={handlePrint}
                         size={30}
                         className="p-2 bg-white border border-black cursor-pointer"
                     />
                     <TfiReload
+                        title="Cập nhật dữ liệu"
                         size={30}
                         className="p-2 bg-white border border-black cursor-pointer"
                         onClick={() => {
@@ -536,33 +549,48 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
                 pagination={false}
                 bordered
-                // summary={(pageData) => {
-                //     let totalTong = 0;
-                //     let totalDaThu = 0;
-                //     let totalChuaThu = 0;
-                //     pageData.forEach(({ tong, dathu, chuathu }) => {
-                //         totalTong += tong;
-                //         totalDaThu += dathu;
-                //         totalChuaThu += chuathu;
-                //     });
-                //     return (
-                //         <>
-                //             <Table.Summary.Row>
-                //                 <Table.Summary.Cell index={0} colSpan={4} className="font-bold">Tên khách hàng: {pageData[0].customer} ({pageData.length})</Table.Summary.Cell>
-                //                 <Table.Summary.Cell index={1}>
-                //                     <Text className="font-bold">{VND.format(totalTong)}</Text>
-                //                 </Table.Summary.Cell>
-                //                 <Table.Summary.Cell index={2}>
-                //                     <Text className="font-bold">{VND.format(totalDaThu)}</Text>
-                //                 </Table.Summary.Cell>
-                //                 <Table.Summary.Cell index={3}>
-                //                     <Text className="font-bold">{VND.format(totalChuaThu)}</Text>
-                //                 </Table.Summary.Cell>
-                //             </Table.Summary.Row>
-                //         </>
-                //     );
-                // }}
+                summary={(pageData) => {
+                    let totalTong = 0;
+                    let totalDaThu = 0;
+                    let totalChuaThu = 0;
+                    pageData.forEach(({ tong, dathu, chuathu }) => {
+                        totalTong += tong;
+                        totalDaThu += dathu;
+                        totalChuaThu += chuathu;
+                    });
+                    return (
+                        <>
+                            <Table.Summary.Row>
+                                <Table.Summary.Cell index={0} colSpan={2} className="font-medium">Tổng</Table.Summary.Cell>
+                                <Table.Summary.Cell index={1}>
+                                    <Text className="font-medium">{VND.format(totalTong)}</Text>
+                                </Table.Summary.Cell>
+                                <Table.Summary.Cell index={2}>
+                                    <Text className="font-medium">{VND.format(totalDaThu)}</Text>
+                                </Table.Summary.Cell>
+                                <Table.Summary.Cell index={3}>
+                                    <Text className="font-medium">{VND.format(totalChuaThu)}</Text>
+                                </Table.Summary.Cell>
+                            </Table.Summary.Row>
+                        </>
+                    );
+                }}
             />
+
+            <div
+            // className='hidden'
+            >
+                <div ref={componentRef}>
+                    <InTongHopNoPhaiThu
+                        form={form}
+                        // components={components}
+                        dataSource={chungTuBan}
+                        columns={columns}
+                    // idHoaDon={chungTuBanData?.id}
+                    // idCustomer={chungTuBanData?.donBanHang?.customer?.id}
+                    />
+                </div>
+            </div>
 
         </div>
     );

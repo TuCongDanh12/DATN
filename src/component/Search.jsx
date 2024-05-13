@@ -67,7 +67,9 @@ function SearchInput() {
         size={30}
         className="p-2 bg-white border border-black"
       />
-      <TfiReload size={30} className="p-2 bg-white border border-black" />
+      <TfiReload size={30} className="p-2 bg-white border border-black"
+        title="Cập nhật dữ liệu"
+      />
     </div>
   );
 }

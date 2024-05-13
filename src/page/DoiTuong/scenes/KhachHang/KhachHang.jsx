@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from "react-router-dom";
-import {  Table, Dropdown, Space, Select, Button, Modal, Form,  Input, message as msg, notification } from "antd";
+import { Table, Dropdown, Space, Select, Button, Modal, Form, Input, message as msg, notification } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { SiMicrosoftexcel } from 'react-icons/si';
 import { TfiReload } from 'react-icons/tfi';
@@ -20,10 +20,10 @@ const KhachHang = () => {
 
     const [api, contextHolder] = notification.useNotification();
     const [customerData, setCustomerData] = useState([]);
-  const [searchText, setSearchText] = useState("");
-  const handleSearch = (value) => {
-    setSearchText(value);
-  };
+    const [searchText, setSearchText] = useState("");
+    const handleSearch = (value) => {
+        setSearchText(value);
+    };
     const {
         listCustomerData,
         isSuccessGetListCustomer,
@@ -42,7 +42,7 @@ const KhachHang = () => {
                 message: 'Thêm dữ liệu thành công!',
                 placement: 'bottomLeft',
                 duration: 2
-              });
+            });
 
             dispatch(clearState());
 
@@ -62,7 +62,7 @@ const KhachHang = () => {
                 message: message,
                 placement: 'bottomLeft',
                 duration: 2
-              });
+            });
 
             dispatch(clearState());
         }
@@ -72,21 +72,21 @@ const KhachHang = () => {
     useEffect(() => {
         console.log("DAY NE", searchText)
         if (searchText.trim() === "") {
-          if (
-            !listCustomerData ||
-            (Array.isArray(listCustomerData) && !listCustomerData.length)
-          ) {
-            setCustomerData([]);
-          } else {
-            setCustomerData(listCustomerData);
-          }
+            if (
+                !listCustomerData ||
+                (Array.isArray(listCustomerData) && !listCustomerData.length)
+            ) {
+                setCustomerData([]);
+            } else {
+                setCustomerData(listCustomerData);
+            }
         } else {
-          const filteredData = listCustomerData.filter((data) => {
-            return data.name.toLowerCase().includes(searchText.toLowerCase());
-          });
-          setCustomerData(filteredData);
+            const filteredData = listCustomerData.filter((data) => {
+                return data.name.toLowerCase().includes(searchText.toLowerCase());
+            });
+            setCustomerData(filteredData);
         }
-      }, [searchText, customerData]);
+    }, [searchText, customerData]);
     const items = [
         {
             key: "xem",
@@ -132,7 +132,7 @@ const KhachHang = () => {
             sorter: (a, b) => a.id - b.id,
             // sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
             ellipsis: true,
-          },
+        },
         {
             title: "Khách hàng",
             dataIndex: "name",
@@ -203,7 +203,7 @@ const KhachHang = () => {
                         layout='inline'
                         onFinish={onFinish}
                     >
-                        
+
                         <Form.Item
                             name='keyword'
                             className='w-[300px] !me-0'
@@ -227,8 +227,10 @@ const KhachHang = () => {
                     {contextHolderMes}
                     {contextHolder}
 
-                    <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' />
-                    <TfiReload size={30} className='p-2 bg-white border border-black cursor-pointer'
+                    {/* <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' /> */}
+                    <TfiReload
+                        title="Cập nhật dữ liệu"
+                        size={30} className='p-2 bg-white border border-black cursor-pointer'
                         onClick={() => {
                             dispatch(getListCustomer());
                             messageApi.open({
@@ -237,6 +239,7 @@ const KhachHang = () => {
                                 content: 'Loading...',
                             });
                             form.resetFields();
+                            setSearchText("");
                         }}
                     />
                 </div>
@@ -299,7 +302,7 @@ const KhachHang = () => {
                     showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
                 }}
                 onChange={onChange}
-                
+
             />
         </div>
     )

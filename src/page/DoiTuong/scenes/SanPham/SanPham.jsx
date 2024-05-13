@@ -114,7 +114,7 @@ const SanPham = () => {
             sorter: (a, b) => a.id - b.id,
             sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
             ellipsis: true,
-          },
+        },
         {
             title: "Sản phẩm",
             dataIndex: "name",
@@ -242,10 +242,10 @@ const SanPham = () => {
         // },
         {
             title: "Số dư",
-            dataIndex: "xxx",
-            key: "xxx",
-            sorter: (a, b) => a.xxx - b.xxx,
-            sortOrder: sortedInfo.columnKey === "xxx" ? sortedInfo.order : null,
+            dataIndex: "category",
+            key: "category",
+            sorter: (a, b) => a.category - b.category,
+            sortOrder: sortedInfo.columnKey === "category" ? sortedInfo.order : null,
             // sorter: (a, b) => a.name.localeCompare(b.name),
         },
         {
@@ -339,8 +339,10 @@ const SanPham = () => {
                     {contextHolderMes}
                     {contextHolder}
 
-                    <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' />
-                    <TfiReload size={30} className='p-2 bg-white border border-black cursor-pointer'
+                    {/* <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' /> */}
+                    <TfiReload
+                        title="Cập nhật dữ liệu"
+                        size={30} className='p-2 bg-white border border-black cursor-pointer'
                         onClick={() => {
                             dispatch(getListProduct());
                             messageApi.open({
@@ -350,7 +352,7 @@ const SanPham = () => {
                             });
                             form.resetFields();
                             clearAll();
-
+                            // setSearchText("");
                         }}
                     />
                 </div>

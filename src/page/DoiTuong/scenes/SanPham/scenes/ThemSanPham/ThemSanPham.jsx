@@ -383,7 +383,7 @@ const ThemSanPham = ({ disabled = true }) => {
                 </Flex>
 
 
-                <div>
+                {/* <div>
                     <Button
                         className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1 mb-4'
                         onClick={handleAdd}
@@ -400,7 +400,7 @@ const ThemSanPham = ({ disabled = true }) => {
                         columns={columns}
                         pagination={false}
                     />
-                </div>
+                </div> */}
 
                 {disabled ?
                     <div className='w-full flex justify-end mt-6 mb-0'>

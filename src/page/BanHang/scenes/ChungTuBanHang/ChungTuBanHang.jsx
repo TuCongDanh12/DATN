@@ -400,6 +400,7 @@ const ChungTuBanHang = () => {
             className="p-2 bg-white border border-black cursor-pointer"
           /> */}
           <TfiReload
+            title="Cập nhật dữ liệu"
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {

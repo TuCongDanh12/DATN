@@ -61,6 +61,8 @@ import ChiTietNoPhaiThu from "./page/CongNo/scenes/ChiTietNoPhaiThu/ChiTietNoPha
 import TaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/TaiKhoanNganHang";
 import Profile from "./page/Profile/Profile";
 import InHoaDonBanHang from "./component/InHoaDonBanHang/InHoaDonBanHang";
+import ThemTaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/scenes/ThemTaiKhoanNganHang/ThemTaiKhoanNganHang";
+import EditTaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/scenes/EditTaiKhoanNganHang/EditTaiKhoanNganHang";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -129,6 +131,12 @@ function App() {
 
                 <Route path="doi-tuong/nhom-san-pham/xem/:id" element={<EditNhomSanPham disabled={true} />} />
                 <Route path="doi-tuong/nhom-san-pham/chinh-sua/:id" element={<EditNhomSanPham disabled={false} />} />
+
+                <Route path="doi-tuong/tai-khoan-ngan-hang/them" element={<ThemTaiKhoanNganHang disabled={false} />} />
+                <Route path="doi-tuong/tai-khoan-ngan-hang/xem/:id" element={<EditTaiKhoanNganHang disabled={true} />} />
+                <Route path="doi-tuong/tai-khoan-ngan-hang/chinh-sua/:id" element={<EditTaiKhoanNganHang disabled={false} />} />
+
+
 
                 <Route path="/mua-hang" element={<MuaHang />}>
                   <Route path="quy-trinh" element={<QuyTrinhMuaHang />} />

@@ -107,7 +107,7 @@ const NhomNhaCungCap = () => {
       });
       setSupplierGroupData(filteredData);
     }
-  }, [searchText,supplierGroupData]);
+  }, [searchText, supplierGroupData]);
   const items = [
     {
       key: "xem",
@@ -238,11 +238,12 @@ const NhomNhaCungCap = () => {
           {contextHolderMes}
           {contextHolder}
 
-          <SiMicrosoftexcel
+          {/* <SiMicrosoftexcel
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
-          />
+          /> */}
           <TfiReload
+            title="Cập nhật dữ liệu"
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {
@@ -253,6 +254,7 @@ const NhomNhaCungCap = () => {
                 content: "Loading...",
               });
               form.resetFields();
+              setSearchText("");
             }}
           />
         </div>
@@ -335,7 +337,7 @@ const NhomNhaCungCap = () => {
 
             <Form.Item label="Mô tả" name="description">
               <Input
-            
+
               />
             </Form.Item>
 

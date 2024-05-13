@@ -486,6 +486,7 @@ const DonDatHang = ({ radio = false }) => {
 
           {!radio && <label for="upload-photo">
             <SiMicrosoftexcel
+              title="Nhập file excel"
               size={30}
               className="p-2 bg-white border border-black cursor-pointer"
             // onClick={readUploadFile}
@@ -493,6 +494,7 @@ const DonDatHang = ({ radio = false }) => {
           </label>}
 
           <TfiReload
+            title="Cập nhật dữ liệu"
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {

@@ -65,12 +65,12 @@ const TaiKhoanNganHang = () => {
 
 
     const items = [
-        // {
-        //     key: "xem",
-        //     label: (<Link className="!text-black">
-        //         Xem
-        //     </Link>),
-        // },
+        {
+            key: "xem",
+            label: (<Link className="!text-black">
+                Xem
+            </Link>),
+        },
         {
             key: "chinh-sua",
             label: (<Link className="!text-black">
@@ -93,9 +93,9 @@ const TaiKhoanNganHang = () => {
             setOpen(true);
         }
         else {
-            // navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
-            setDataSelected(record);
-            setOpenAddNhomSanPham(true);
+            navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+            // setDataSelected(record);
+            // setOpenAddNhomSanPham(true);
         }
     };
 
@@ -164,8 +164,12 @@ const TaiKhoanNganHang = () => {
                             onClick: (e) => handleDropdownItemClick(e, record),
                             items: items,
                         }}>
-                        <Link className="!text-black">
+                        {/* <Link className="!text-black">
                             Chỉnh sửa
+                            <DownOutlined />
+                        </Link> */}
+                        <Link to={`xem/${record.key}`} state={{ id: record.key }} className="!text-black">
+                            Xem
                             <DownOutlined />
                         </Link>
                     </Dropdown>
@@ -245,8 +249,10 @@ const TaiKhoanNganHang = () => {
                     {contextHolderMes}
                     {contextHolder}
 
-                    <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' />
-                    <TfiReload size={30} className='p-2 bg-white border border-black cursor-pointer'
+                    {/* <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' /> */}
+                    <TfiReload
+                        title="Cập nhật dữ liệu"
+                        size={30} className='p-2 bg-white border border-black cursor-pointer'
                         onClick={() => {
                             dispatch(getListBankAccount());
                             messageApi.open({
@@ -256,6 +262,7 @@ const TaiKhoanNganHang = () => {
                             });
                             form.resetFields();
                             clearAll();
+                            // setSearchText("");
                         }}
                     />
                 </div>
@@ -263,7 +270,8 @@ const TaiKhoanNganHang = () => {
                 <Button
                     className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1'
                     type='link'
-                    onClick={() => setOpenAddNhomSanPham(true)}
+                    // onClick={() => setOpenAddNhomSanPham(true)}
+                    onClick={() => navigate("them")}
                 >
                     <Add />Thêm
                 </Button>
@@ -374,7 +382,7 @@ const TaiKhoanNganHang = () => {
                             <Input
                             />
                         </Form.Item>
-                        
+
                         <Form.Item
                             label="Ghi chú"
                             name='note'
