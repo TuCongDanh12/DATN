@@ -253,74 +253,104 @@ const DonDatHang = ({ radio = false }) => {
       render: (val, record) => VND.format(val),
       sorter: (a, b) => a.chuathu - b.chuathu,
       sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
-    },
-    {
-      title: "Tình trạng",
-      dataIndex: "documentStatus",
-      key: "documentStatus",
-      render: (val, record) => {
-        switch (val) {
-          case "UNDOCUMENTED":
-            return "Chưa thực hiện";
-          case "DOCUMENTING":
-            return "Đang thực hiện";
-          case "DOCUMENTED":
-            return "Hoàn thành";
-          default:
-            return "Lỗi";
-        }
-      },
-      filters: [
-        {
-          value: "UNDOCUMENTED",
-          text: "Chưa thực hiện",
-        },
-        {
-          value: "DOCUMENTING",
-          text: "Đang thực hiện",
-        },
-        {
-          value: "DOCUMENTED",
-          text: "Hoàn thành",
-        },
-      ],
-      onFilter: (value, record) => record.documentStatus.indexOf(value) === 0,
-      filteredValue: filteredInfo.documentStatus || null,
-      fixed: 'right',
+      ellipsis: true,
     },
     // {
-    //   title: "Tình trạng giao hàng",
-    //   dataIndex: "deliveryStatus",
-    //   key: "deliveryStatus",
+    //   title: "Tình trạng",
+    //   dataIndex: "documentStatus",
+    //   key: "documentStatus",
     //   render: (val, record) => {
     //     switch (val) {
-    //       case "NOT_DELIVERED":
-    //         return "Chưa giao";
-    //       case "DELIVERING":
-    //         return "Đang giao";
-    //       case "DELIVERED":
-    //         return "Đã giao đủ";
+    //       case "UNDOCUMENTED":
+    //         return "Chưa thực hiện";
+    //       case "DOCUMENTING":
+    //         return "Đang thực hiện";
+    //       case "DOCUMENTED":
+    //         return "Hoàn thành";
     //       default:
     //         return "Lỗi";
     //     }
     //   },
     //   filters: [
     //     {
-    //       value: "NOT_DELIVERED",
-    //       text: "Chưa giao",
+    //       value: "UNDOCUMENTED",
+    //       text: "Chưa thực hiện",
     //     },
     //     {
-    //       value: "DELIVERING",
-    //       text: "Đang giao",
+    //       value: "DOCUMENTING",
+    //       text: "Đang thực hiện",
     //     },
     //     {
-    //       value: "DELIVERED",
-    //       text: "Đã giao đủ",
+    //       value: "DOCUMENTED",
+    //       text: "Hoàn thành",
     //     },
     //   ],
-    //   onFilter: (value, record) => record.deliveryStatus.indexOf(value) === 0,
-    //   filteredValue: filteredInfo.deliveryStatus || null,
+    //   onFilter: (value, record) => record.documentStatus.indexOf(value) === 0,
+    //   filteredValue: filteredInfo.documentStatus || null,
+    //   fixed: 'right',
     // },
+    {
+      title: "Tình trạng kho",
+      dataIndex: "stockStatus",
+      key: "stockStatus",
+      render: (val, record) => {
+        switch (val) {
+          case "IN_STOCK":
+            return "Còn hàng";
+          case "OUT_OF_STOCK":
+            return "Không đủ hàng";
+          default:
+            return "Lỗi";
+        }
+      },
+      filters: [
+        {
+          value: "IN_STOCK",
+          text: "Còn hàng",
+        },
+        {
+          value: "OUT_OF_STOCK",
+          text: "Không đủ hàng",
+        },
+      ],
+      onFilter: (value, record) => record.stockStatus.indexOf(value) === 0,
+      filteredValue: filteredInfo.stockStatus || null,
+      ellipsis: true,
+    },
+    {
+      title: "Tình trạng giao hàng",
+      dataIndex: "deliveryStatus",
+      key: "deliveryStatus",
+      render: (val, record) => {
+        switch (val) {
+          case "NOT_DELIVERED":
+            return "Chưa giao";
+          case "DELIVERING":
+            return "Đang giao";
+          case "DELIVERED":
+            return "Đã giao đủ";
+          default:
+            return "Lỗi";
+        }
+      },
+      filters: [
+        {
+          value: "NOT_DELIVERED",
+          text: "Chưa giao",
+        },
+        {
+          value: "DELIVERING",
+          text: "Đang giao",
+        },
+        {
+          value: "DELIVERED",
+          text: "Đã giao đủ",
+        },
+      ],
+      onFilter: (value, record) => record.deliveryStatus.indexOf(value) === 0,
+      filteredValue: filteredInfo.deliveryStatus || null,
+      ellipsis: true,
+    },
     {
       title: "Chức năng",
       dataIndex: "chucnang",

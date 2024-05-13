@@ -111,7 +111,11 @@ const EditDonDatHang = ({ disabled = false }) => {
 
     useEffect(() => {
         if (donBanHangData) {
-            const data = { ...donBanHangData };
+            const data = {
+                ...donBanHangData,
+                dieukhoanthanhtoan: donBanHangData.dieuKhoan.name,
+                chietkhauthuongmai: donBanHangData.cktm.name
+            };
 
             switch (donBanHangData.documentStatus) {
                 case "UNDOCUMENTED":
@@ -178,9 +182,11 @@ const EditDonDatHang = ({ disabled = false }) => {
                     soluongdaban: soluongdaban,
                     // soluongdaxuat: 1,
                     price: product.price,
+                    phantramcktm: donBanHangData.cktm.discountRate,
+                    tiencktm: product.count * product.price * (donBanHangData.cktm.discountRate / 100),
                     thanhtien: product.price * product.count,
                     phantramthuegtgt: product.product.productGroup.tax,
-                    tienthuegtgt: product.count * product.price * (product.product.productGroup.tax / 100)
+                    tienthuegtgt: product.count * product.price * (1 - donBanHangData.cktm.discountRate / 100) * (product.product.productGroup.tax / 100)
                 }
             })
 
@@ -287,6 +293,19 @@ const EditDonDatHang = ({ disabled = false }) => {
             dataIndex: "thanhtien",
             editable: !disabled,
             render: (val, record) => VND.format(val),
+        },
+        {
+            title: "% chiết khấu",
+            dataIndex: "phantramcktm",
+            editable: !disabled,
+            // render: (val, record) => VND.format(val),
+        },
+        {
+            title: "Tiền chiết khấu",
+            dataIndex: "tiencktm",
+            editable: !disabled,
+            render: (val, record) => VND.format(val),
+            
         },
         {
             title: "% thuế GTGT",
@@ -511,7 +530,7 @@ const EditDonDatHang = ({ disabled = false }) => {
 
                         <Form.Item
                             label="Điều khoản thanh toán"
-                            name='x'
+                            name='dieukhoanthanhtoan'
                         >
                             <Input
                                 disabled={disabled}
@@ -520,8 +539,8 @@ const EditDonDatHang = ({ disabled = false }) => {
                         </Form.Item>
 
                         <Form.Item
-                            label="Tình trạng đơn hàng"
-                            name='documentStatus'
+                            label="Chiết khấu thương mại"
+                            name='chietkhauthuongmai'
                         >
                             <Input
                                 disabled={disabled}
@@ -530,6 +549,16 @@ const EditDonDatHang = ({ disabled = false }) => {
                         </Form.Item>
 
                         {/* <Form.Item
+                            label="Tình trạng đơn hàng"
+                            name='documentStatus'
+                        >
+                            <Input
+                                disabled={disabled}
+
+                            />
+                        </Form.Item> */}
+
+                        <Form.Item
                             label="Tình trạng giao hàng"
                             name='deliveryStatus'
                         >
@@ -537,7 +566,7 @@ const EditDonDatHang = ({ disabled = false }) => {
                                 disabled={disabled}
 
                             />
-                        </Form.Item> */}
+                        </Form.Item>
                     </Flex>
 
                 </Flex>
@@ -545,14 +574,14 @@ const EditDonDatHang = ({ disabled = false }) => {
 
                 <div className='flex justify-start'>
                     <div className='w-[300px] mb-8'>
-                        {donBanHangData?.ctban?.length&&<div className='flex justify-between'>
+                        {donBanHangData?.ctban?.length !== 0 && <div className='flex justify-between'>
                             <p>Tham chiếu đến chứng từ bán hàng:</p>
                             <p>
                                 {
-                                    donBanHangData?.ctban?.map(ct=><span
+                                    donBanHangData?.ctban?.map(ct => <span
                                         className='px-2 text-[#1DA1F2] font-medium	cursor-pointer'
                                         onClick={() => navigate(`/ban-hang/chung-tu-ban-hang/xem/${ct.id}`, { state: { id: ct.id } })}
-                                        >{ct.id}</span>)
+                                    >{ct.id}</span>)
                                 }
                             </p>
                         </div>}
@@ -591,6 +620,16 @@ const EditDonDatHang = ({ disabled = false }) => {
                                 }
                             </p>
                         </div>
+                        <div className='flex justify-between'>
+                            <p>Tiền chiết khấu ({donBanHangData.cktm.discountRate}%)</p>
+                            <p>
+                                {
+                                    VND.format(productOfDonBanHangs.map(product => product.thanhtien).reduce((total, currentValue) => {
+                                        return total + currentValue;
+                                    }, 0) * (donBanHangData.cktm.discountRate / 100))
+                                }
+                            </p>
+                        </div>
                         <div className='flex justify-between border-b border-zinc-950'>
                             <p>Thuế GTGT</p>
                             <p>
@@ -608,6 +647,10 @@ const EditDonDatHang = ({ disabled = false }) => {
                                     VND.format(productOfDonBanHangs.map(product => product.thanhtien).reduce((total, currentValue) => {
                                         return total + currentValue;
                                     }, 0)
+                                        -
+                                        productOfDonBanHangs.map(product => product.thanhtien).reduce((total, currentValue) => {
+                                            return total + currentValue;
+                                        }, 0) * (donBanHangData.cktm.discountRate / 100)
                                         +
                                         productOfDonBanHangs.map(product => product.tienthuegtgt).reduce((total, currentValue) => {
                                             return total + currentValue;
