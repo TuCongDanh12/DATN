@@ -573,8 +573,8 @@ const EditDonDatHang = ({ disabled = false }) => {
 
 
                 <div className='flex justify-start'>
-                    <div className='w-[300px] mb-8'>
-                        {donBanHangData?.ctban?.length !== 0 && <div className='flex justify-between'>
+                    <div className='min-w-[300px] mb-8'>
+                        {donBanHangData?.ctban?.length !== 0 && <div className='flex'>
                             <p>Tham chiếu đến chứng từ bán hàng:</p>
                             <p>
                                 {
@@ -621,7 +621,7 @@ const EditDonDatHang = ({ disabled = false }) => {
                             </p>
                         </div>
                         <div className='flex justify-between'>
-                            <p>Tiền chiết khấu ({donBanHangData?.cktm?.discountRate}%)</p>
+                            <p>Tiền chiết khấu</p>
                             <p>
                                 {
                                     VND.format(productOfDonBanHangs.map(product => product.tiencktm).reduce((total, currentValue) => {

@@ -410,7 +410,7 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                 components={components}
                 dataSource={productOfChungTuBans}
                 columns={columns}
-
+                chungTuBanData={chungTuBanData}
                 form={form}
                 disabled={disabled}
                 onFinish={onFinish} />,
@@ -422,7 +422,7 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                 components={components}
                 dataSource={productOfChungTuBans}
                 columns={columns}
-
+                chungTuBanData={chungTuBanData}
                 form={form}
                 disabled={disabled}
                 onFinish={onFinish}
