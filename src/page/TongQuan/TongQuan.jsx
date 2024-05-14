@@ -33,62 +33,62 @@ const items = [
 const data = [
   {
     name: "Tháng 1",
-    loinhuan: 4000,
+    doanhthu: 4000,
     chiphi: 2400,
   },
   {
     name: "Tháng 2",
-    loinhuan: 3000,
+    doanhthu: 3000,
     chiphi: 1398,
   },
   {
     name: "Tháng 3",
-    loinhuan: 2000,
+    doanhthu: 2000,
     chiphi: 9800,
   },
   {
     name: "Tháng 4",
-    loinhuan: 2780,
+    doanhthu: 2780,
     chiphi: 3908,
   },
   {
     name: "Tháng 5",
-    loinhuan: 1890,
+    doanhthu: 1890,
     chiphi: 4800,
   },
   {
     name: "Tháng 6",
-    loinhuan: 2390,
+    doanhthu: 2390,
     chiphi: 3800,
   },
   {
     name: "Tháng 7",
-    loinhuan: 3490,
+    doanhthu: 3490,
     chiphi: 4300,
   },
   {
     name: "Tháng 8",
-    loinhuan: 3490,
+    doanhthu: 3490,
     chiphi: 4300,
   },
   {
     name: "Tháng 9",
-    loinhuan: 3490,
+    doanhthu: 3490,
     chiphi: 4300,
   },
   {
     name: "Tháng 10",
-    loinhuan: 3490,
+    doanhthu: 3490,
     chiphi: 4300,
   },
   {
     name: "Tháng 11",
-    loinhuan: 3490,
+    doanhthu: 3490,
     chiphi: 4300,
   },
   {
     name: "Tháng 12",
-    loinhuan: 3490,
+    doanhthu: 3490,
     chiphi: 4300,
   },
 ];
@@ -153,7 +153,7 @@ const TongQuan = () => {
               <Tooltip />
               <Legend />
               <Bar
-                dataKey="chiphi"
+                dataKey="doanhthu"
                 fill="#8884d8"
                 activeBar={<Rectangle fill="pink" stroke="blue" />}
               />
@@ -206,7 +206,7 @@ const TongQuan = () => {
           <Tooltip />
           <Legend />
           <Line type="monotone" dataKey="chiphi" stroke="#8884d8" />
-          <Line type="monotone" dataKey="loinhuan" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="doanhthu" stroke="#82ca9d" />
         </LineChart>
       </ResponsiveContainer>
       </div>
