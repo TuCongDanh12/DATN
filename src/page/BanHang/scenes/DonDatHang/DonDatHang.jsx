@@ -368,7 +368,7 @@ const DonDatHang = ({ radio = false }) => {
           <Dropdown
             menu={{
               onClick: (e) => handleDropdownItemClick(e, record),
-              items: items,
+              items: ((record.deliveryStatus === "DELIVERED" || record.stockStatus === "OUT_OF_STOCK") && items.filter(item => item.key === "xem")) || items,
             }}
           >
             <Link

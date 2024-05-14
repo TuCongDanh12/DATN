@@ -336,7 +336,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
           <Dropdown
             menu={{
               onClick: (e) => handleDropdownItemClick(e, record),
-              items: items,
+              items: (record.paymentStatus === "PAID" && items.filter(item => item.key === "xem")) || items,
             }}
           >
             <Link
