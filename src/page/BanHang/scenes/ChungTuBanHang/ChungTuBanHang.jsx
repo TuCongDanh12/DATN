@@ -100,7 +100,7 @@ const ChungTuBanHang = () => {
       const dataConvertCurrent = listChungTuBanData.map(chungTuBanData => {
         console.log("chungTuBanData", chungTuBanData)
 
-        let tong = chungTuBanData.finalValue;
+        let tong = chungTuBanData.totalProductValue - chungTuBanData.totalDiscountValue + chungTuBanData.totalTaxValue;
         // chungTuBanData.productOfCtban.forEach(productOfCt => {
         //   tong += productOfCt.count * productOfCt.price;
         //   tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
