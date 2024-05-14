@@ -113,8 +113,8 @@ const EditDonDatHang = ({ disabled = false }) => {
         if (donBanHangData) {
             const data = {
                 ...donBanHangData,
-                dieukhoanthanhtoan: donBanHangData.dieuKhoan.name,
-                chietkhauthuongmai: donBanHangData.cktm.name
+                dieukhoanthanhtoan: donBanHangData?.dieuKhoan?.name,
+                chietkhauthuongmai: donBanHangData?.cktm?.name
             };
 
             switch (donBanHangData.documentStatus) {
@@ -182,11 +182,11 @@ const EditDonDatHang = ({ disabled = false }) => {
                     soluongdaban: soluongdaban,
                     // soluongdaxuat: 1,
                     price: product.price,
-                    phantramcktm: donBanHangData.cktm.discountRate,
-                    tiencktm: product.count * product.price * (donBanHangData.cktm.discountRate / 100),
+                    phantramcktm: donBanHangData?.cktm?.discountRate,
+                    tiencktm: product.count * product.price * (donBanHangData?.cktm?.discountRate / 100),
                     thanhtien: product.price * product.count,
                     phantramthuegtgt: product.product.productGroup.tax,
-                    tienthuegtgt: product.count * product.price * (1 - donBanHangData.cktm.discountRate / 100) * (product.product.productGroup.tax / 100)
+                    tienthuegtgt: product.count * product.price * (1 - donBanHangData?.cktm?.discountRate / 100) * (product.product.productGroup.tax / 100)
                 }
             })
 
@@ -621,12 +621,12 @@ const EditDonDatHang = ({ disabled = false }) => {
                             </p>
                         </div>
                         <div className='flex justify-between'>
-                            <p>Tiền chiết khấu ({donBanHangData.cktm.discountRate}%)</p>
+                            <p>Tiền chiết khấu ({donBanHangData?.cktm?.discountRate}%)</p>
                             <p>
                                 {
-                                    VND.format(productOfDonBanHangs.map(product => product.thanhtien).reduce((total, currentValue) => {
+                                    VND.format(productOfDonBanHangs.map(product => product.tiencktm).reduce((total, currentValue) => {
                                         return total + currentValue;
-                                    }, 0) * (donBanHangData.cktm.discountRate / 100))
+                                    }, 0))
                                 }
                             </p>
                         </div>
@@ -648,9 +648,9 @@ const EditDonDatHang = ({ disabled = false }) => {
                                         return total + currentValue;
                                     }, 0)
                                         -
-                                        productOfDonBanHangs.map(product => product.thanhtien).reduce((total, currentValue) => {
+                                        productOfDonBanHangs.map(product => product.tiencktm).reduce((total, currentValue) => {
                                             return total + currentValue;
-                                        }, 0) * (donBanHangData.cktm.discountRate / 100)
+                                        }, 0)
                                         +
                                         productOfDonBanHangs.map(product => product.tienthuegtgt).reduce((total, currentValue) => {
                                             return total + currentValue;

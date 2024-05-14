@@ -60,9 +60,12 @@ const DonDatHang = ({ radio = false }) => {
   useEffect(() => {
     dispatch(getListDonBanHang());
     radio && setFilteredInfo({
-      "documentStatus": [
-        "UNDOCUMENTED",
-        "DOCUMENTING"
+      "deliveryStatus": [
+        "NOT_DELIVERED",
+        "DELIVERING"
+      ],
+      "stockStatus": [
+        "IN_STOCK"
       ]
     });
   }, []);
@@ -110,16 +113,20 @@ const DonDatHang = ({ radio = false }) => {
       const dataConvertCurrent = listDonBanHangData.map(donBanHangData => {
         let tong = 0;
         donBanHangData.productOfDonBanHangs.forEach(productOfDon => {
-          tong += productOfDon.count * productOfDon.price * (1 + productOfDon.product.productGroup.tax / 100);
+          let tienhang = productOfDon.count * productOfDon.price;
+          let chietkhau = productOfDon.count * productOfDon.price * (donBanHangData.cktm.discountRate / 100);
+          let thue = (tienhang - chietkhau) * (productOfDon.product.productGroup.tax / 100);
+          tong += (tienhang - chietkhau + thue);
         })
 
         let dathu = 0;
         donBanHangData.ctban.forEach(chungTuBan => {
-          chungTuBan.productOfCtban.forEach(productOfCt => {
-            const data = donBanHangData.productOfDonBanHangs.filter(item => item.product.id === productOfCt.product.id);
-            dathu += productOfCt.count * data[0].price;
-            dathu += productOfCt.count * data[0].price * (data[0].product.productGroup.tax / 100);
-          })
+          dathu += chungTuBan.finalValue
+          // chungTuBan.productOfCtban.forEach(productOfCt => {
+          //   const data = donBanHangData.productOfDonBanHangs.filter(item => item.product.id === productOfCt.product.id);
+          //   dathu += productOfCt.count * data[0].price;
+          //   dathu += productOfCt.count * data[0].price * (data[0].product.productGroup.tax / 100);
+          // })
         })
 
         let chuathu = tong - dathu;
@@ -296,9 +303,9 @@ const DonDatHang = ({ radio = false }) => {
       render: (val, record) => {
         switch (val) {
           case "IN_STOCK":
-            return "Còn hàng";
+            return "Đủ hàng";
           case "OUT_OF_STOCK":
-            return "Không đủ hàng";
+            return "Thiếu hàng";
           default:
             return "Lỗi";
         }
@@ -306,11 +313,11 @@ const DonDatHang = ({ radio = false }) => {
       filters: [
         {
           value: "IN_STOCK",
-          text: "Còn hàng",
+          text: "Đủ hàng",
         },
         {
           value: "OUT_OF_STOCK",
-          text: "Không đủ hàng",
+          text: "Thiếu hàng",
         },
       ],
       onFilter: (value, record) => record.stockStatus.indexOf(value) === 0,
@@ -456,8 +463,10 @@ const DonDatHang = ({ radio = false }) => {
           "paymentStatus": "NOT_PAID",
           "deliveryStatus": "NOT_DELIVERED",
           "documentStatus": "UNDOCUMENTED",
-          "deliveryTerm": "2021-11-01",
+          "deliveryTerm": formatDate(ExcelDateToJSDate(json[0]["Hạn giao hàng"])),
           "salespersonId": json[0]["Mã nhân viên bán hàng"],
+          "dieuKhoanId": json[0]["Mã điều khoản thanh toán"],
+          "cktmId": json[0]["Mã tỷ lệ chiết khấu"],
           "customerId": json[0]["Mã khách hàng"],
           "products": json.map(item => {
             return {
@@ -540,9 +549,12 @@ const DonDatHang = ({ radio = false }) => {
               setFilterday([]);
               setSelectedRowKeys([]);
               radio && setFilteredInfo({
-                "documentStatus": [
-                  "UNDOCUMENTED",
-                  "DOCUMENTING"
+                "deliveryStatus": [
+                  "NOT_DELIVERED",
+                  "DELIVERING"
+                ],
+                "stockStatus": [
+                  "IN_STOCK"
                 ]
               });
             }}

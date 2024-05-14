@@ -73,7 +73,7 @@ const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish }
                         ]}
                     >
                         <Input
-                            disabled={disabled}
+                            disabled={true}
                         />
                     </Form.Item>
 

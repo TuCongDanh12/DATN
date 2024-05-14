@@ -100,7 +100,7 @@ const EditableCell = ({
 };
 
 
-const ThemThuTien = ({ disabled = false }) => {
+const XemPhieuThu = ({ disabled = false }) => {
     const dispatch = useDispatch();
     const params = useParams();
     console.log("params", params)
@@ -129,6 +129,7 @@ const ThemThuTien = ({ disabled = false }) => {
         dispatch(getListBankAccount());
         // dispatch(getListAccountant());
         dispatch(getListSalesperson());
+        
     }, []);
 
     const [filteredInfo, setFilteredInfo] = useState({});
@@ -379,7 +380,7 @@ const ThemThuTien = ({ disabled = false }) => {
                 "content": values.content,
                 "submitter": values.submitter,
                 "customerId": dataHoaDonSelected[0].donBanHang.customer.id,
-                "salespersonID": 1,
+                "salespersonID": values.salespersonID,
                 "chungTuDto": dataHoaDonSelected.map(hoaDon => {
                     return {
                         "money": hoaDon.sothanhtoan,
@@ -539,7 +540,7 @@ const ThemThuTien = ({ disabled = false }) => {
                                 <Select
                                     disabled={disabled}
                                     onChange={(value) => {
-                                        const dataFilter = listBankAccountData.filter(item => item.id === value);
+                                        const dataFilter = listBankAccountData.filter(item => item.accountNumber === value);
                                         console.log("dataFilter", dataFilter)
 
                                         const data = {
@@ -556,7 +557,7 @@ const ThemThuTien = ({ disabled = false }) => {
                                     }}
                                 >
                                     {
-                                        listBankAccountData.map(item => <Select.Option value={item.id} key={item.id}>{item.accountNumber}</Select.Option>)
+                                        listBankAccountData.map(item => <Select.Option value={item.accountNumber} key={item.id}>{item.accountNumber}</Select.Option>)
                                     }
                                 </Select>
 
@@ -834,4 +835,4 @@ const ThemThuTien = ({ disabled = false }) => {
     )
 }
 
-export default ThemThuTien
+export default XemPhieuThu

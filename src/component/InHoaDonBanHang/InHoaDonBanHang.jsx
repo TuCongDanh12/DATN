@@ -5,7 +5,7 @@ import { VND } from '../../utils/func';
 const { Text } = Typography;
 
 
-const InHoaDonBanHang = ({ components, dataSource, columns, form, disabled, onFinish, idHoaDon, idCustomer }) => {
+const InHoaDonBanHang = ({ components, dataSource, columns, form, disabled, onFinish, idHoaDon, idCustomer, tilechietkhau, hanthanhtoan }) => {
     const dataSourceConvert = dataSource.map((data, index) => {
         return {
             ...data,
@@ -292,59 +292,28 @@ const InHoaDonBanHang = ({ components, dataSource, columns, form, disabled, onFi
                         columns={defaultColumns}
                         pagination={false}
                         summary={(pageData) => {
-                            let totalCount = 0;
+                            let totalTiencktm = 0;
                             let totalThanhtien = 0;
                             let totalTienthuegtgt = 0;
-                            pageData.forEach(({ count, thanhtien, tienthuegtgt }) => {
-                                totalCount += count;
+                            pageData.forEach(({  thanhtien, tienthuegtgt, tiencktm }) => {
                                 totalThanhtien += thanhtien;
                                 totalTienthuegtgt += tienthuegtgt;
+                                totalTiencktm += tiencktm;
                             });
-                            let tong = totalThanhtien + totalTienthuegtgt;
+                            let tong = totalThanhtien - totalTiencktm + totalTienthuegtgt;
                             return (
                                 <>
-                                    {/* <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-bold" colSpan={3}>Tỷ lệ chiết khấu: {5}%</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={1} className="font-bold"></Table.Summary.Cell>
-                                        <Table.Summary.Cell index={2} className="font-bold"></Table.Summary.Cell>
-                                        <Table.Summary.Cell index={3}>
-                                            <Text className="font-bold" >{VND.format(totalCount)}</Text>
-                                        </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={4} className="font-bold"></Table.Summary.Cell>
-
-                                        <Table.Summary.Cell index={5} >
-                                            <Text className="font-bold">{VND.format(totalThanhtien)}</Text>
-                                        </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={6} className="font-bold"></Table.Summary.Cell>
-
-                                        <Table.Summary.Cell index={7}>
-                                            <Text className="font-bold">{VND.format(totalTienthuegtgt)}</Text>
-                                        </Table.Summary.Cell>
-                                    </Table.Summary.Row> */}
                                     <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium" colSpan={3}>Tỷ lệ chiết khấu: {5}%</Table.Summary.Cell>
+                                        <Table.Summary.Cell index={0} className="font-medium" colSpan={3}>Tỷ lệ chiết khấu: {tilechietkhau}%</Table.Summary.Cell>
                                         <Table.Summary.Cell index={1} className="font-medium" colSpan={3}>Số tiền chiết khấu:</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={2} className="font-medium">{VND.format(totalThanhtien * (5 / 100))}</Table.Summary.Cell>
-                                        {/* <Table.Summary.Cell index={3}>
-                                            <Text className="font-bold" >{VND.format(totalCount)}</Text>
-                                        </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={4} className="font-bold"></Table.Summary.Cell>
-
-                                        <Table.Summary.Cell index={5} >
-                                            <Text className="font-bold">{VND.format(totalThanhtien)}</Text>
-                                        </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={6} className="font-bold"></Table.Summary.Cell>
-
-                                        <Table.Summary.Cell index={7}>
-                                            <Text className="font-bold">{VND.format(totalTienthuegtgt)}</Text>
-                                        </Table.Summary.Cell> */}
+                                        <Table.Summary.Cell index={2} className="font-medium">{VND.format(totalTiencktm)}</Table.Summary.Cell>
                                     </Table.Summary.Row>
 
                                     <Table.Summary.Row>
                                         <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={6}>Cộng tiền hàng (đã trừ CK):</Table.Summary.Cell>
                                         <Table.Summary.Cell index={1} className="font-medium">
                                             {/* {VND.format(tong)} */}
-                                            <Text className="font-medium">{VND.format(totalThanhtien - totalThanhtien * (5 / 100))}</Text>
+                                            <Text className="font-medium">{VND.format(totalThanhtien - totalTiencktm)}</Text>
                                         </Table.Summary.Cell>
                                     </Table.Summary.Row>
 
@@ -361,15 +330,15 @@ const InHoaDonBanHang = ({ components, dataSource, columns, form, disabled, onFi
                                         <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={6}>Tổng tiền thanh toán</Table.Summary.Cell>
                                         <Table.Summary.Cell index={1} className="font-medium">
                                             {/* {VND.format(tong)} */}
-                                            <Text className="font-medium">{VND.format(totalThanhtien - totalThanhtien * (5 / 100) + totalTienthuegtgt)}</Text>
+                                            <Text className="font-medium">{VND.format(tong)}</Text>
                                         </Table.Summary.Cell>
                                     </Table.Summary.Row>
 
                                     <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={7}>Số tiền viết bằng chữ: {to_vietnamese(totalThanhtien - totalThanhtien * (5 / 100) + totalTienthuegtgt)}</Table.Summary.Cell>
+                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={7}>Số tiền viết bằng chữ: {to_vietnamese(tong)}</Table.Summary.Cell>
                                     </Table.Summary.Row>
 
-                                    
+
 
                                     {/* <Table.Summary.Row>
                                         <Table.Summary.Cell index={0} className="font-bold">Tổng</Table.Summary.Cell>

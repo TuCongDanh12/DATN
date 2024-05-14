@@ -125,7 +125,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
 
     // console.log("listProductData", listProductData);
     useEffect(() => {
-        if ( isSuccessGetDonBanHang) {
+        if (isSuccessGetDonBanHang) {
             const products = donBanHangData.productOfDonBanHangs.map(product => {
 
                 let soluongdaban = 0;
@@ -148,9 +148,11 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                     soluongchuadat: product.count - soluongdaban,
                     // soluongdaxuat: 1,
                     price: product.price,
+                    phantramcktm: donBanHangData?.cktm?.discountRate,
+                    tiencktm: product.count * product.price * (donBanHangData?.cktm?.discountRate / 100),
                     thanhtien: product.price * product.count,
                     phantramthuegtgt: product.product.productGroup.tax,
-                    tienthuegtgt: product.count * product.price * (product.product.productGroup.tax / 100)
+                    tienthuegtgt: product.count * product.price * (1 - donBanHangData?.cktm?.discountRate / 100) * (product.product.productGroup.tax / 100)
                 }
             })
 
@@ -161,7 +163,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
             setProductOfDonBanHangs(products);
             dispatch(clearState());
         }
-    }, [ isSuccessGetDonBanHang]);
+    }, [isSuccessGetDonBanHang]);
 
 
     const nameValue = Form.useWatch('id', form);
@@ -251,6 +253,19 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
 
         },
         {
+            title: "% chiết khấu",
+            dataIndex: "phantramcktm",
+            editable: !disabled,
+            // render: (val, record) => VND.format(val),
+        },
+        {
+            title: "Tiền chiết khấu",
+            dataIndex: "tiencktm",
+            editable: !disabled,
+            render: (val, record) => VND.format(val),
+
+        },
+        {
             title: "% thuế GTGT",
             dataIndex: "phantramthuegtgt",
             editable: false,
@@ -291,9 +306,9 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
 
     const handleSave = (row) => {
         console.log("row", row);
-        row.thanhtien= row.price*row.count;
-        row.tienthuegtgt = row.price*row.count*(row.phantramthuegtgt/100);
-        
+        row.thanhtien = row.price * row.count;
+        row.tiencktm = row.price * row.count * (row.phantramcktm / 100);
+        row.tienthuegtgt = (row.thanhtien - row.tiencktm) * (row.phantramthuegtgt / 100);
         const newData = [...productOfDonBanHangs];
         const index = newData.findIndex((item) => row.key === item.key);
         const item = newData[index];
@@ -340,15 +355,15 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                 month = '' + (d.getMonth() + 1),
                 day = '' + d.getDate(),
                 year = d.getFullYear();
-        
-            if (month.length < 2) 
+
+            if (month.length < 2)
                 month = '0' + month;
-            if (day.length < 2) 
+            if (day.length < 2)
                 day = '0' + day;
-        
+
             return [year, month, day].join('-');
         }
-        
+
         let dataConvert = {
             "deliveryDate": formatDate(values.deliveryDate.$d),
             "warehouseKeeperId": values.warehouseKeeperId,
@@ -370,7 +385,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
 
         // console.log("dayjs(values.deliveryDate, dateFormat)",dayjs(new Date(values.deliveryDate.$d).toISOString().slice(0, 10), dateFormat))
 
-        dispatch(postChungTuBan({values:dataConvert}));
+        dispatch(postChungTuBan({ values: dataConvert }));
         navigate(-2);
     };
 
@@ -470,13 +485,20 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
 
     useEffect(() => {
         if (donBanHangData) {
+            // let hanThanhToan = new Date();
+            // hanThanhToan?.setDate(hanThanhToan?.getDate() + donBanHangData?.dieuKhoan?.creditPeriod);
+
+            // let currentDay = new Date().getDate();
+            // let hanDay = new Date().setDate(currentDay + donBanHangData?.dieuKhoan?.creditPeriod);
+
             const data = {
                 ...donBanHangData,
                 receiver: donBanHangData.namecCustomer,
                 paymentMethod: "CASH",
-                paymentTerm: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 createdAt: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
-                deliveryDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat)
+                deliveryDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
+                dieukhoanthanhtoan: donBanHangData?.dieuKhoan?.name,
+                chietkhauthuongmai: donBanHangData?.cktm?.name
             };
 
             switch (donBanHangData.documentStatus) {
@@ -512,9 +534,48 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
             form.setFieldsValue({
                 ...data
             });
+
+            // let hanThanhToan = new Date();
+            // hanThanhToan?.setDate(hanThanhToan?.getDate() + Number(donBanHangData?.dieuKhoan?.creditPeriod));
+            // function test() {
+            //     const data = {
+            //         // paymentTerm: dayjs(new Date((new Date()).getTime() + (donBanHangData?.dieuKhoan?.creditPeriod * 24 * 60 * 60 * 1000)).toISOString()?.slice(0, 10), dateFormat)
+            //         paymentTerm: dayjs(hanThanhToan.toISOString()?.slice(0, 10), dateFormat)
+            //     }
+            //     form.setFieldsValue({
+            //         ...data
+            //     });
+            // }
+
+            // setTimeout(test, 5000)
+
+            // var currentDate = new Date();
+
+            // // Thêm 30 ngày
+            // currentDate.setDate(currentDate.getDate() + 30);
+
+            // form.setFieldsValue({
+            //     paymentTerm: dayjs(currentDate.toISOString().slice(0, 10), dateFormat)
+            // });
+
         }
     }, [donBanHangData]);
 
+    useEffect(() => {
+        if (donBanHangData?.dieuKhoan?.creditPeriod) {
+            // let hanThanhToan = new Date();
+            // hanThanhToan?.setDate(hanThanhToan?.getDate() + Number(donBanHangData?.dieuKhoan?.creditPeriod));
+
+            const data = {
+                paymentTerm: dayjs(new Date((new Date()).getTime() + (donBanHangData?.dieuKhoan?.creditPeriod * 24 * 60 * 60 * 1000)).toISOString()?.slice(0, 10), dateFormat)
+                // paymentTerm: dayjs(hanThanhToan.toISOString()?.slice(0, 10), dateFormat)
+            }
+            form.setFieldsValue({
+                ...data
+            });
+        }
+
+    }, [donBanHangData?.dieuKhoan?.creditPeriod]);
 
 
     return (
@@ -576,9 +637,9 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                         </Select>
                     </Form.Item> */}
 
-                    <Checkbox checked={phieuThuChecked} onChange={onChangePhieuThu}>
+                    {/* <Checkbox checked={phieuThuChecked} onChange={onChangePhieuThu}>
                         Lập kèm phiếu thu
-                    </Checkbox>
+                    </Checkbox> */}
                 </Flex>
 
 
@@ -594,6 +655,18 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                             <p>
                                 {
                                     VND.format(productOfDonBanHangs.map(product => product.thanhtien).reduce((total, currentValue) => {
+                                        return total + currentValue;
+                                    }, 0))
+                                }
+                            </p>
+                        </div>
+                        <div className='flex justify-between'>
+                            <p>Tiền chiết khấu 
+                                {/* ({donBanHangData?.cktm?.discountRate}%) */}
+                                </p>
+                            <p>
+                                {
+                                    VND.format(productOfDonBanHangs.map(product => product.tiencktm).reduce((total, currentValue) => {
                                         return total + currentValue;
                                     }, 0))
                                 }
@@ -616,6 +689,10 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                                     VND.format(productOfDonBanHangs.map(product => product.thanhtien).reduce((total, currentValue) => {
                                         return total + currentValue;
                                     }, 0)
+                                        -
+                                        productOfDonBanHangs.map(product => product.tiencktm).reduce((total, currentValue) => {
+                                            return total + currentValue;
+                                        }, 0)
                                         +
                                         productOfDonBanHangs.map(product => product.tienthuegtgt).reduce((total, currentValue) => {
                                             return total + currentValue;
