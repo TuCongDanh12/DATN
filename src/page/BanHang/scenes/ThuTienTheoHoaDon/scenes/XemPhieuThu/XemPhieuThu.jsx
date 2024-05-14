@@ -251,14 +251,14 @@ const XemPhieuThu = ({ disabled = false }) => {
             sorter: (a, b) => a.tong - b.tong,
             sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
         },
-        {
-            title: "Chưa thu",
-            dataIndex: "chuathu",
-            key: "chuathu",
-            render: (val, record) => VND.format(val),
-            sorter: (a, b) => a.chuathu - b.chuathu,
-            sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
-        },
+        // {
+        //     title: "Chưa thu",
+        //     dataIndex: "chuathu",
+        //     key: "chuathu",
+        //     render: (val, record) => VND.format(val),
+        //     sorter: (a, b) => a.chuathu - b.chuathu,
+        //     sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
+        // },
         // {
         //     title: "Số lượng chưa đặt",
         //     dataIndex: "soluongchuadat",
@@ -734,11 +734,11 @@ const XemPhieuThu = ({ disabled = false }) => {
                         pagination={false}
                         summary={(pageData) => {
                             let totalTong = 0;
-                            let totalChuaThu = 0;
+                            // let totalChuaThu = 0;
                             let totalSoThanhToan = 0;
                             pageData.forEach(({ tong, sothanhtoan, chuathu }) => {
                                 totalTong += tong;
-                                totalChuaThu += chuathu;
+                                // totalChuaThu += chuathu;
                                 totalSoThanhToan += sothanhtoan;
                             });
                             return (
@@ -748,9 +748,9 @@ const XemPhieuThu = ({ disabled = false }) => {
                                         <Table.Summary.Cell index={1}>
                                             <Text className="font-bold">{VND.format(totalTong)}</Text>
                                         </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={2}>
+                                        {/* <Table.Summary.Cell index={2}>
                                             <Text className="font-bold">{VND.format(totalChuaThu)}</Text>
-                                        </Table.Summary.Cell>
+                                        </Table.Summary.Cell> */}
                                         <Table.Summary.Cell index={3}>
                                             <Text className="font-bold">{VND.format(totalSoThanhToan)}</Text>
                                         </Table.Summary.Cell>

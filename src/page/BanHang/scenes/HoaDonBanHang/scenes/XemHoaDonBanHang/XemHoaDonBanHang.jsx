@@ -494,7 +494,9 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                 paymentMethod: "CASH",
                 paymentTerm: dayjs(chungTuBanData.paymentTerm, dateFormat),
                 createdAt: dayjs(chungTuBanData.createdAt, dateFormat),
-                deliveryDate: dayjs(chungTuBanData.deliveryDate, dateFormat)
+                deliveryDate: dayjs(chungTuBanData.deliveryDate, dateFormat),
+                dieukhoanthanhtoan: chungTuBanData?.donBanHang?.dieuKhoan?.name,
+                chietkhauthuongmai: chungTuBanData?.donBanHang?.cktm?.name
             };
 
             switch (chungTuBanData.documentStatus) {
@@ -586,7 +588,8 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                     components={components}
                     dataSource={productOfChungTuBans}
                     columns={columns}
-
+                    chungTuBanData={chungTuBanData}
+                    isHoaDon={true}
                     form={form}
                     disabled={disabled}
                     onFinish={onFinish}

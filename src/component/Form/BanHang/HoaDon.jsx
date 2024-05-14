@@ -2,12 +2,15 @@ import React from 'react'
 import { Form, Input, DatePicker, Flex, Table, Select } from "antd";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { useNavigate } from 'react-router-dom';
 
 const dateFormat = "YYYY-MM-DD";
 dayjs.extend(customParseFormat);
 
 
-const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) => {
+const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish, chungTuBanData, isHoaDon }) => {
+    const navigate = useNavigate();
+
     const columsFilter = columns
     // .filter(item=> (item.dataIndex!=="phantramthuegtgt"&&item.dataIndex!=="tienthuegtgt"))
 
@@ -267,6 +270,47 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) =
                 </Flex>
 
             </Flex>
+
+            <div className='flex justify-start flex-col'>
+                <div className='min-w-[300px]'>
+                    <div className='flex'>
+                        <p>Tham chiếu đến đơn bán hàng:</p>
+                        <p>
+                            <span
+                                className='px-2 text-[#1DA1F2] font-medium	cursor-pointer'
+                                onClick={() => navigate(`/ban-hang/don-dat-hang/xem/${chungTuBanData?.donBanHang?.id}`, { state: { id: chungTuBanData?.donBanHang?.id } })}
+                            >{chungTuBanData?.donBanHang?.id}</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div className='min-w-[300px]'>
+                    {isHoaDon && <div className='flex'>
+                        <p>Tham chiếu đến chứng từ bán hàng:</p>
+                        <p>
+                            <span
+                                className='px-2 text-[#1DA1F2] font-medium	cursor-pointer'
+                                onClick={() => navigate(`/ban-hang/chung-tu-ban-hang/xem/${chungTuBanData?.id}`, { state: { id: chungTuBanData?.id } })}
+                            >{chungTuBanData?.id}</span>
+                        </p>
+                    </div>}
+                </div>
+
+                <div className='min-w-[300px] mb-8'>
+                    {chungTuBanData?.phieuThu?.length !== 0 && <div className='flex'>
+                        <p>Tham chiếu đến phiếu thu:</p>
+                        <p>
+                            {
+                                chungTuBanData?.phieuThu?.map(ct => <span
+                                    className='px-2 text-[#1DA1F2] font-medium	cursor-pointer'
+                                    onClick={() => navigate(`/ban-hang/thu-tien-theo-hoa-don/xem/${ct.id}`, { state: { id: ct.id } })}
+                                >{ct.id}</span>)
+                            }
+                        </p>
+                    </div>}
+                </div>
+            </div>
+
             <div>
                 <Table
                     components={components}
