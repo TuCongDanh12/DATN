@@ -1,49 +1,52 @@
-import React, { useState } from "react";
-import { Modal, Button } from "antd";
+import React from "react";
+import { Flex, Button, Popconfirm, message } from "antd";
+import { Link } from "react-router-dom";
+import { notification } from "./../services/notification.service";
 
-function Notification(props) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
+function NotificationComponent(props) {
+  const DetailAnnouncement = (entityId, type) => {
+    return type === "THU" ? (
+      <Link to={`/ban-hang/don-dat-hang/xem/${entityId}`}>Xem chi tiết</Link>
+    ) : (
+      <Link to={`/ban-hang/chung-tu-ban-hang/xem/${entityId}`}>Xem chi tiết</Link>
+    );
   };
-  const handleOk = () => {
-    setIsModalOpen(false);
+
+  const confirm = async () => {
+    try {
+      const res = await notification.updateResolve(props.id);
+      console.log(res);
+      message.success("Cập nhật thành công");
+    } catch (err) {
+      console.error(err);
+      message.error("Cập nhật thất bại");
+    }
   };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
+
   return (
-    <div
+    <Flex
+      justify="space-between"
       className={`border border-gray-300 shadow-md rounded-lg bg-pink-100 p-2 ${props.className}`}
     >
-      <p className="font-bold">Tới hạn thanh toán</p>
-      <p>
-        <i>Thông báo</i>: Sắp tới hạn thanh toán cho hóa đơn{" "}
-        <strong onClick={showModal} className="cursor-pointer">
-          HĐ0001
-        </strong>
-      </p>
-      <Modal
-        title="Thông báo cho hóa đơn HĐ0001"
-        open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
-      >
-        <p>
-          <i>Nhà cung cấp:</i> <strong>Từ Công Danh</strong>
-        </p>
-        <p>
-          <i>
-            Thời hạn thanh toán: còn <strong>5</strong> ngày
-          </i>
-        </p>
-        <p>
-          <i>Số tiền phải thanh toán:</i> <strong>5 000 000</strong> đồng
-        </p>
-        <a className='text-blue-500' href='#'>Xem chi tiết hóa đơn</a>
-      </Modal>
-    </div>
+      <p>{props.message}</p>
+      <Flex gap={10} align="center" className="text-blue-500">
+        {console.log(props.id,props.entityId)}
+        {DetailAnnouncement(props.entityId, props.type)}
+        {props.resolved ? (
+          <Button disabled>Đã xử lý</Button>
+        ) : (
+          <Popconfirm
+            title="Bạn chắc chắn đã xử lý thông báo này?"
+            onConfirm={confirm}
+            okText="Xác nhận"
+            cancelText="Hủy"
+          >
+            <Button className="bg-pink-200">Xác nhận xử lý</Button>
+          </Popconfirm>
+        )}
+      </Flex>
+    </Flex>
   );
 }
 
-export default Notification;
+export default NotificationComponent;
