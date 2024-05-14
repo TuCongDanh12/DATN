@@ -294,7 +294,7 @@ const ThemKhachHang = ({ disabled = true }) => {
                             />
                         </Form.Item>
 
-                        
+
                     </Flex>
 
                     <Flex vertical gap={5} className='w-[50%]'>
@@ -346,7 +346,7 @@ const ThemKhachHang = ({ disabled = true }) => {
                             />
                         </Form.Item> */}
 
-<Form.Item
+                        <Form.Item
                             label="Số điện thoại"
                             name='phone'
                             rules={[
@@ -394,7 +394,7 @@ const ThemKhachHang = ({ disabled = true }) => {
                 </Flex>
 
 
-                <div>
+                {/* <div>
                     <Button
                         className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1 mb-4'
                         onClick={handleAdd}
@@ -411,7 +411,7 @@ const ThemKhachHang = ({ disabled = true }) => {
                         columns={columns}
                         pagination={false}
                     />
-                </div>
+                </div> */}
 
                 {disabled ?
                     <div className='w-full flex justify-end mt-6 mb-0'>

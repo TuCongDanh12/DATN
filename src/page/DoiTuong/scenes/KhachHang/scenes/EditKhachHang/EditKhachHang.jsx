@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } from "antd";
+import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber, Modal, notification } from "antd";
 import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { doiTuongSelector, getListCustomerGroup, getCustomer } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getListCustomerGroup, getCustomer, clearState } from '../../../../../../store/features/doiTuongSilce';
+import { FaCheck } from "react-icons/fa";
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -96,11 +97,14 @@ const EditKhachHang = ({ disabled = false }) => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
 
-    const { listcustomerData,
+    const {
         customerData,
-        listSupplierGroupData,
-        supplierGroupData,
-        listCustomerGroupData } = useSelector(doiTuongSelector);
+        listCustomerGroupData,
+        isSuccessPostDieuKhoanThanhToan,
+        isSuccessPostCktm,
+        isError,
+        message
+    } = useSelector(doiTuongSelector);
     console.log("customerData", customerData);
 
     useEffect(() => {
@@ -116,11 +120,64 @@ const EditKhachHang = ({ disabled = false }) => {
         }
     }, [customerData]);
 
+    const [api, contextHolder] = notification.useNotification();
+
+
+    useEffect(() => {
+        if (isSuccessPostDieuKhoanThanhToan) {
+            api.success({
+                message: 'Thêm dữ liệu thành công!',
+                placement: 'bottomLeft',
+                duration: 2
+            });
+
+            dispatch(clearState());
+            dispatch(getCustomer({ id: params.id }));
+        }
+        else if (isSuccessPostCktm) {
+            api.success({
+                message: 'Thêm dữ liệu thành công!',
+                placement: 'bottomLeft',
+                duration: 2
+            });
+
+            dispatch(clearState());
+            dispatch(getCustomer({ id: params.id }));
+        }
+        if (isError) {
+            api.error({
+                message: message,
+                placement: 'bottomLeft',
+                duration: 2
+            });
+
+            dispatch(clearState());
+        }
+    }, [
+        isSuccessPostCktm,
+        isSuccessPostDieuKhoanThanhToan,
+        isError,
+        message
+    ]);
+
     const nameValue = Form.useWatch('name', form);
 
     const [dataSource, setDataSource] = useState([
         {
             key: '0',
+            'id': '1',
+            'tenchietkhau': 'Chiết khấu 1',
+            'songayduocno': '20',
+            'songayhuongchietkhau': '10',
+            'phantramchietkhau': '2',
+            'noidung': '...',
+        }
+    ]);
+
+    const [dataSource2, setDataSource2] = useState([
+        {
+            key: '0',
+            'id': '1',
             'tenchietkhau': 'Chiết khấu 1',
             'songayduocno': '20',
             'songayhuongchietkhau': '10',
@@ -137,39 +194,83 @@ const EditKhachHang = ({ disabled = false }) => {
     };
     const defaultColumns = [
         {
-            title: 'Tên chiết khấu',
-            dataIndex: 'tenchietkhau',
-            width: '30%',
+            title: "ID",
+            dataIndex: "id",
+            key: "id",
+            ellipsis: true,
+            width: '10%',
+        },
+        {
+            title: 'Tên điều khoản thanh toán',
+            dataIndex: 'name',
             editable: !disabled,
+            ellipsis: true,
         },
         {
             title: 'Số ngày được nợ',
-            dataIndex: 'songayduocno',
+            dataIndex: 'creditPeriod',
             editable: !disabled,
+            ellipsis: true,
         },
         {
-            title: 'Số ngày hưởng chiết khấu',
-            dataIndex: 'songayhuongchietkhau',
+            title: 'Mô tả',
+            dataIndex: 'description',
             editable: !disabled,
+            ellipsis: true,
         },
         {
-            title: '% chiết khấu',
-            dataIndex: 'phantramchietkhau',
-            editable: !disabled,
-        },
-        {
-            title: 'Nội dung',
-            dataIndex: 'noidung',
-            editable: !disabled,
-        },
-        {
-            title: '',
+            title: 'Chỉnh sửa',
             dataIndex: 'operation',
-            width: '50px',
+            width: '100px',
             render: (_, record) =>
                 dataSource.length >= 1 ? (
                     <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
-                        <RiDeleteBin6Line size={20} color='#1E1E1E' />
+                        <FaCheck size={20} color='#1E1E1E' />
+                    </Typography.Link>
+                ) : null,
+        },
+    ];
+
+
+    const defaultColumns2 = [
+        {
+            title: "ID",
+            dataIndex: "id",
+            key: "id",
+            ellipsis: true,
+            width: '10%',
+        },
+        {
+            title: 'Tên chiết khấu',
+            dataIndex: 'name',
+            editable: !disabled,
+            ellipsis: true,
+        },
+        {
+            title: 'Số tiền tối thiểu để nhận được chiết khấu',
+            dataIndex: 'minProductValue',
+            editable: !disabled,
+            ellipsis: true,
+        },
+        {
+            title: '% chiết khấu',
+            dataIndex: 'discountRate',
+            editable: !disabled,
+        },
+        {
+            title: 'Mô tả',
+            dataIndex: 'description',
+            editable: !disabled,
+            ellipsis: true,
+        },
+        {
+            title: 'Chỉnh sửa',
+            dataIndex: 'operation',
+            width: '100px',
+            render: (_, record) =>
+                dataSource2.length >= 1 ? (
+                    <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
+                        <FaCheck size={20} color='#1E1E1E' />
                     </Typography.Link>
                 ) : null,
         },
@@ -181,7 +282,7 @@ const EditKhachHang = ({ disabled = false }) => {
             'tenchietkhau': '.',
             'songayduocno': '.',
             'songayhuongchietkhau': '.',
-            'phantramchietkhau': '.',
+            'discountRate': '.',
             'noidung': '.',
         };
         setDataSource([...dataSource, newData]);
@@ -214,7 +315,7 @@ const EditKhachHang = ({ disabled = false }) => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: ['songayduocno', 'songayhuongchietkhau', 'phantramchietkhau'].includes(col.dataIndex) ? 'number' : 'text',
+                inputType: ['creditPeriod'].includes(col.dataIndex) ? 'number' : 'text',
                 editable: col.editable,
                 dataIndex: col.dataIndex,
                 title: col.title,
@@ -223,9 +324,67 @@ const EditKhachHang = ({ disabled = false }) => {
         };
     });
 
+    const columns2 = defaultColumns2.map((col) => {
+        if (!col.editable) {
+            return col;
+        }
+        return {
+            ...col,
+            onCell: (record) => ({
+                record,
+                inputType: ['discountRate', 'minProductValue'].includes(col.dataIndex) ? 'number' : 'text',
+                editable: col.editable,
+                dataIndex: col.dataIndex,
+                title: col.title,
+                handleSave,
+            }),
+        };
+    });
+
+
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
         console.log(dataSource);
+    };
+
+
+    //add dieu khoan thanh toan
+    const [openAddDieuKhoanThanhToan, setOpenAddDieuKhoanThanhToan] = useState(false);
+    const [formAddDieuKhoanThanhToan] = Form.useForm();
+
+    const handleCancelAddDieuKhoanThanhToan = () => {
+        setOpenAddDieuKhoanThanhToan(false);
+    }
+
+    const onFinishAddDieuKhoanThanhToan = (values) => {
+        console.log('Received values of form: ', values);
+
+        const dataConvert = {
+            ...values,
+            "customerId": customerData.id
+        }
+        // dispatch(postProductGroup({ values }));
+        formAddDieuKhoanThanhToan.resetFields();
+    };
+
+
+    //add chiet khau thương mại
+    const [openAddChietKhauThuongMai, setOpenAddChietKhauThuongMai] = useState(false);
+    const [formAddChietKhauThuongMai] = Form.useForm();
+
+    const handleCancelAddChietKhauThuongMai = () => {
+        setOpenAddChietKhauThuongMai(false);
+    }
+
+    const onFinishAddChietKhauThuongMai = (values) => {
+        console.log('Received values of form: ', values);
+
+        const dataConvert = {
+            ...values,
+            "customerId": customerData.id
+        }
+        // dispatch(postProductGroup({ values }));
+        formAddChietKhauThuongMai.resetFields();
     };
 
     return (
@@ -300,54 +459,6 @@ const EditKhachHang = ({ disabled = false }) => {
                     </Flex>
 
                     <Flex vertical gap={5} className='w-[50%]'>
-                        {/* <Form.Item
-                            label="Ngân hàng"
-                            name='bankName'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Số tài khoản"
-                            name='accountNumber'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            label="Chủ tài khoản"
-                            name='accountName'
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            <Input
-                                disabled={disabled}
-
-                            />
-                        </Form.Item> */}
-
                         <Form.Item
                             label="Số điện thoại"
                             name='phone'
@@ -397,20 +508,208 @@ const EditKhachHang = ({ disabled = false }) => {
 
 
                 <div>
-                    <Button
-                        className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1 mb-4'
-                        onClick={handleAdd}
-                        disabled={disabled}
-                    >
-                        Thêm 1 dòng
-                    </Button>
+                    <div className='flex gap-4'>
+                        <Button
+                            className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1 mb-4'
+                            onClick={() => setOpenAddDieuKhoanThanhToan(true)}
+                            disabled={disabled}
+                        >
+                            Thêm điều khoản thanh toán
+                        </Button>
 
+                        <Modal
+                            title="THÊM ĐIỀU KHOẢN THANH TOÁN"
+                            centered
+                            open={openAddDieuKhoanThanhToan}
+                            width={700}
+                            footer=''
+                            onCancel={handleCancelAddDieuKhoanThanhToan}
+                        >
+                            <Form
+                                form={formAddDieuKhoanThanhToan}
+                                layout='horizontal'
+                                onFinish={onFinishAddDieuKhoanThanhToan}
+                                labelCol={{
+                                    flex: '200px',
+                                }}
+                                labelAlign="left"
+                                className='mt-4'
+                            >
+                                <Form.Item
+                                    label="Tên điều khoản thanh toán"
+                                    name='name'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Trường này là bắt buộc!',
+                                        },
+                                    ]}
+                                >
+                                    <Input
+                                    />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Số ngày được nợ"
+                                    name='creditPeriod'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Trường này là bắt buộc!',
+                                        },
+                                    ]}
+                                >
+                                    <InputNumber
+                                        style={{
+                                            width: '100%',
+                                        }} />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Mô tả"
+                                    name='description'
+                                >
+                                    <Input
+                                    />
+                                </Form.Item>
+
+                                <Form.Item className='flex justify-end gap-2 mt-6 mb-0'>
+
+                                    <Button
+                                        className='bg-[#FF7742] font-bold text-white mr-2'
+                                        htmlType="reset"
+                                        onClick={() => setOpenAddDieuKhoanThanhToan(false)}
+                                    >
+                                        Hủy
+                                    </Button>
+                                    <Button
+                                        className='!bg-[#67CDBB] font-bold text-white'
+                                        htmlType="submit"
+                                        onClick={() => setOpenAddDieuKhoanThanhToan(false)}
+                                    >
+                                        Xác nhận
+                                    </Button>
+                                </Form.Item>
+                            </Form>
+                        </Modal>
+
+                        <Button
+                            className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1 mb-4'
+                            onClick={() => setOpenAddChietKhauThuongMai(true)}
+                            disabled={disabled}
+                        >
+                            Thêm chiết khấu thương mại
+                        </Button>
+
+                        <Modal
+                            title="THÊM CHIẾT KHẤU THƯƠNG MẠI"
+                            centered
+                            open={openAddChietKhauThuongMai}
+                            width={700}
+                            footer=''
+                            onCancel={handleCancelAddChietKhauThuongMai}
+                        >
+                            <Form
+                                form={formAddChietKhauThuongMai}
+                                layout='horizontal'
+                                onFinish={onFinishAddChietKhauThuongMai}
+                                labelCol={{
+                                    flex: '200px',
+                                }}
+                                labelAlign="left"
+                                className='mt-4'
+                            >
+                                <Form.Item
+                                    label="Tên chiết khấu"
+                                    name='name'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Trường này là bắt buộc!',
+                                        },
+                                    ]}
+                                >
+                                    <Input
+                                    />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Số tiền tối thiểu"
+                                    name='minProductValue'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Trường này là bắt buộc!',
+                                        },
+                                    ]}
+                                >
+                                    <InputNumber
+                                        style={{
+                                            width: '100%',
+                                        }} />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="% chiết khấu"
+                                    name='discountRate'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Trường này là bắt buộc!',
+                                        },
+                                    ]}
+                                >
+                                    <InputNumber
+                                        style={{
+                                            width: '100%',
+                                        }} />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Mô tả"
+                                    name='description'
+                                >
+                                    <Input
+                                    />
+                                </Form.Item>
+
+                                <Form.Item className='flex justify-end gap-2 mt-6 mb-0'>
+
+                                    <Button
+                                        className='bg-[#FF7742] font-bold text-white mr-2'
+                                        htmlType="reset"
+                                        onClick={() => setOpenAddChietKhauThuongMai(false)}
+                                    >
+                                        Hủy
+                                    </Button>
+                                    <Button
+                                        className='!bg-[#67CDBB] font-bold text-white'
+                                        htmlType="submit"
+                                        onClick={() => setOpenAddChietKhauThuongMai(false)}
+                                    >
+                                        Xác nhận
+                                    </Button>
+                                </Form.Item>
+                            </Form>
+                        </Modal>
+
+                    </div>
                     <Table
                         components={components}
                         rowClassName={() => 'editable-row'}
                         bordered
                         dataSource={dataSource}
                         columns={columns}
+                        pagination={false}
+                        className='mb-4'
+                    />
+
+                    <Table
+                        components={components}
+                        rowClassName={() => 'editable-row'}
+                        bordered
+                        dataSource={dataSource2}
+                        columns={columns2}
                         pagination={false}
                     />
                 </div>
