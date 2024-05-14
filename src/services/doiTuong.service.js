@@ -265,6 +265,76 @@ const getListSalesperson = () => {
         });
 };
 
+
+
+
+
+
+const getListDieuKhoanThanhToan = () => {
+    return axios.get(`${API_URL}/dieu-khoan`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+const getDieuKhoanThanhToan = ({ id }) => {
+    return axios.get(`${API_URL}/dieu-khoan/${id}`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+const postDieuKhoanThanhToan = ({ values }) => {
+    return axios.post(`${API_URL}/dieu-khoan`,
+        {
+            ...values
+        },
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+
+
+
+
+
+const getListCktm = () => {
+    return axios.get(`${API_URL}/cktm`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+const getCktm = ({ id }) => {
+    return axios.get(`${API_URL}/cktm/${id}`,
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
+const postCktm = ({ values }) => {
+    return axios.post(`${API_URL}/cktm`,
+        {
+            ...values
+        },
+        {
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+};
+
 const doiTuongService = {
     getListSupplier,
     getSupplier,
@@ -297,6 +367,14 @@ const doiTuongService = {
     getListAccountant,
 
     getListSalesperson,
+
+    getListDieuKhoanThanhToan,
+    getDieuKhoanThanhToan,
+    postDieuKhoanThanhToan,
+
+    getListCktm,
+    getCktm,
+    postCktm,
 };
 
 export default doiTuongService;

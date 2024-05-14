@@ -389,6 +389,118 @@ export const getListSalesperson = createAsyncThunk(
 );
 
 
+
+
+
+
+
+
+
+
+
+
+
+export const getListDieuKhoanThanhToan = createAsyncThunk(
+    "doiTuong/getListDieuKhoanThanhToan",
+    async (thunkAPI) => {
+        try {
+            const response = await doiTuongService.getListDieuKhoanThanhToan();
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const getDieuKhoanThanhToan = createAsyncThunk(
+    "doiTuong/getDieuKhoanThanhToan",
+    async ({ id }, thunkAPI) => {
+        try {
+            const response = await doiTuongService.getDieuKhoanThanhToan({ id });
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const postDieuKhoanThanhToan = createAsyncThunk(
+    "doiTuong/postDieuKhoanThanhToan",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await doiTuongService.postDieuKhoanThanhToan({values});
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const getListCktm = createAsyncThunk(
+    "doiTuong/getListCktm",
+    async (thunkAPI) => {
+        try {
+            const response = await doiTuongService.getListCktm();
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const getCktm = createAsyncThunk(
+    "doiTuong/getCktm",
+    async ({ id }, thunkAPI) => {
+        try {
+            const response = await doiTuongService.getCktm({ id });
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+export const postCktm = createAsyncThunk(
+    "doiTuong/postCktm",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await doiTuongService.postCktm({values});
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
+
+
+
 const initialState = {
     isFetching: false,
     isSuccess: false,
@@ -414,6 +526,12 @@ const initialState = {
     isSuccessGetListAccountant: false,
 
     isSuccessGetListSalesperson: false,
+
+    isSuccessGetListDieuKhoanThanhToan: false,
+    isSuccessPostDieuKhoanThanhToan: false,
+    
+    isSuccessGetListCktm: false,
+    isSuccessPostCktm: false,
     
     isError: false,
     message: "",
@@ -438,6 +556,12 @@ const initialState = {
     listAccountantData: [],
 
     listSalespersonData: [],
+
+    listDieuKhoanThanhToanData: [],
+    dieuKhoanThanhToanData: {},
+
+    listCktmData: [],
+    cktmData: {},
 };
 
 export const doiTuongSlice = createSlice({
@@ -464,6 +588,12 @@ export const doiTuongSlice = createSlice({
 
             state.isSuccessGetListBankAccount = false;
             state.isSuccessPostBankAccount = false;
+
+            state.isSuccessGetListDieuKhoanThanhToan = false;
+            state.isSuccessPostDieuKhoanThanhToan = false;
+
+            state.isSuccessGetListCktm = false;
+            state.isSuccessPostCktm = false;
 
             state.isFetching = false;
             state.message = "";
@@ -1039,6 +1169,150 @@ export const doiTuongSlice = createSlice({
             state.isFetching = false;
             state.isError = true;
             // state.message = action.error.message;
+        })
+
+
+
+
+
+
+
+
+
+
+        builder.addCase(getListDieuKhoanThanhToan.pending, (state) => {
+            console.log("getListDieuKhoanThanhToan.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getListDieuKhoanThanhToan.fulfilled, (state, action) => {
+            console.log("getListDieuKhoanThanhToan.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessGetListDieuKhoanThanhToan = true;
+            state.listDieuKhoanThanhToanData = action.payload.result.data.map(item=>{return {...item, key: item.id}});
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getListDieuKhoanThanhToan.rejected, (state, action) => {
+            console.log("getListDieuKhoanThanhToan.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            // state.message = action.error.message;
+        })
+
+        builder.addCase(getDieuKhoanThanhToan.pending, (state) => {
+            console.log("getDieuKhoanThanhToan.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getDieuKhoanThanhToan.fulfilled, (state, action) => {
+            console.log("getDieuKhoanThanhToan.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccess = true;
+            state.dieuKhoanThanhToanData = {...action.payload.result.data, key: action.payload.result.data.id};
+
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getDieuKhoanThanhToan.rejected, (state, action) => {
+            console.log("getDieuKhoanThanhToan.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
+
+        builder.addCase(postDieuKhoanThanhToan.pending, (state) => {
+            console.log("postDieuKhoanThanhToan.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(postDieuKhoanThanhToan.fulfilled, (state, action) => {
+            console.log("postDieuKhoanThanhToan.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessPostDieuKhoanThanhToan = true;
+            state.productData = action.payload;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(postDieuKhoanThanhToan.rejected, (state, action) => {
+            console.log("postDieuKhoanThanhToan.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        builder.addCase(getListCktm.pending, (state) => {
+            console.log("getListCktm.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getListCktm.fulfilled, (state, action) => {
+            console.log("getListCktm.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessGetListCktm = true;
+            state.listCktmData = action.payload.result.data.map(item=>{return {...item, key: item.id}});
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getListCktm.rejected, (state, action) => {
+            console.log("getListCktm.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            // state.message = action.error.message;
+        })
+
+        builder.addCase(getCktm.pending, (state) => {
+            console.log("getCktm.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(getCktm.fulfilled, (state, action) => {
+            console.log("getCktm.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccess = true;
+            state.cktmData = {...action.payload.result.data, key: action.payload.result.data.id};
+
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(getCktm.rejected, (state, action) => {
+            console.log("getCktm.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
+
+        builder.addCase(postCktm.pending, (state) => {
+            console.log("postCktm.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(postCktm.fulfilled, (state, action) => {
+            console.log("postCktm.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessPostCktm = true;
+            state.productData = action.payload;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(postCktm.rejected, (state, action) => {
+            console.log("postCktm.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
         })
 
     },
