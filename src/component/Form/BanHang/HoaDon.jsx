@@ -59,7 +59,7 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) =
                         ]}
                     >
                         <Input
-                            disabled={disabled}
+                            disabled={true}
                         />
                     </Form.Item>
 
@@ -106,7 +106,25 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) =
                 </Flex>
 
                 <Flex vertical gap={5} className='w-[50%]'>
+                    <Form.Item
+                        label="Điều khoản thanh toán"
+                        name='dieukhoanthanhtoan'
+                    >
+                        <Input
+                            disabled={true}
 
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Chiết khấu thương mại"
+                        name='chietkhauthuongmai'
+                    >
+                        <Input
+                            disabled={true}
+
+                        />
+                    </Form.Item>
 
                     <Form.Item
                         label="Ngày hạch toán"
@@ -142,7 +160,7 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) =
                         />
                     </Form.Item>
 
-                    <Form.Item
+                    {/* <Form.Item
                         label="Tình trạng thanh toán"
                         name="paymentStatus"
                         rules={[
@@ -159,7 +177,7 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish }) =
                             <Select.Option value={"BEING_PAID"}>Thanh toán 1 phần</Select.Option>
                             <Select.Option value={"PAID"}>Đã thanh toán</Select.Option>
                         </Select>
-                    </Form.Item>
+                    </Form.Item> */}
 
                     {/* <Form.Item
                         label="Ngày giao hàng"

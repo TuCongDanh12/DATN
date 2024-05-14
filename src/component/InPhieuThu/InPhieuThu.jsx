@@ -6,7 +6,7 @@ import moment from 'moment';
 const { Text } = Typography;
 
 
-const InPhieuChi = ({ components, dataSource, columns, form, disabled, onFinish, idPhieuXuat, idCustomer }) => {
+const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish, idPhieuXuat, idCustomer }) => {
     const dataSourceConvert = dataSource.map((data, index) => {
         return {
             ...data,
@@ -326,4 +326,4 @@ const InPhieuChi = ({ components, dataSource, columns, form, disabled, onFinish,
     )
 }
 
-export default InPhieuChi
+export default InPhieuThu

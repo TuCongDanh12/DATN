@@ -131,7 +131,7 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                 // const data = listProductData.filter(item => item.id === productOfChungTu.product.id);
                 // console.log("data", data);
 
-                let soluongdaban = 0;
+                // let soluongdaban = 0;
                 // chungTuBanData.ctban.forEach(chungtuban => {
                 //     chungtuban.productOfCtban.forEach(productOfCtbanItem => {
                 //         if (productOfCtbanItem.product.id === product.id) {
@@ -146,13 +146,15 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                     id: productOfChungTu.product.id,
                     productName: productOfChungTu.product.name,
                     unit: productOfChungTu.product.unit,
-                    count: productOfChungTu.count - soluongdaban,
-                    soluongchuadat: productOfChungTu.count - soluongdaban,
+                    count: productOfChungTu.count,
+                    soluongchuadat: productOfChungTu.count,
                     // soluongdaxuat: 1,
                     price: productOfChungTu.price,
+                    phantramcktm: chungTuBanData.donBanHang?.cktm?.discountRate,
+                    tiencktm: productOfChungTu.count * productOfChungTu.price * (chungTuBanData.donBanHang?.cktm?.discountRate / 100),
                     thanhtien: productOfChungTu.price * productOfChungTu.count,
                     phantramthuegtgt: productOfChungTu.product.productGroup.tax,
-                    tienthuegtgt: productOfChungTu.count * productOfChungTu.price * (productOfChungTu.product.productGroup.tax / 100)
+                    tienthuegtgt: productOfChungTu.count * productOfChungTu.price * (1 - chungTuBanData.donBanHang?.cktm?.discountRate / 100) * (productOfChungTu.product.productGroup.tax / 100)
                 }
             })
 
@@ -249,6 +251,19 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
             title: "Thành tiền",
             dataIndex: "thanhtien",
             editable: false,
+            render: (val, record) => VND.format(val),
+
+        },
+        {
+            title: "% chiết khấu",
+            dataIndex: "phantramcktm",
+            editable: !disabled,
+            // render: (val, record) => VND.format(val),
+        },
+        {
+            title: "Tiền chiết khấu",
+            dataIndex: "tiencktm",
+            editable: !disabled,
             render: (val, record) => VND.format(val),
 
         },
@@ -578,12 +593,24 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                 />
 
                 <div className='flex justify-end'>
-                    <div className='w-[300px] my-8'>
+                <div className='w-[300px] my-8'>
                         <div className='flex justify-between'>
                             <p>Tổng tiền hàng</p>
                             <p>
                                 {
                                     VND.format(productOfChungTuBans.map(product => product.thanhtien).reduce((total, currentValue) => {
+                                        return total + currentValue;
+                                    }, 0))
+                                }
+                            </p>
+                        </div>
+                        <div className='flex justify-between'>
+                            <p>Tiền chiết khấu
+                                 {/* ({chungTuBanData?.donBanHang?.cktm?.discountRate}%) */}
+                                 </p>
+                            <p>
+                                {
+                                    VND.format(productOfChungTuBans.map(product => product.tiencktm).reduce((total, currentValue) => {
                                         return total + currentValue;
                                     }, 0))
                                 }
@@ -606,6 +633,10 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                                     VND.format(productOfChungTuBans.map(product => product.thanhtien).reduce((total, currentValue) => {
                                         return total + currentValue;
                                     }, 0)
+                                        -
+                                        productOfChungTuBans.map(product => product.tiencktm).reduce((total, currentValue) => {
+                                            return total + currentValue;
+                                        }, 0)
                                         +
                                         productOfChungTuBans.map(product => product.tienthuegtgt).reduce((total, currentValue) => {
                                             return total + currentValue;
@@ -664,6 +695,7 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
                         columns={columns}
                         idHoaDon={chungTuBanData?.id}
                         idCustomer={chungTuBanData?.donBanHang?.customer?.id}
+                        tilechietkhau={chungTuBanData?.donBanHang?.cktm?.discountRate}
                     />
                 </div>
             </div>

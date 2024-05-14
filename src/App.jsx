@@ -63,6 +63,7 @@ import Profile from "./page/Profile/Profile";
 import InHoaDonBanHang from "./component/InHoaDonBanHang/InHoaDonBanHang";
 import ThemTaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/scenes/ThemTaiKhoanNganHang/ThemTaiKhoanNganHang";
 import EditTaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/scenes/EditTaiKhoanNganHang/EditTaiKhoanNganHang";
+import XemPhieuThu from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/XemPhieuThu/XemPhieuThu";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -178,7 +179,7 @@ function App() {
 
 
                 <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThemThuTien />} />
-                <Route path="ban-hang/thu-tien-theo-hoa-don/xem/:id" element={<ThemThuTien disabled={true} />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/xem/:id" element={<XemPhieuThu disabled={true} />} />
                 <Route path="/tien-mat" element={<TienMat />} />
                 <Route path="/tien-gui" element={<TienGui />} />
 

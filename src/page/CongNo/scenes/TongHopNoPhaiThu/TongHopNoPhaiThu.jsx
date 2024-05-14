@@ -578,7 +578,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
             />
 
             <div
-            // className='hidden'
+            className='hidden'
             >
                 <div ref={componentRef}>
                     <InTongHopNoPhaiThu
