@@ -121,7 +121,7 @@ const DonDatHang = ({ radio = false }) => {
 
         let dathu = 0;
         donBanHangData.ctban.forEach(chungTuBan => {
-          dathu += chungTuBan.finalValue
+          dathu += chungTuBan.totalProductValue - chungTuBan.totalDiscountValue + chungTuBan.totalTaxValue
           // chungTuBan.productOfCtban.forEach(productOfCt => {
           //   const data = donBanHangData.productOfDonBanHangs.filter(item => item.product.id === productOfCt.product.id);
           //   dathu += productOfCt.count * data[0].price;
