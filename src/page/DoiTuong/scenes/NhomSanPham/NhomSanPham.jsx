@@ -54,11 +54,16 @@ const NhomSanPham = () => {
     isSuccessPostProductGroup,
     isError,
     message,
+    isSuccessUpdateProductGroup
   } = useSelector(doiTuongSelector);
 
   useEffect(() => {
     dispatch(getListProductGroup());
   }, []);
+
+  useEffect(() => {
+    setProductGroupData(listProductGroupData);
+  }, [listProductGroupData]);
 
   useEffect(() => {
     if (isSuccessPostProductGroup) {
@@ -70,7 +75,18 @@ const NhomSanPham = () => {
 
       dispatch(clearState());
       dispatch(getListProductGroup());
-    } else if (isSuccessGetListProductGroup) {
+    } 
+    else if(isSuccessUpdateProductGroup){
+      api.success({
+        message: 'Cập nhật dữ liệu thành công!',
+        placement: 'bottomLeft',
+        duration: 2
+      });
+
+      // dispatch(getListCustomerGroup());
+      dispatch(clearState());
+    }
+    else if (isSuccessGetListProductGroup) {
       // messageApi.open({
       //   key: 'updatable',
       //   type: 'success',
@@ -94,6 +110,7 @@ const NhomSanPham = () => {
     isSuccessPostProductGroup,
     isError,
     message,
+    isSuccessUpdateProductGroup
   ]);
 
   useEffect(() => {

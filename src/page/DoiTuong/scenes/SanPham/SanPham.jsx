@@ -49,11 +49,17 @@ const SanPham = () => {
     isSuccessPostProduct,
     isError,
     message,
+    isSuccessUpdateProduct
   } = useSelector(doiTuongSelector);
 
   useEffect(() => {
     dispatch(getListProduct());
   }, []);
+
+  useEffect(() => {
+    setProductData(listProductData);
+  }, [listProductData]);
+
 
   useEffect(() => {
     if (isSuccessPostProduct) {
@@ -64,7 +70,18 @@ const SanPham = () => {
       });
       dispatch(getListProduct());
       dispatch(clearState());
-    } else if (isSuccessGetListProduct) {
+    } 
+    else if(isSuccessUpdateProduct){
+      api.success({
+        message: 'Cập nhật dữ liệu thành công!',
+        placement: 'bottomLeft',
+        duration: 2
+      });
+
+      // dispatch(getListCustomerGroup());
+      dispatch(clearState());
+    }
+    else if (isSuccessGetListProduct) {
       // messageApi.open({
       //     key: 'updatable',
       //     type: 'success',
@@ -83,7 +100,7 @@ const SanPham = () => {
 
       dispatch(clearState());
     }
-  }, [isSuccessGetListProduct, isSuccessPostProduct, isError]);
+  }, [isSuccessGetListProduct, isSuccessPostProduct, isError, message, isSuccessUpdateProduct]);
 
   useEffect(() => {
     if (searchText.trim() === "") {

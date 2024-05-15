@@ -3,7 +3,7 @@ import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } fro
 import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { doiTuongSelector, getListProductGroup, getProduct } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getListProductGroup, getProduct, updateProduct } from '../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -225,7 +225,13 @@ const EditSanPham = ({ disabled = false }) => {
 
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
-        console.log(dataSource);
+        // console.log(dataSource);
+        const dataConvert = {
+            ...values,
+            id: productData.id
+        }
+        dispatch(updateProduct({ values: dataConvert }));
+        navigate(-1);
     };
 
     return (
@@ -281,7 +287,7 @@ const EditSanPham = ({ disabled = false }) => {
                             />
                         </Form.Item>
 
-                        
+
                         <Form.Item
                             label="Đơn vị tính"
                             name='unit'
@@ -312,11 +318,29 @@ const EditSanPham = ({ disabled = false }) => {
                             </Select>
                         </Form.Item>
 
+                        <Form.Item
+                            label="Số lượng"
+                            name='category'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <InputNumber
+                                style={{
+                                    width: '100%',
+                                }}
+                                disabled={disabled}
+                            />
+                        </Form.Item>
+
                     </Flex>
 
                     <Flex vertical gap={5} className='w-[50%]'>
 
-                    <Form.Item
+                        <Form.Item
                             label="Giá mua"
                             name='priceReceived'
                             rules={[
@@ -329,9 +353,9 @@ const EditSanPham = ({ disabled = false }) => {
                             <InputNumber
                                 style={{
                                     width: '100%',
-                                }} 
+                                }}
                                 disabled={disabled}
-                                />
+                            />
                         </Form.Item>
 
                         <Form.Item
@@ -347,11 +371,11 @@ const EditSanPham = ({ disabled = false }) => {
                             <InputNumber
                                 style={{
                                     width: '100%',
-                                }} 
+                                }}
                                 disabled={disabled}
-                                />
+                            />
                         </Form.Item>
-                       
+
 
                         {/* <Form.Item
                             label="Số dư"
