@@ -560,6 +560,7 @@ const EditKhachHang = ({ disabled = false }) => {
                                     ]}
                                 >
                                     <InputNumber
+                                        min={0}
                                         style={{
                                             width: '100%',
                                         }} />
@@ -644,6 +645,9 @@ const EditKhachHang = ({ disabled = false }) => {
                                     ]}
                                 >
                                     <InputNumber
+                                        defaultValue={0}
+                                        min={0}
+                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'đ'}
                                         style={{
                                             width: '100%',
                                         }} />
@@ -660,6 +664,7 @@ const EditKhachHang = ({ disabled = false }) => {
                                     ]}
                                 >
                                     <InputNumber
+                                        min={0}
                                         style={{
                                             width: '100%',
                                         }} />
