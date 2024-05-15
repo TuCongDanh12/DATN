@@ -99,13 +99,17 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                 let tong = 0;
                 let dathu = 0;
                 congNo.forEach(chungTuBanData => {
-                    console.log("chungTuBanData", chungTuBanData)
+                    tong += chungTuBanData.totalProductValue - chungTuBanData.totalDiscountValue + chungTuBanData.totalTaxValue;
+                    // console.log("chungTuBanData", chungTuBanData)
 
-                    chungTuBanData.productOfCtban.forEach(productOfCt => {
-                        tong += productOfCt.count * productOfCt.price;
-                        tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
-                    })
+                    // chungTuBanData.productOfCtban.forEach(productOfCt => {
+                    //     tong += productOfCt.count * productOfCt.price;
+                    //     tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
+                    // })
                     //continue ...
+                    dathu += chungTuBanData?.phieuThu?.map(pt => pt.money).reduce((total, currentValue) => {
+                        return total + currentValue;
+                    }, 0)
                 })
 
                 let chuathu = tong - dathu;
@@ -578,7 +582,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
             />
 
             <div
-            className='hidden'
+                className='hidden'
             >
                 <div ref={componentRef}>
                     <InTongHopNoPhaiThu

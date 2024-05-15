@@ -10,12 +10,12 @@ const CongNo = () => {
       //   content: "Quy trình"
       // },
       {
-        url: 'tong-hop-no-phai-thu',
-        content: "Tổng hợp nợ phải thu"
-      },
-      {
         url: 'chi-tiet-no-phai-thu',
         content: "Chi tiết nợ phải thu"
+      },
+      {
+        url: 'tong-hop-no-phai-thu',
+        content: "Tổng hợp nợ phải thu"
       },
       {
         url: 'bao-cao',
