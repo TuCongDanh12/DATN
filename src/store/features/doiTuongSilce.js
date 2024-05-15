@@ -140,7 +140,19 @@ export const postCustomerGroup = createAsyncThunk(
 );
 
 
-
+export const updateCustomerGroup = createAsyncThunk(
+    "doiTuong/updateCustomerGroup",
+    async ({ values }, thunkAPI) => {
+        try {
+            const response = await doiTuongService.updateCustomerGroup({ values });
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
 
 
 
@@ -190,6 +202,21 @@ export const postCustomer = createAsyncThunk(
     }
 );
 
+
+export const updateCustomer = createAsyncThunk(
+    "doiTuong/updateCustomer",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await doiTuongService.updateCustomer({values});
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
 
 
 
@@ -244,6 +271,20 @@ export const postProductGroup = createAsyncThunk(
     }
 );
 
+export const updateProductGroup = createAsyncThunk(
+    "doiTuong/updateProductGroup",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await doiTuongService.updateProductGroup({values});
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
 
 
 
@@ -295,7 +336,20 @@ export const postProduct = createAsyncThunk(
     }
 );
 
-
+export const updateProduct = createAsyncThunk(
+    "doiTuong/updateProduct",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await doiTuongService.updateProduct({values});
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
 
 
 
@@ -345,7 +399,20 @@ export const postBankAccount = createAsyncThunk(
     }
 );
 
-
+export const updateBankAccount = createAsyncThunk(
+    "doiTuong/updateBankAccount",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await doiTuongService.updateBankAccount({values});
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
 
 
 
@@ -443,8 +510,20 @@ export const postDieuKhoanThanhToan = createAsyncThunk(
     }
 );
 
-
-
+export const updateDieuKhoanThanhToan = createAsyncThunk(
+    "doiTuong/updateDieuKhoanThanhToan",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await doiTuongService.updateDieuKhoanThanhToan({values});
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
 
 
 
@@ -499,6 +578,20 @@ export const postCktm = createAsyncThunk(
     }
 );
 
+export const updateCktm = createAsyncThunk(
+    "doiTuong/updateCktm",
+    async ({ values }, thunkAPI) => {
+        try {
+            console.log("values", values)
+            const response = await doiTuongService.updateCktm({values});
+            console.log("response", response);
+            return response.data;
+        } catch (error) {
+            console.log("error", error);
+            return thunkAPI.rejectWithValue(error.response.data);
+        }
+    }
+);
 
 
 const initialState = {
@@ -512,16 +605,23 @@ const initialState = {
 
     isSuccessGetListCustomer: false,
     isSuccessPostCustomer: false,
+    isSuccessUpdateCustomer: false,
+
     isSuccessGetListCustomerGroup: false,
     isSuccessPostCustomerGroup: false,
+    isSuccessUpdateCustomerGroup: false,
 
     isSuccessGetListProduct: false,
     isSuccessPostProduct: false,
+    isSuccessUpdateProduct: false,
+
     isSuccessGetListProductGroup: false,
     isSuccessPostProductGroup: false,
+    isSuccessUpdateProductGroup: false,
 
     isSuccessGetListBankAccount: false,
     isSuccessPostBankAccount: false,
+    isSuccessUpdateBankAccount: false,
 
     isSuccessGetListAccountant: false,
 
@@ -529,9 +629,11 @@ const initialState = {
 
     isSuccessGetListDieuKhoanThanhToan: false,
     isSuccessPostDieuKhoanThanhToan: false,
+    isSuccessUpdateDieuKhoanThanhToan: false,
     
     isSuccessGetListCktm: false,
     isSuccessPostCktm: false,
+    isSuccessUpdateCktm: false,
     
     isError: false,
     message: "",
@@ -578,22 +680,31 @@ export const doiTuongSlice = createSlice({
 
             state.isSuccessGetListCustomer = false;
             state.isSuccessPostCustomer = false;
+            state.isSuccessUpdateCustomer = false;
+
             state.isSuccessGetListCustomerGroup = false;
             state.isSuccessPostCustomerGroup = false;
+            state.isSuccessUpdateCustomerGroup = false;
 
             state.isSuccessGetListProduct = false;
             state.isSuccessPostProduct = false;
+            state.isSuccessUpdateProduct = false;
+
             state.isSuccessGetListProductGroup = false;
             state.isSuccessPostProductGroup = false;
+            state.isSuccessUpdateProductGroup = false;
 
             state.isSuccessGetListBankAccount = false;
             state.isSuccessPostBankAccount = false;
+            state.isSuccessUpdateBankAccount = false;
 
             state.isSuccessGetListDieuKhoanThanhToan = false;
             state.isSuccessPostDieuKhoanThanhToan = false;
+            state.isSuccessUpdateDieuKhoanThanhToan = false;
 
             state.isSuccessGetListCktm = false;
             state.isSuccessPostCktm = false;
+            state.isSuccessUpdateCktm = false;
 
             state.isFetching = false;
             state.message = "";
@@ -799,7 +910,25 @@ export const doiTuongSlice = createSlice({
         })
 
 
+        builder.addCase(updateCustomerGroup.pending, (state) => {
+            console.log("updateCustomerGroup.pending", state)
+            state.isFetching = true;
+        })
 
+        builder.addCase(updateCustomerGroup.fulfilled, (state, action) => {
+            console.log("updateCustomerGroup.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessUpdateCustomerGroup = true;
+            // state.customerGroupData = action.payload.result.data;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(updateCustomerGroup.rejected, (state, action) => {
+            console.log("updateCustomerGroup.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
 
 
 
@@ -870,7 +999,25 @@ export const doiTuongSlice = createSlice({
             state.message = action.error.message;
         })
 
+        builder.addCase(updateCustomer.pending, (state) => {
+            console.log("updateCustomer.pending", state)
+            state.isFetching = true;
+        })
 
+        builder.addCase(updateCustomer.fulfilled, (state, action) => {
+            console.log("updateCustomer.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessUpdateCustomer = true;
+            // state.customerGroupData = action.payload.result.data;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(updateCustomer.rejected, (state, action) => {
+            console.log("updateCustomer.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
 
 
 
@@ -968,6 +1115,25 @@ export const doiTuongSlice = createSlice({
             state.message = action.error.message;
         })
 
+        builder.addCase(updateProductGroup.pending, (state) => {
+            console.log("updateProductGroup.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(updateProductGroup.fulfilled, (state, action) => {
+            console.log("updateProductGroup.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessUpdateProductGroup = true;
+            // state.customerGroupData = action.payload.result.data;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(updateProductGroup.rejected, (state, action) => {
+            console.log("updateProductGroup.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
 
 
 
@@ -1040,6 +1206,25 @@ export const doiTuongSlice = createSlice({
             state.message = action.error.message;
         })
 
+        builder.addCase(updateProduct.pending, (state) => {
+            console.log("updateProduct.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(updateProduct.fulfilled, (state, action) => {
+            console.log("updateProduct.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessUpdateProduct = true;
+            // state.customerGroupData = action.payload.result.data;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(updateProduct.rejected, (state, action) => {
+            console.log("updateProduct.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
 
 
 
@@ -1114,7 +1299,25 @@ export const doiTuongSlice = createSlice({
         })
 
 
+        builder.addCase(updateBankAccount.pending, (state) => {
+            console.log("updateBankAccount.pending", state)
+            state.isFetching = true;
+        })
 
+        builder.addCase(updateBankAccount.fulfilled, (state, action) => {
+            console.log("updateBankAccount.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessUpdateBankAccount = true;
+            // state.customerGroupData = action.payload.result.data;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(updateBankAccount.rejected, (state, action) => {
+            console.log("updateBankAccount.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
 
 
 
@@ -1242,7 +1445,25 @@ export const doiTuongSlice = createSlice({
         })
 
 
+        builder.addCase(updateDieuKhoanThanhToan.pending, (state) => {
+            console.log("updateDieuKhoanThanhToan.pending", state)
+            state.isFetching = true;
+        })
 
+        builder.addCase(updateDieuKhoanThanhToan.fulfilled, (state, action) => {
+            console.log("updateDieuKhoanThanhToan.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessUpdateDieuKhoanThanhToan = true;
+            // state.customerGroupData = action.payload.result.data;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(updateDieuKhoanThanhToan.rejected, (state, action) => {
+            console.log("updateDieuKhoanThanhToan.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
 
 
 
@@ -1314,6 +1535,27 @@ export const doiTuongSlice = createSlice({
             state.isError = true;
             state.message = action.error.message;
         })
+
+        builder.addCase(updateCktm.pending, (state) => {
+            console.log("updateCktm.pending", state)
+            state.isFetching = true;
+        })
+
+        builder.addCase(updateCktm.fulfilled, (state, action) => {
+            console.log("updateCktm.fulfilled", action.payload)
+            state.isFetching = false;
+            state.isSuccessUpdateCktm = true;
+            // state.customerGroupData = action.payload.result.data;
+            //   state.message = action.payload.message;
+        })
+
+        builder.addCase(updateCktm.rejected, (state, action) => {
+            console.log("updateCktm.rejected", action)
+            state.isFetching = false;
+            state.isError = true;
+            state.message = action.error.message;
+        })
+
 
     },
 });

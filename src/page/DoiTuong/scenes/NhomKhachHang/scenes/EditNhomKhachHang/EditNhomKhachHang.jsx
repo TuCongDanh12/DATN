@@ -3,7 +3,7 @@ import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } fro
 import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { doiTuongSelector, getCustomerGroup } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getCustomerGroup, updateCustomerGroup } from '../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -97,7 +97,8 @@ const EditNhomKhachHang = ({ disabled = false }) => {
     const [form] = Form.useForm();
 
     const { 
-        customerGroupData, } = useSelector(doiTuongSelector);
+        customerGroupData,
+     } = useSelector(doiTuongSelector);
 
     useEffect(() => {
         dispatch(getCustomerGroup({ id: params.id }));
@@ -215,7 +216,14 @@ const EditNhomKhachHang = ({ disabled = false }) => {
 
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
-        console.log(dataSource);
+        const dataConvert = {
+            ...values,
+            id: customerGroupData.id
+        }
+
+        dispatch(updateCustomerGroup({values: dataConvert}));
+        navigate(-1);
+        // console.log(dataSource);
     };
 
     return (

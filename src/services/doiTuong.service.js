@@ -99,6 +99,19 @@ const postCustomerGroup = ({ values }) => {
 };
 
 
+const updateCustomerGroup = ({ values }) => {
+    let { id, ...newObj } = values;
+    return axios.patch(`${API_URL}/customer-group/${id}`,
+        {
+            ...newObj
+        },
+        {
+            // headers: authHeader()
+        },
+    );
+};
+
+
 
 
 const getListCustomer = () => {
@@ -133,6 +146,17 @@ const postCustomer = ({ values }) => {
 };
 
 
+const updateCustomer = ({ values }) => {
+    let { id, customerGroup, ...newObj } = values;
+    return axios.patch(`${API_URL}/customer/${id}`,
+        {
+            ...newObj
+        },
+        {
+            // headers: authHeader()
+        },
+    );
+};
 
 
 
@@ -170,6 +194,19 @@ const postProductGroup = ({ values }) => {
         });
 };
 
+const updateProductGroup = ({ values }) => {
+    let { id, ...newObj } = values;
+    return axios.patch(`${API_URL}/product-group/${id}`,
+        {
+            ...newObj
+        },
+        {
+            // headers: authHeader()
+        },
+    );
+};
+
+
 
 
 
@@ -203,7 +240,17 @@ const postProduct = ({ values }) => {
         });
 };
 
-
+const updateProduct = ({ values }) => {
+    let { id, productGroup, ...newObj } = values;
+    return axios.patch(`${API_URL}/product/${id}`,
+        {
+            ...newObj
+        },
+        {
+            // headers: authHeader()
+        },
+    );
+};
 
 
 
@@ -236,6 +283,18 @@ const postBankAccount = ({ values }) => {
                 "Content-Type": "application/json",
             }
         });
+};
+
+const updateBankAccount = ({ values }) => {
+    let { id, ...newObj } = values;
+    return axios.patch(`${API_URL}/bank-account/${id}`,
+        {
+            ...newObj
+        },
+        {
+            // headers: authHeader()
+        },
+    );
 };
 
 
@@ -300,7 +359,17 @@ const postDieuKhoanThanhToan = ({ values }) => {
         });
 };
 
-
+const updateDieuKhoanThanhToan = ({ values }) => {
+    let { id, ...newObj } = values;
+    return axios.patch(`${API_URL}/dieu-khoan/${id}`,
+        {
+            ...newObj
+        },
+        {
+            // headers: authHeader()
+        },
+    );
+};
 
 
 
@@ -335,6 +404,19 @@ const postCktm = ({ values }) => {
         });
 };
 
+const updateCktm = ({ values }) => {
+    let { id, ...newObj } = values;
+    return axios.patch(`${API_URL}/cktm/${id}`,
+        {
+            ...newObj
+        },
+        {
+            // headers: authHeader()
+        },
+    );
+};
+
+
 const doiTuongService = {
     getListSupplier,
     getSupplier,
@@ -347,22 +429,27 @@ const doiTuongService = {
     getListCustomerGroup,
     getCustomerGroup,
     postCustomerGroup,
+    updateCustomerGroup,
 
     getListCustomer,
     getCustomer,
     postCustomer,
+    updateCustomer,
 
     getListProductGroup,
     getProductGroup,
     postProductGroup,
+    updateProductGroup,
 
     getListProduct,
     getProduct,
     postProduct,
+    updateProduct,
 
     getListBankAccount,
     getBankAccount,
     postBankAccount,
+    updateBankAccount,
 
     getListAccountant,
 
@@ -371,10 +458,12 @@ const doiTuongService = {
     getListDieuKhoanThanhToan,
     getDieuKhoanThanhToan,
     postDieuKhoanThanhToan,
+    updateDieuKhoanThanhToan,
 
     getListCktm,
     getCktm,
     postCktm,
+    updateCktm,
 };
 
 export default doiTuongService;

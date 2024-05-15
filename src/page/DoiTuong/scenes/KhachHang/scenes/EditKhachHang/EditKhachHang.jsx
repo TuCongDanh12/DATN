@@ -3,7 +3,7 @@ import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber, Moda
 import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { doiTuongSelector, getListCustomerGroup, getCustomer, clearState } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getListCustomerGroup, getCustomer, clearState, updateCustomer } from '../../../../../../store/features/doiTuongSilce';
 import { FaCheck } from "react-icons/fa";
 
 const EditableContext = React.createContext(null);
@@ -192,7 +192,7 @@ const EditKhachHang = ({ disabled = false }) => {
         const newData = dataSource.filter((item) => item.key !== key);
         setDataSource(newData);
     };
-    const defaultColumns = [
+    let defaultColumns = [
         {
             title: "ID",
             dataIndex: "id",
@@ -232,7 +232,7 @@ const EditKhachHang = ({ disabled = false }) => {
     ];
 
 
-    const defaultColumns2 = [
+    let defaultColumns2 = [
         {
             title: "ID",
             dataIndex: "id",
@@ -275,6 +275,12 @@ const EditKhachHang = ({ disabled = false }) => {
                 ) : null,
         },
     ];
+
+
+    if (disabled) {
+        defaultColumns = defaultColumns.filter(item => item.dataIndex !== "operation");
+        defaultColumns2 = defaultColumns2.filter(item => item.dataIndex !== "operation");
+    }
 
     const handleAdd = () => {
         const newData = {
@@ -342,9 +348,16 @@ const EditKhachHang = ({ disabled = false }) => {
     });
 
 
+
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
-        console.log(dataSource);
+        // console.log(dataSource);
+        const dataConvert = {
+            ...values,
+            id: customerData.id
+        }
+        dispatch(updateCustomer({values: dataConvert}));
+        navigate(-1);
     };
 
 
@@ -416,7 +429,7 @@ const EditKhachHang = ({ disabled = false }) => {
                             ]}
                         >
                             <Select
-                                disabled={disabled}
+                                disabled={true}
                             >
                                 {
                                     listCustomerGroupData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
