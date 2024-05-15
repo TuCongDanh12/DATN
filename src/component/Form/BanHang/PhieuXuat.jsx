@@ -11,7 +11,7 @@ const dateFormat = "YYYY/MM/DD";
 dayjs.extend(customParseFormat);
 
 
-const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish, chungTuBanData }) => {
+const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish, chungTuBanData, isAddChungTu }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -191,7 +191,7 @@ const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish, 
 
             <div className='flex justify-start flex-col'>
                 <div className='min-w-[300px]'>
-                    <div className='flex'>
+                    {!isAddChungTu && <div className='flex'>
                         <p>Tham chiếu đến đơn bán hàng:</p>
                         <p>
                             <span
@@ -199,10 +199,10 @@ const PhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish, 
                                 onClick={() => navigate(`/ban-hang/don-dat-hang/xem/${chungTuBanData?.donBanHang?.id}`, { state: { id: chungTuBanData?.donBanHang?.id } })}
                             >{chungTuBanData?.donBanHang?.id}</span>
                         </p>
-                    </div>
+                    </div>}
                 </div>
-                <div className='min-w-[300px] mb-8'>
-                    {chungTuBanData?.phieuThu?.length !== 0 && <div className='flex'>
+                <div className='min-w-[300px]'>
+                    {!isAddChungTu && chungTuBanData?.phieuThu?.length !== 0 && <div className='flex mb-8'>
                         <p>Tham chiếu đến phiếu thu:</p>
                         <p>
                             {

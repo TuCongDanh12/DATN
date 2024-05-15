@@ -408,7 +408,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                 components={components}
                 dataSource={productOfDonBanHangs}
                 columns={columns}
-
+                isAddChungTu={true}
                 form={form}
                 disabled={disabled}
                 onFinish={onFinish} />,

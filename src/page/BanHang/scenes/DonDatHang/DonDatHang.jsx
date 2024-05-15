@@ -211,6 +211,12 @@ const DonDatHang = ({ radio = false }) => {
       title: "ID đơn hàng",
       dataIndex: "id",
       key: "id",
+      render: (val, record) => <span
+        onClick={() => {
+          // navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
+          navigate(`/ban-hang/don-dat-hang/xem/${val}`, { state: { id: val } });
+        }}
+        className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.deliveryTerm) < new Date() ? "" : ""}`}>{val}</span>,
       sorter: (a, b) => a.id - b.id,
       sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
       ellipsis: true,
@@ -219,29 +225,41 @@ const DonDatHang = ({ radio = false }) => {
       title: "Ngày đặt hàng",
       dataIndex: "saleDate",
       key: "saleDate",
-      render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
       sorter: (a, b) =>
         moment(a.saleDate, "DD-MM-YYYY") - moment(b.saleDate, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "saleDate" ? sortedInfo.order : null,
       fixed: 'left',
     },
     {
+      title: "Hạn đặt hàng",
+      dataIndex: "deliveryTerm",
+      key: "deliveryTerm",
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
+      sorter: (a, b) =>
+        moment(a.deliveryTerm, "DD-MM-YYYY") - moment(b.deliveryTerm, "DD-MM-YYYY"),
+      sortOrder: sortedInfo.columnKey === "deliveryTerm" ? sortedInfo.order : null,
+      fixed: 'left',
+    },
+    {
       title: "Khách hàng",
       dataIndex: "customer",
       key: "customer",
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{val}</span>,
       ellipsis: true,
     },
     {
       title: "Nội dung",
       dataIndex: "content",
       key: "content",
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{val}</span>,
       ellipsis: true,
     },
     {
       title: "Tổng",
       dataIndex: "tong",
       key: "tong",
-      render: (val, record) => VND.format(val),
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
       sorter: (a, b) => a.tong - b.tong,
       sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
     },
@@ -257,7 +275,7 @@ const DonDatHang = ({ radio = false }) => {
       title: "Chưa lập chứng từ",
       dataIndex: "chuathu",
       key: "chuathu",
-      render: (val, record) => VND.format(val),
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
       sorter: (a, b) => a.chuathu - b.chuathu,
       sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
       ellipsis: true,
@@ -304,8 +322,9 @@ const DonDatHang = ({ radio = false }) => {
         switch (val) {
           case "IN_STOCK":
             return "Đủ hàng";
-          case "OUT_OF_STOCK":
-            return "Thiếu hàng";
+            case "OUT_OF_STOCK":
+              return <span className={`text-[#d44950] font-medium`}>Thiếu hàng</span>
+            // return "Thiếu hàng";
           default:
             return "Lỗi";
         }
