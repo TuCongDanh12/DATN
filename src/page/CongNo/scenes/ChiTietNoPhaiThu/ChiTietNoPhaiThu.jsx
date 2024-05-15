@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Table,
@@ -30,6 +30,8 @@ import moment from "moment/moment";
 import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
 import { VND } from "../../../../utils/func";
 import { congNoSelector, getListCongNo } from './../../../../store/features/congNoSlice';
+import { useReactToPrint } from "react-to-print";
+import { FaRegFilePdf } from "react-icons/fa6";
 const { Text } = Typography;
 
 
@@ -96,13 +98,18 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
       const dataConvertCurrent = listCongNo.map(congNo => congNo.map(chungTuBanData => {
         console.log("chungTuBanData", chungTuBanData)
 
-        let tong = 0;
-        chungTuBanData.productOfCtban.forEach(productOfCt => {
-          tong += productOfCt.count * productOfCt.price;
-          tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
-        })
+        let tong = chungTuBanData.totalProductValue - chungTuBanData.totalDiscountValue + chungTuBanData.totalTaxValue;
+
+        // let tong = 0;
+        // chungTuBanData.productOfCtban.forEach(productOfCt => {
+        //   tong += productOfCt.count * productOfCt.price;
+        //   tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
+        // })
         //continue ...
         let dathu = 0;
+        dathu += chungTuBanData?.phieuThu?.map(pt => pt.money).reduce((total, currentValue) => {
+          return total + currentValue;
+        }, 0)
         let chuathu = tong - dathu;
 
         return {
@@ -190,6 +197,12 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
       title: "ID hóa đơn",
       dataIndex: "sohoadon",
       key: "sohoadon",
+      render: (val, record) => <span
+        onClick={() => {
+          // navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
+          navigate(`/ban-hang/hoa-don-ban-hang/xem/${val}`, { state: { id: val } });
+        }}
+        className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.paymentTerm) < new Date() ? "" : ""}`}>{val}</span>,
       sorter: (a, b) => a.sohoadon - b.sohoadon,
       sortOrder: sortedInfo.columnKey === "sohoadon" ? sortedInfo.order : null,
       ellipsis: true,
@@ -198,7 +211,7 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
       title: "Ngày hóa đơn",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
       sorter: (a, b) =>
         moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "createdAt" ? sortedInfo.order : null,
@@ -209,7 +222,7 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
       title: "Hạn thanh toán",
       dataIndex: "paymentTerm",
       key: "paymentTerm",
-      render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
       sorter: (a, b) =>
         moment(a.paymentTerm, "DD-MM-YYYY") - moment(b.paymentTerm, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "paymentTerm" ? sortedInfo.order : null,
@@ -225,7 +238,9 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
       title: "Giá trị hóa đơn",
       dataIndex: "tong",
       key: "tong",
-      render: (val, record) => VND.format(val),
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+
+      // render: (val, record) => VND.format(val),
       sorter: (a, b) => a.tong - b.tong,
       sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
     },
@@ -233,7 +248,9 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
       title: "Đã thu",
       dataIndex: "dathu",
       key: "dathu",
-      render: (val, record) => VND.format(val),
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+
+      // render: (val, record) => VND.format(val),
       sorter: (a, b) => a.dathu - b.dathu,
       sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
     },
@@ -241,7 +258,9 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
       title: "Chưa thu",
       dataIndex: "chuathu",
       key: "chuathu",
-      render: (val, record) => VND.format(val),
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+
+      // render: (val, record) => VND.format(val),
       sorter: (a, b) => a.chuathu - b.chuathu,
       sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
     },
@@ -410,6 +429,13 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
     setSortedInfo({});
   };
 
+  //Xuat file pdf, in file
+  const componentRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
+
   return (
     <div className="m-4">
       <div className={`px-[20px] w-full flex justify-between pb-7 ${!checkbox && "bg-white py-7"}`}>
@@ -441,10 +467,12 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
           {contextHolderMes}
           {contextHolder}
 
-          {/* <SiMicrosoftexcel
+          <FaRegFilePdf
+            title="Xuất file pdf"
+            onClick={handlePrint}
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
-          /> */}
+          />
           <TfiReload
             title="Cập nhật dữ liệu"
             size={30}
