@@ -32,12 +32,17 @@ const NhomKhachHang = () => {
     isSuccessGetListCustomerGroup,
     isSuccessPostCustomerGroup,
     isError,
-    message
+    message,
+    isSuccessUpdateCustomerGroup
   } = useSelector(doiTuongSelector);
 
   useEffect(() => {
     dispatch(getListCustomerGroup());
   }, []);
+
+  useEffect(() => {
+    setCustomerGroupData(listCustomerGroupData);
+  }, [listCustomerGroupData]);
 
   useEffect(() => {
     if (isSuccessPostCustomerGroup) {
@@ -49,6 +54,16 @@ const NhomKhachHang = () => {
 
       dispatch(clearState());
       dispatch(getListCustomerGroup());
+    }
+    else if(isSuccessUpdateCustomerGroup){
+      api.success({
+        message: 'Cập nhật dữ liệu thành công!',
+        placement: 'bottomLeft',
+        duration: 2
+      });
+
+      // dispatch(getListCustomerGroup());
+      dispatch(clearState());
     }
     else if (isSuccessGetListCustomerGroup) {
       // messageApi.open({
@@ -74,7 +89,8 @@ const NhomKhachHang = () => {
     isSuccessGetListCustomerGroup,
     isSuccessPostCustomerGroup,
     isError,
-    message
+    message,
+    isSuccessUpdateCustomerGroup
   ]);
 
   useEffect(() => {

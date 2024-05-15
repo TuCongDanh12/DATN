@@ -3,7 +3,7 @@ import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber } fro
 import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { doiTuongSelector, getProductGroup } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getProductGroup, updateProductGroup } from '../../../../../../store/features/doiTuongSilce';
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -325,7 +325,13 @@ const EditNhomSanPham = ({ disabled = false }) => {
 
     const onFinish = (values) => {
         console.log('Received values of form: ', values);
-        console.log(dataSource);
+        // console.log(dataSource);
+        const dataConvert = {
+            ...values,
+            id: productGroupData.id
+        }
+        dispatch(updateProductGroup({values: dataConvert}));
+        navigate(-1);
     };
 
     return (
