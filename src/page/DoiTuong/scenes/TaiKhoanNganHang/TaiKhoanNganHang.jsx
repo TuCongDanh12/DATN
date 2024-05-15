@@ -48,12 +48,18 @@ const TaiKhoanNganHang = () => {
   const handleSearch = (value) => {
     setSearchText(value);
   };
-  const { listBankAccountData, isSuccessPostBankAccount, isError, message } =
+  const { listBankAccountData, isSuccessPostBankAccount, isError, message,
+    isSuccessUpdateBankAccount
+   } =
     useSelector(doiTuongSelector);
 
   useEffect(() => {
     dispatch(getListBankAccount());
   }, []);
+
+  useEffect(() => {
+    setBankAccountData(listBankAccountData);
+  }, [listBankAccountData]);
 
   useEffect(() => {
     if (isSuccessPostBankAccount) {
@@ -66,6 +72,26 @@ const TaiKhoanNganHang = () => {
       dispatch(clearState());
       dispatch(getListBankAccount());
     }
+    else if(isSuccessUpdateBankAccount){
+      api.success({
+        message: 'Cập nhật dữ liệu thành công!',
+        placement: 'bottomLeft',
+        duration: 2
+      });
+
+      // dispatch(getListCustomerGroup());
+      dispatch(clearState());
+    }
+    else if (listBankAccountData) {
+      // messageApi.open({
+      //   key: 'updatable',
+      //   type: 'success',
+      //   content: 'Tải dữ liệu thành công!',
+      //   duration: 2,
+      // });
+
+      dispatch(clearState());
+    }
     if (isError) {
       api.error({
         message: message,
@@ -75,7 +101,7 @@ const TaiKhoanNganHang = () => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostBankAccount, isError, message]);
+  }, [isSuccessPostBankAccount, isError, message, isSuccessUpdateBankAccount]);
 
   useEffect(() => {
     console.log("DAY NE", searchText);

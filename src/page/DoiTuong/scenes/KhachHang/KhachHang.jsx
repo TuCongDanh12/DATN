@@ -45,11 +45,17 @@ const KhachHang = () => {
     isSuccessPostCustomer,
     isError,
     message,
+    isSuccessUpdateCustomer
   } = useSelector(doiTuongSelector);
 
   useEffect(() => {
     dispatch(getListCustomer());
   }, []);
+
+  useEffect(() => {
+    setCustomerData(listCustomerData);
+  }, [listCustomerData]);
+
 
   useEffect(() => {
     if (isSuccessPostCustomer) {
@@ -60,7 +66,17 @@ const KhachHang = () => {
       });
 
       dispatch(clearState());
-    } else if (isSuccessGetListCustomer) {
+    } 
+    else if (isSuccessUpdateCustomer) {
+      api.success({
+        message: 'Cập nhật dữ liệu thành công!',
+        placement: 'bottomLeft',
+        duration: 2
+      });
+
+      dispatch(clearState());
+    }
+    else if (isSuccessGetListCustomer) {
       dispatch(clearState());
     }
     if (isError) {
@@ -72,7 +88,7 @@ const KhachHang = () => {
 
       dispatch(clearState());
     }
-  }, [isSuccessGetListCustomer, isSuccessPostCustomer, isError]);
+  }, [isSuccessGetListCustomer, isSuccessPostCustomer, isError, message, isSuccessUpdateCustomer]);
 
   useEffect(() => {
     console.log("DAY NE", searchText);
