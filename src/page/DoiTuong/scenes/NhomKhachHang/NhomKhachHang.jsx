@@ -125,12 +125,12 @@ const NhomKhachHang = () => {
         Chỉnh sửa
       </Link>)
     },
-    {
-      key: "xoa",
-      label: (<Link className="!text-black">
-        Xóa
-      </Link>)
-    },
+    // {
+    //   key: "xoa",
+    //   label: (<Link className="!text-black">
+    //     Xóa
+    //   </Link>)
+    // },
   ];
 
   const handleDropdownItemClick = (e, record) => {
