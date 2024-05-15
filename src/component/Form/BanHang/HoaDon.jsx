@@ -273,7 +273,7 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish, chu
 
             <div className='flex justify-start flex-col'>
                 <div className='min-w-[300px]'>
-                    <div className='flex'>
+                    {isHoaDon && <div className='flex'>
                         <p>Tham chiếu đến đơn bán hàng:</p>
                         <p>
                             <span
@@ -281,7 +281,7 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish, chu
                                 onClick={() => navigate(`/ban-hang/don-dat-hang/xem/${chungTuBanData?.donBanHang?.id}`, { state: { id: chungTuBanData?.donBanHang?.id } })}
                             >{chungTuBanData?.donBanHang?.id}</span>
                         </p>
-                    </div>
+                    </div>}
                 </div>
 
                 <div className='min-w-[300px]'>
@@ -296,8 +296,8 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish, chu
                     </div>}
                 </div>
 
-                <div className='min-w-[300px] mb-8'>
-                    {chungTuBanData?.phieuThu?.length !== 0 && <div className='flex'>
+                <div className='min-w-[300px]'>
+                    {isHoaDon && chungTuBanData?.phieuThu?.length !== 0 && <div className='flex mb-8'>
                         <p>Tham chiếu đến phiếu thu:</p>
                         <p>
                             {

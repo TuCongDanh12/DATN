@@ -188,7 +188,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       setOpen(true);
     } else {
       dispatch(hoaDonSelected([record]));
-      navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`);
+      navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
     }
   };
 
