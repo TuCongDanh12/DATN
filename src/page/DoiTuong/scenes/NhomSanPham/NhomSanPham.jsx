@@ -1,13 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Table, Dropdown, Space, Select, Button, Modal, Form, Input, message as msg, notification, InputNumber } from "antd";
+import {
+  Table,
+  Dropdown,
+  Space,
+  Select,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message as msg,
+  notification,
+  InputNumber,
+} from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { SiMicrosoftexcel } from 'react-icons/si';
-import { TfiReload } from 'react-icons/tfi';
-import { Add } from '@mui/icons-material';
-import { MdOutlineSearch } from 'react-icons/md';
-import { useDispatch, useSelector } from 'react-redux';
-import { clearState, doiTuongSelector, getListProductGroup, getListSupplier, getListSupplierGroup, postProductGroup, postSupplierGroup } from '../../../../store/features/doiTuongSilce';
+import { SiMicrosoftexcel } from "react-icons/si";
+import { TfiReload } from "react-icons/tfi";
+import { Add } from "@mui/icons-material";
+import { MdOutlineSearch } from "react-icons/md";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  clearState,
+  doiTuongSelector,
+  getListProductGroup,
+  getListSupplier,
+  getListSupplierGroup,
+  postProductGroup,
+  postSupplierGroup,
+} from "../../../../store/features/doiTuongSilce";
 
 const NhomSanPham = () => {
   const dispatch = useDispatch();
@@ -23,13 +43,17 @@ const NhomSanPham = () => {
   const [api, contextHolder] = notification.useNotification();
   const [filteredInfo, setFilteredInfo] = useState({});
   const [sortedInfo, setSortedInfo] = useState({});
-
+  const [searchText, setSearchText] = useState("");
+  const [productGroupData, setProductGroupData] = useState([]);
+  const handleSearch = (value) => {
+    setSearchText(value);
+  };
   const {
     listProductGroupData,
     isSuccessGetListProductGroup,
     isSuccessPostProductGroup,
     isError,
-    message
+    message,
   } = useSelector(doiTuongSelector);
 
   useEffect(() => {
@@ -39,15 +63,14 @@ const NhomSanPham = () => {
   useEffect(() => {
     if (isSuccessPostProductGroup) {
       api.success({
-        message: 'Thêm dữ liệu thành công!',
-        placement: 'bottomLeft',
-        duration: 2
+        message: "Thêm dữ liệu thành công!",
+        placement: "bottomLeft",
+        duration: 2,
       });
 
       dispatch(clearState());
       dispatch(getListProductGroup());
-    }
-    else if (isSuccessGetListProductGroup) {
+    } else if (isSuccessGetListProductGroup) {
       // messageApi.open({
       //   key: 'updatable',
       //   type: 'success',
@@ -60,40 +83,49 @@ const NhomSanPham = () => {
     if (isError) {
       api.error({
         message: message,
-        placement: 'bottomLeft',
-        duration: 2
+        placement: "bottomLeft",
+        duration: 2,
       });
 
       dispatch(clearState());
     }
-
   }, [
     isSuccessGetListProductGroup,
     isSuccessPostProductGroup,
     isError,
-    message
+    message,
   ]);
 
-
+  useEffect(() => {
+    if (searchText.trim() === "") {
+      if (
+        !listProductGroupData ||
+        (Array.isArray(listProductGroupData) && !listProductGroupData.length)
+      ) {
+        setProductGroupData([]);
+      } else {
+        setProductGroupData(listProductGroupData);
+      }
+    } else {
+      const filteredData = listProductGroupData.filter((data) => {
+        return data.name.toLowerCase().includes(searchText.toLowerCase());
+      });
+      setProductGroupData(filteredData);
+    }
+  }, [searchText, productGroupData]);
 
   const items = [
     {
       key: "xem",
-      label: (<Link className="!text-black">
-        Xem
-      </Link>),
+      label: <Link className="!text-black">Xem</Link>,
     },
     {
       key: "chinh-sua",
-      label: (<Link className="!text-black">
-        Chỉnh sửa
-      </Link>)
+      label: <Link className="!text-black">Chỉnh sửa</Link>,
     },
     {
       key: "xoa",
-      label: (<Link className="!text-black">
-        Xóa
-      </Link>)
+      label: <Link className="!text-black">Xóa</Link>,
     },
   ];
 
@@ -103,8 +135,7 @@ const NhomSanPham = () => {
     if (e.key === "xoa") {
       setDataSelected(record);
       setOpen(true);
-    }
-    else {
+    } else {
       navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
     }
   };
@@ -115,7 +146,7 @@ const NhomSanPham = () => {
 
   const handleCancelAddNhomSanPham = () => {
     setOpenAddNhomSanPham(false);
-  }
+  };
 
   const columns = [
     {
@@ -163,8 +194,13 @@ const NhomSanPham = () => {
             menu={{
               onClick: (e) => handleDropdownItemClick(e, record),
               items: items,
-            }}>
-            <Link to={`xem/${record.key}`} state={{ id: record.key }} className="!text-black">
+            }}
+          >
+            <Link
+              to={`xem/${record.key}`}
+              state={{ id: record.key }}
+              className="!text-black"
+            >
               Xem
               <DownOutlined />
             </Link>
@@ -184,20 +220,18 @@ const NhomSanPham = () => {
     },
   };
 
-
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
+    console.log("Received values of form: ", values);
   };
 
   const onFinishAddNhomSanPham = (values) => {
-    console.log('Received values of form: ', values);
+    console.log("Received values of form: ", values);
     dispatch(postProductGroup({ values }));
     formAddNhomSanPham.resetFields();
   };
 
-
   const onChange = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
+    console.log("params", pagination, filters, sorter, extra);
     setFilteredInfo(filters);
     setSortedInfo(sorter);
   };
@@ -208,37 +242,25 @@ const NhomSanPham = () => {
   };
 
   return (
-    <div className='m-4'>
-      <div className='px-[20px] w-full flex justify-between py-7 bg-white'>
-        <div className='flex gap-[5px] items-center'>
-          <Form
-            form={form}
-            layout='inline'
-            onFinish={onFinish}
-          >
-            <Form.Item
-              name='type'
-              className='w-[200px] !me-[5px]'
-            >
-              <Select placeholder='Tìm kiếm theo'>
-                <Select.Option value="nhacungcap">Nhà cung cấp</Select.Option>
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name='keyword'
-              className='w-[300px] !me-0'
-            >
+    <div className="m-4">
+      <div className="px-[20px] w-full flex justify-between py-7 bg-white">
+        <div className="flex gap-[5px] items-center">
+          <Form form={form} layout="inline" onFinish={onFinish}>
+            <Form.Item 
+             value={searchText}
+             onChange={(e) => handleSearch(e.target.value)}
+            name="keyword" className="w-[300px] !me-0">
               <Input
-                className='rounded-tr-none rounded-br-none'
+                className="rounded-tr-none rounded-br-none"
                 placeholder="Nhập từ khóa"
               />
             </Form.Item>
 
             <Button
-              className='!bg-[#FAFAFA] font-bold m-0 p-0 w-[32px] h-[32px] flex justify-center items-center rounded-tl-none rounded-bl-none rounded-tr-md rounded-br-md'
+              className="!bg-[#FAFAFA] font-bold m-0 p-0 w-[32px] h-[32px] flex justify-center items-center rounded-tl-none rounded-bl-none rounded-tr-md rounded-br-md"
               htmlType="submit"
             >
-              <MdOutlineSearch size={20} color='#898989' />
+              <MdOutlineSearch size={20} color="#898989" />
             </Button>
           </Form>
 
@@ -248,13 +270,14 @@ const NhomSanPham = () => {
           {/* <SiMicrosoftexcel size={30} className='p-2 bg-white border border-black cursor-pointer' /> */}
           <TfiReload
             title="Cập nhật dữ liệu"
-            size={30} className='p-2 bg-white border border-black cursor-pointer'
+            size={30}
+            className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {
               dispatch(getListProductGroup());
               messageApi.open({
-                key: 'updatable',
-                type: 'loading',
-                content: 'Loading...',
+                key: "updatable",
+                type: "loading",
+                content: "Loading...",
               });
               form.resetFields();
               clearAll();
@@ -264,11 +287,12 @@ const NhomSanPham = () => {
         </div>
 
         <Button
-          className='!bg-[#7A77DF] font-bold text-white flex items-center gap-1'
-          type='link'
+          className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
+          type="link"
           onClick={() => setOpenAddNhomSanPham(true)}
         >
-          <Add />Thêm
+          <Add />
+          Thêm
         </Button>
 
         <Modal
@@ -276,14 +300,17 @@ const NhomSanPham = () => {
           centered
           open={open}
           width={500}
-          footer=''
+          footer=""
           onCancel={handleCancel}
         >
-          <div className='m-8 mt-10 text-center'>Bạn muốn xóa nhóm sản phẩm<br /> <strong>"{dataSelected.name}"</strong>?</div>
+          <div className="m-8 mt-10 text-center">
+            Bạn muốn xóa nhóm sản phẩm
+            <br /> <strong>"{dataSelected.name}"</strong>?
+          </div>
 
-          <div className='flex justify-end gap-2 mb-0'>
+          <div className="flex justify-end gap-2 mb-0">
             <Button
-              className='bg-[#FF7742] font-bold text-white mr-2'
+              className="bg-[#FF7742] font-bold text-white mr-2"
               onClick={() => {
                 setDataSelected({});
                 setOpen(false);
@@ -292,7 +319,7 @@ const NhomSanPham = () => {
               Hủy
             </Button>
             <Button
-              className='!bg-[#67CDBB] font-bold text-white'
+              className="!bg-[#67CDBB] font-bold text-white"
               onClick={() => {
                 //dispatch(deleteNhaCungCap({id:dataSelected.key}));
                 setDataSelected({});
@@ -309,68 +336,63 @@ const NhomSanPham = () => {
           centered
           open={openAddNhomSanPham}
           width={700}
-          footer=''
+          footer=""
           onCancel={handleCancelAddNhomSanPham}
         >
           <Form
             form={formAddNhomSanPham}
-            layout='horizontal'
+            layout="horizontal"
             onFinish={onFinishAddNhomSanPham}
             labelCol={{
-              flex: '200px',
+              flex: "200px",
             }}
             labelAlign="left"
-            className='mt-4'
+            className="mt-4"
           >
             <Form.Item
               label="Tên nhóm sản phẩm"
-              name='name'
+              name="name"
               rules={[
                 {
                   required: true,
-                  message: 'Trường này là bắt buộc!',
+                  message: "Trường này là bắt buộc!",
                 },
               ]}
             >
-              <Input
-              />
+              <Input />
             </Form.Item>
 
             <Form.Item
               label="% thuế GTGT"
-              name='tax'
+              name="tax"
               rules={[
                 {
                   required: true,
-                  message: 'Trường này là bắt buộc!',
+                  message: "Trường này là bắt buộc!",
                 },
               ]}
             >
               <InputNumber
                 style={{
-                  width: '100%',
-                }} />
-            </Form.Item>
-
-            <Form.Item
-              label="Ghi chú"
-              name='description'
-            >
-              <Input
+                  width: "100%",
+                }}
               />
             </Form.Item>
 
-            <Form.Item className='flex justify-end gap-2 mt-6 mb-0'>
+            <Form.Item label="Ghi chú" name="description">
+              <Input />
+            </Form.Item>
 
+            <Form.Item className="flex justify-end gap-2 mt-6 mb-0">
               <Button
-                className='bg-[#FF7742] font-bold text-white mr-2'
+                className="bg-[#FF7742] font-bold text-white mr-2"
                 htmlType="reset"
                 onClick={() => setOpenAddNhomSanPham(false)}
               >
                 Hủy
               </Button>
               <Button
-                className='!bg-[#67CDBB] font-bold text-white'
+                className="!bg-[#67CDBB] font-bold text-white"
                 htmlType="submit"
                 onClick={() => setOpenAddNhomSanPham(false)}
               >
@@ -387,18 +409,19 @@ const NhomSanPham = () => {
         //     ...rowSelection,
         // }}
         columns={columns}
-        dataSource={listProductGroupData}
+        dataSource={productGroupData}
         pagination={{
           total: listProductGroupData.length,
           defaultPageSize: 20,
           // pageSize: 20,
-          position: ['bottomRight'],
-          showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
+          position: ["bottomRight"],
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`,
         }}
         onChange={onChange}
       />
     </div>
-  )
-}
+  );
+};
 
-export default NhomSanPham
+export default NhomSanPham;
