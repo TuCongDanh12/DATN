@@ -263,7 +263,7 @@ const EditSanPham = ({ disabled = false }) => {
                             ]}
                         >
                             <Select
-                                disabled={disabled}
+                                disabled={true}
                             >
                                 {
                                     listProductGroupData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
