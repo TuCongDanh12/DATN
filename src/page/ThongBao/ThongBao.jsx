@@ -40,15 +40,15 @@ const ThongBao = () => {
           options={[
             {
               value: null,
-              label: "TẤT CẢ",
+              label: "Tất cả",
             },
             {
               value: "THU",
-              label: "THU",
+              label: "Hóa đơn",
             },
             {
               value: "BAN_HANG",
-              label: "BAN_HANG",
+              label: "Đơn đặt hàng",
             },
           ]}
         />

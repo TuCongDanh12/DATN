@@ -14,7 +14,7 @@ import {
 } from "recharts";
 import { DownOutlined } from "@ant-design/icons";
 import { Dropdown, Space, Flex, Progress, Table } from "antd";
-
+import Countdocument from "../../component/Tongquan/count-document";
 const items = [
   {
     label: "Năm nay",
@@ -117,8 +117,9 @@ const columns = [
 const TongQuan = () => {
   return (
     <div className="ml-5">
-      <h1 className="font-bold text-3xl ">Tổng quan</h1>
-      <Flex gap={50}>
+      <h1 className="font-bold text-3xl mb-5">Tổng quan</h1>
+      <Countdocument/>
+      <Flex gap={50} className='mt-5'>
         <div>
           <p className="text-xl">Doanh thu</p>
           <Dropdown
