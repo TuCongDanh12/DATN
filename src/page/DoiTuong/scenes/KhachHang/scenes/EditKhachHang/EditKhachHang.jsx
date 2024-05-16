@@ -421,7 +421,8 @@ const EditKhachHang = ({ disabled = false }) => {
 
         const dataConvert = {
             ...values,
-            "customerId": customerData.id
+            "customerId": customerData.id,
+            minProductValue: 0
         }
         formAddDieuKhoanThanhToan.resetFields();
         dispatch(postDieuKhoanThanhToan({ values: dataConvert }));
