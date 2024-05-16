@@ -1,14 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { Flex, Button, Popconfirm, message } from "antd";
 import { Link } from "react-router-dom";
 import { notification } from "./../services/notification.service";
 
 function NotificationComponent(props) {
+  const [resolved, setResolved] = useState(props.resolved);
+
+  const updateStatusRead = async (id) => {
+    try {
+      const res = await notification.updateReadStatus(props.id);
+      console.log(res);
+      message.success("Cập nhật thành công");
+    } catch (err) {
+      console.error(err);
+      message.error("Cập nhật thất bại");
+    }
+  };
+
   const DetailAnnouncement = (entityId, type) => {
     return type === "THU" ? (
-      <Link to={`/ban-hang/don-dat-hang/xem/${entityId}`}>Xem chi tiết</Link>
+      <Link onClick={() => updateStatusRead(entityId)} to={`/ban-hang/don-dat-hang/xem/${entityId}`}>Xem chi tiết</Link>
     ) : (
-      <Link to={`/ban-hang/chung-tu-ban-hang/xem/${entityId}`}>Xem chi tiết</Link>
+      <Link onClick={() => updateStatusRead(entityId)} to={`/ban-hang/chung-tu-ban-hang/xem/${entityId}`}>Xem chi tiết</Link>
     );
   };
 
@@ -17,6 +30,7 @@ function NotificationComponent(props) {
       const res = await notification.updateResolve(props.id);
       console.log(res);
       message.success("Cập nhật thành công");
+      setResolved(true);  // Update the resolved state
     } catch (err) {
       console.error(err);
       message.error("Cập nhật thất bại");
@@ -30,10 +44,10 @@ function NotificationComponent(props) {
     >
       <p>{props.message}</p>
       <Flex gap={10} align="center" className="text-blue-500">
-        {console.log(props.id,props.entityId)}
+        {console.log(props.id, props.type)}
         {DetailAnnouncement(props.entityId, props.type)}
-        {props.resolved ? (
-          <Button disabled>Đã xử lý</Button>
+        {resolved ? (
+          <Button disabled className='w-[120px]'>Đã xử lý</Button>
         ) : (
           <Popconfirm
             title="Bạn chắc chắn đã xử lý thông báo này?"
@@ -41,7 +55,7 @@ function NotificationComponent(props) {
             okText="Xác nhận"
             cancelText="Hủy"
           >
-            <Button className="bg-pink-200">Xác nhận xử lý</Button>
+            <Button className="bg-pink-200 w-[120px]">Xác nhận xử lý</Button>
           </Popconfirm>
         )}
       </Flex>
