@@ -3,7 +3,7 @@ import { Form, Input, Flex, Table, Button, Select, Typography, InputNumber, Moda
 import { useNavigate, useParams } from 'react-router-dom';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
-import { doiTuongSelector, getListCustomerGroup, getCustomer, clearState, updateCustomer } from '../../../../../../store/features/doiTuongSilce';
+import { doiTuongSelector, getListCustomerGroup, getCustomer, clearState, updateCustomer, postDieuKhoanThanhToan, postCktm, updateDieuKhoanThanhToan, updateCktm } from '../../../../../../store/features/doiTuongSilce';
 import { FaCheck } from "react-icons/fa";
 
 const EditableContext = React.createContext(null);
@@ -103,9 +103,16 @@ const EditKhachHang = ({ disabled = false }) => {
         isSuccessPostDieuKhoanThanhToan,
         isSuccessPostCktm,
         isError,
-        message
+        message,
+        isSuccessUpdateDieuKhoanThanhToan,
+        isSuccessUpdateCktm,
     } = useSelector(doiTuongSelector);
     console.log("customerData", customerData);
+
+    const [dataSource, setDataSource] = useState([]);
+
+    const [dataSource2, setDataSource2] = useState([]);
+
 
     useEffect(() => {
         dispatch(getCustomer({ id: params.id }));
@@ -117,6 +124,9 @@ const EditKhachHang = ({ disabled = false }) => {
             form.setFieldsValue({
                 ...customerData
             });
+
+            setDataSource(customerData.dieuKhoans);
+            setDataSource2(customerData.cktms);
         }
     }, [customerData]);
 
@@ -144,6 +154,24 @@ const EditKhachHang = ({ disabled = false }) => {
             dispatch(clearState());
             dispatch(getCustomer({ id: params.id }));
         }
+        else if (isSuccessUpdateDieuKhoanThanhToan) {
+            api.success({
+                message: 'Cập nhật dữ liệu thành công!',
+                placement: 'bottomLeft',
+                duration: 2
+            });
+            dispatch(getCustomer({ id: params.id }));
+            dispatch(clearState());
+        }
+        else if (isSuccessUpdateCktm) {
+            api.success({
+                message: 'Cập nhật dữ liệu thành công!',
+                placement: 'bottomLeft',
+                duration: 2
+            });
+            dispatch(getCustomer({ id: params.id }));
+            dispatch(clearState());
+        }
         if (isError) {
             api.error({
                 message: message,
@@ -157,34 +185,13 @@ const EditKhachHang = ({ disabled = false }) => {
         isSuccessPostCktm,
         isSuccessPostDieuKhoanThanhToan,
         isError,
-        message
+        message,
+        isSuccessUpdateDieuKhoanThanhToan,
+        isSuccessUpdateCktm
     ]);
 
     const nameValue = Form.useWatch('name', form);
 
-    const [dataSource, setDataSource] = useState([
-        {
-            key: '0',
-            'id': '1',
-            'tenchietkhau': 'Chiết khấu 1',
-            'songayduocno': '20',
-            'songayhuongchietkhau': '10',
-            'phantramchietkhau': '2',
-            'noidung': '...',
-        }
-    ]);
-
-    const [dataSource2, setDataSource2] = useState([
-        {
-            key: '0',
-            'id': '1',
-            'tenchietkhau': 'Chiết khấu 1',
-            'songayduocno': '20',
-            'songayhuongchietkhau': '10',
-            'phantramchietkhau': '2',
-            'noidung': '...',
-        }
-    ]);
 
     const [count, setCount] = useState(1);
 
@@ -208,7 +215,7 @@ const EditKhachHang = ({ disabled = false }) => {
         },
         {
             title: 'Số ngày được nợ',
-            dataIndex: 'creditPeriod',
+            dataIndex: 'paymentPeriod',
             editable: !disabled,
             ellipsis: true,
         },
@@ -224,7 +231,22 @@ const EditKhachHang = ({ disabled = false }) => {
             width: '100px',
             render: (_, record) =>
                 dataSource.length >= 1 ? (
-                    <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
+                    <Typography.Link
+                        onClick={() => {
+                            // handleDelete(record.key)
+                            console.log("record", record)
+                            const dataConvert = {
+                                "name": record.name,
+                                "description": record.description,
+                                "paymentPeriod": record.paymentPeriod,
+                                "minProductValue": record.minProductValue,
+                                "id": record.id
+                            }
+                            dispatch(updateDieuKhoanThanhToan({ values: dataConvert }));
+                        }
+
+                        }
+                        className='flex justify-center'>
                         <FaCheck size={20} color='#1E1E1E' />
                     </Typography.Link>
                 ) : null,
@@ -269,7 +291,20 @@ const EditKhachHang = ({ disabled = false }) => {
             width: '100px',
             render: (_, record) =>
                 dataSource2.length >= 1 ? (
-                    <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
+                    <Typography.Link
+                        onClick={() => {
+                            // handleDelete(record.key)
+                            console.log("record", record)
+                            const dataConvert = {
+                                "name": record.name,
+                                "description": record.description,
+                                "discountRate": record.discountRate,
+                                "minProductValue": record.minProductValue,
+                                "id": record.id
+                            }
+                            dispatch(updateCktm({ values: dataConvert }));
+                        }}
+                        className='flex justify-center'>
                         <FaCheck size={20} color='#1E1E1E' />
                     </Typography.Link>
                 ) : null,
@@ -297,13 +332,24 @@ const EditKhachHang = ({ disabled = false }) => {
 
     const handleSave = (row) => {
         const newData = [...dataSource];
-        const index = newData.findIndex((item) => row.key === item.key);
+        const index = newData.findIndex((item) => row.id === item.id);
         const item = newData[index];
         newData.splice(index, 1, {
             ...item,
             ...row,
         });
         setDataSource(newData);
+    };
+
+    const handleSave2 = (row) => {
+        const newData = [...dataSource2];
+        const index = newData.findIndex((item) => row.id === item.id);
+        const item = newData[index];
+        newData.splice(index, 1, {
+            ...item,
+            ...row,
+        });
+        setDataSource2(newData);
     };
 
     const components = {
@@ -313,6 +359,7 @@ const EditKhachHang = ({ disabled = false }) => {
         },
     };
 
+
     const columns = defaultColumns.map((col) => {
         if (!col.editable) {
             return col;
@@ -321,7 +368,7 @@ const EditKhachHang = ({ disabled = false }) => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: ['creditPeriod'].includes(col.dataIndex) ? 'number' : 'text',
+                inputType: ['paymentPeriod'].includes(col.dataIndex) ? 'number' : 'text',
                 editable: col.editable,
                 dataIndex: col.dataIndex,
                 title: col.title,
@@ -342,7 +389,7 @@ const EditKhachHang = ({ disabled = false }) => {
                 editable: col.editable,
                 dataIndex: col.dataIndex,
                 title: col.title,
-                handleSave,
+                handleSave: handleSave2,
             }),
         };
     });
@@ -356,7 +403,7 @@ const EditKhachHang = ({ disabled = false }) => {
             ...values,
             id: customerData.id
         }
-        dispatch(updateCustomer({values: dataConvert}));
+        dispatch(updateCustomer({ values: dataConvert }));
         navigate(-1);
     };
 
@@ -376,8 +423,8 @@ const EditKhachHang = ({ disabled = false }) => {
             ...values,
             "customerId": customerData.id
         }
-        // dispatch(postProductGroup({ values }));
         formAddDieuKhoanThanhToan.resetFields();
+        dispatch(postDieuKhoanThanhToan({ values: dataConvert }));
     };
 
 
@@ -396,7 +443,7 @@ const EditKhachHang = ({ disabled = false }) => {
             ...values,
             "customerId": customerData.id
         }
-        // dispatch(postProductGroup({ values }));
+        dispatch(postCktm({ values: dataConvert }));
         formAddChietKhauThuongMai.resetFields();
     };
 
@@ -405,6 +452,8 @@ const EditKhachHang = ({ disabled = false }) => {
             <h1 className="font-bold text-[32px] mb-8">
                 Khách hàng {nameValue || customerData.name}
             </h1>
+            {contextHolder}
+
             <Form
                 form={form}
                 // labelCol={{ span: 10 }}
@@ -564,7 +613,7 @@ const EditKhachHang = ({ disabled = false }) => {
 
                                 <Form.Item
                                     label="Số ngày được nợ"
-                                    name='creditPeriod'
+                                    name='paymentPeriod'
                                     rules={[
                                         {
                                             required: true,
@@ -658,9 +707,9 @@ const EditKhachHang = ({ disabled = false }) => {
                                     ]}
                                 >
                                     <InputNumber
-                                        defaultValue={0}
+                                        addonAfter='đ'
                                         min={0}
-                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + 'đ'}
+                                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                                         style={{
                                             width: '100%',
                                         }} />

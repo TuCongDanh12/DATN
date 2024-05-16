@@ -309,7 +309,7 @@ const TaiKhoanNganHang = () => {
               });
               form.resetFields();
               clearAll();
-              // setSearchText("");
+              setSearchText("");
             }}
           />
         </div>

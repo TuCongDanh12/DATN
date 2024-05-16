@@ -392,7 +392,7 @@ const SanPham = () => {
               });
               form.resetFields();
               clearAll();
-              // setSearchText("");
+              setSearchText("");
             }}
           />
         </div>

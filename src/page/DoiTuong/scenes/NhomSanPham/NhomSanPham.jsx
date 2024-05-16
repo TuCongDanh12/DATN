@@ -298,7 +298,7 @@ const NhomSanPham = () => {
               });
               form.resetFields();
               clearAll();
-              // setSearchText("");
+              setSearchText("");
             }}
           />
         </div>
