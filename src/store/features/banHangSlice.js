@@ -529,18 +529,11 @@ export const banHangSlice = createSlice({
             console.log("getPhieuThuTienMat.fulfilled", action.payload)
             state.isFetching = false;
             state.isSuccessGetPhieuThuTienMat = true;
-            state.chungTuBanData =
+            state.phieuThuTienMatData =
             {
                 ...action.payload.result.data,
                 key: action.payload.result.data.id,
-                namecCustomer: action.payload.result.data.donBanHang.customer.name,
-                taxCode: action.payload.result.data.donBanHang.customer.taxCode,
-                address: action.payload.result.data.donBanHang.customer.address,
-                warehouseKeeperId: action.payload.result.data.warehouseKeeper.id
-                // salesperson: action.payload.result.data.donBanHang.salesperson.name,
-                // address: action.payload.result.data.customer.address,
-                // namecCustomer: action.payload.result.data.customer.name,
-
+                paymentMethod: "CASH",
             };
 
             //   state.message = action.payload.message;
@@ -562,7 +555,7 @@ export const banHangSlice = createSlice({
             console.log("postPhieuThuTienMat.fulfilled", action.payload)
             state.isFetching = false;
             state.isSuccessPostPhieuThuTienMat = true;
-            state.chungTuBanData = action.payload;
+            // state.chungTuBanData = action.payload;
             //   state.message = action.payload.message;
         })
 
@@ -615,14 +608,12 @@ export const banHangSlice = createSlice({
             console.log("getPhieuThuTienGui.fulfilled", action.payload)
             state.isFetching = false;
             state.isSuccessGetPhieuThuTienGui = true;
-            state.chungTuBanData =
+            state.phieuThuTienGuiData =
             {
                 ...action.payload.result.data,
                 key: action.payload.result.data.id,
-                namecCustomer: action.payload.result.data.donBanHang.customer.name,
-                taxCode: action.payload.result.data.donBanHang.customer.taxCode,
-                address: action.payload.result.data.donBanHang.customer.address,
-                warehouseKeeperId: action.payload.result.data.warehouseKeeper.id
+                paymentMethod: "TRANSFER",
+
                 // salesperson: action.payload.result.data.donBanHang.salesperson.name,
                 // address: action.payload.result.data.customer.address,
                 // namecCustomer: action.payload.result.data.customer.name,
@@ -648,7 +639,7 @@ export const banHangSlice = createSlice({
             console.log("postPhieuThuTienGui.fulfilled", action.payload)
             state.isFetching = false;
             state.isSuccessPostPhieuThuTienGui = true;
-            state.chungTuBanData = action.payload;
+            // state.chungTuBanData = action.payload;
             //   state.message = action.payload.message;
         })
 

@@ -107,7 +107,10 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
         // })
         //continue ...
         let dathu = 0;
-        dathu += chungTuBanData?.phieuThu?.map(pt => pt.money).reduce((total, currentValue) => {
+        dathu += chungTuBanData?.phieuThuTienMat?.map(pt => pt.money).reduce((total, currentValue) => {
+          return total + currentValue;
+        }, 0)
+        dathu += chungTuBanData?.phieuThuTienGui?.map(pt => pt.money).reduce((total, currentValue) => {
           return total + currentValue;
         }, 0)
         let chuathu = tong - dathu;
@@ -495,6 +498,7 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
                   "BEING_PAID"
                 ]
               });
+              setSearchText("");
             }}
           />
         </div>

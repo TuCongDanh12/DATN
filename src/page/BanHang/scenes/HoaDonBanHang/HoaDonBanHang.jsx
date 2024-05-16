@@ -117,7 +117,13 @@ const HoaDonBanHang = ({ checkbox = false }) => {
         //continue ...
         // let dathu = 0;
         let dathu = 0;
-        dathu += chungTuBanData?.phieuThu?.map(pt => pt.money).reduce((total, currentValue) => {
+        // dathu += chungTuBanData?.phieuThu?.map(pt => pt.money).reduce((total, currentValue) => {
+        //   return total + currentValue;
+        // }, 0)
+        dathu += chungTuBanData?.phieuThuTienMat?.map(pt => pt.money).reduce((total, currentValue) => {
+          return total + currentValue;
+        }, 0)
+        dathu += chungTuBanData?.phieuThuTienGui?.map(pt => pt.money).reduce((total, currentValue) => {
           return total + currentValue;
         }, 0)
         let chuathu = tong - dathu;
@@ -202,6 +208,12 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       dataIndex: "id",
       key: "id",
       sorter: (a, b) => a.id - b.id,
+      render: (val, record) => <span
+        onClick={() => {
+          // navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
+          navigate(`/ban-hang/hoa-don-ban-hang/xem/${val}`, { state: { id: val } });
+        }}
+        className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "" : ""}`}>{val}</span>,
       sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
       ellipsis: true,
     },
@@ -209,10 +221,20 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       title: "Ngày hóa đơn",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
       sorter: (a, b) =>
         moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "createdAt" ? sortedInfo.order : null,
+      // fixed: 'left',
+    },
+    {
+      title: "Hạn thanh toán",
+      dataIndex: "paymentTerm",
+      key: "paymentTerm",
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
+      sorter: (a, b) =>
+        moment(a.paymentTerm, "DD-MM-YYYY") - moment(b.paymentTerm, "DD-MM-YYYY"),
+      sortOrder: sortedInfo.columnKey === "paymentTerm" ? sortedInfo.order : null,
       // fixed: 'left',
     },
     {
@@ -220,12 +242,15 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       dataIndex: "idCustomer",
       key: "idCustomer",
       sorter: (a, b) => a.idCustomer - b.idCustomer,
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{val}</span>,
       sortOrder: sortedInfo.columnKey === "idCustomer" ? sortedInfo.order : null,
       ellipsis: true,
     },
     {
       title: "Khách hàng",
       dataIndex: "customer",
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{val}</span>,
+
       key: "customer",
       ellipsis: true,
     },
@@ -239,7 +264,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       title: "Giá trị hóa đơn",
       dataIndex: "tong",
       key: "tong",
-      render: (val, record) => VND.format(val),
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
       sorter: (a, b) => a.tong - b.tong,
       sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
     },
@@ -255,7 +280,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       title: "Chưa thu",
       dataIndex: "chuathu",
       key: "chuathu",
-      render: (val, record) => VND.format(val),
+      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
       sorter: (a, b) => a.chuathu - b.chuathu,
       sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
     },
@@ -267,11 +292,11 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       render: (val, record) => {
         switch (val) {
           case "NOT_PAID":
-            return "Chưa thanh toán";
+            return <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{"Chưa thanh toán"}</span>;
           case "BEING_PAID":
-            return "Thanh toán 1 phần";
+            return <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{"Thanh toán 1 phần"}</span>;
           case "PAID":
-            return "Đã thanh toán";
+            return <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{"Đã thanh toán"}</span>;
           default:
             return "Lỗi";
         }
@@ -292,11 +317,12 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       ],
       onFilter: (value, record) => record.paymentStatus.indexOf(value) === 0,
       filteredValue: filteredInfo.paymentStatus || null,
+      ellipsis: true,
     },
     // {
     //   title: "Tình trạng giao hàng",
-    //   dataIndex: "deliveryStatus",
-    //   key: "deliveryStatus",
+    //   dataIndex: "paymentStatus",
+    //   key: "paymentStatus",
     //   render: (val, record) => {
     //     switch (val) {
     //       case "NOT_DELIVERED":
@@ -323,8 +349,8 @@ const HoaDonBanHang = ({ checkbox = false }) => {
     //       text: "Đã giao đủ",
     //     },
     //   ],
-    //   onFilter: (value, record) => record.deliveryStatus.indexOf(value) === 0,
-    //   filteredValue: filteredInfo.deliveryStatus || null,
+    //   onFilter: (value, record) => record.paymentStatus.indexOf(value) === 0,
+    //   filteredValue: filteredInfo.paymentStatus || null,
     // },
     {
       title: "Chức năng",
@@ -485,6 +511,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
                   "BEING_PAID"
                 ]
               });
+              setSearchText("");
             }}
           />
         </div>

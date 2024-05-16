@@ -63,7 +63,8 @@ import Profile from "./page/Profile/Profile";
 import InHoaDonBanHang from "./component/InHoaDonBanHang/InHoaDonBanHang";
 import ThemTaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/scenes/ThemTaiKhoanNganHang/ThemTaiKhoanNganHang";
 import EditTaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/scenes/EditTaiKhoanNganHang/EditTaiKhoanNganHang";
-import XemPhieuThu from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/XemPhieuThu/XemPhieuThu";
+import XemPhieuThuTienMat from './page/BanHang/scenes/ThuTienTheoHoaDon/scenes/XemPhieuThuTienMat/XemPhieuThuTienMat';
+import XemPhieuThuTienGui from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/XemPhieuThuTienGui/XemPhieuThuTienGui";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -179,7 +180,8 @@ function App() {
 
 
                 <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThemThuTien />} />
-                <Route path="ban-hang/thu-tien-theo-hoa-don/xem/:id" element={<XemPhieuThu disabled={true} />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/xem-phieu-thu-tien-mat/:id" element={<XemPhieuThuTienMat disabled={true} />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/xem-phieu-thu-tien-gui/:id" element={<XemPhieuThuTienGui disabled={true} />} />
                 <Route path="/tien-mat" element={<TienMat />} />
                 <Route path="/tien-gui" element={<TienGui />} />
 

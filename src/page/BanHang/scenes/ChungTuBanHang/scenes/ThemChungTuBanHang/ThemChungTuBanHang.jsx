@@ -386,7 +386,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
         // console.log("dayjs(values.deliveryDate, dateFormat)",dayjs(new Date(values.deliveryDate.$d).toISOString().slice(0, 10), dateFormat))
 
         dispatch(postChungTuBan({ values: dataConvert }));
-        navigate(-2);
+        navigate('/ban-hang/chung-tu-ban-hang');
     };
 
 
@@ -420,7 +420,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                 components={components}
                 dataSource={productOfDonBanHangs}
                 columns={columns}
-
+                isAddChungTu={true}
                 form={form}
                 disabled={disabled}
                 onFinish={onFinish}
@@ -486,10 +486,10 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
     useEffect(() => {
         if (donBanHangData) {
             // let hanThanhToan = new Date();
-            // hanThanhToan?.setDate(hanThanhToan?.getDate() + donBanHangData?.dieuKhoan?.creditPeriod);
+            // hanThanhToan?.setDate(hanThanhToan?.getDate() + donBanHangData?.dieuKhoan?.paymentPeriod);
 
             // let currentDay = new Date().getDate();
-            // let hanDay = new Date().setDate(currentDay + donBanHangData?.dieuKhoan?.creditPeriod);
+            // let hanDay = new Date().setDate(currentDay + donBanHangData?.dieuKhoan?.paymentPeriod);
 
             const data = {
                 ...donBanHangData,
@@ -536,10 +536,10 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
             });
 
             // let hanThanhToan = new Date();
-            // hanThanhToan?.setDate(hanThanhToan?.getDate() + Number(donBanHangData?.dieuKhoan?.creditPeriod));
+            // hanThanhToan?.setDate(hanThanhToan?.getDate() + Number(donBanHangData?.dieuKhoan?.paymentPeriod));
             // function test() {
             //     const data = {
-            //         // paymentTerm: dayjs(new Date((new Date()).getTime() + (donBanHangData?.dieuKhoan?.creditPeriod * 24 * 60 * 60 * 1000)).toISOString()?.slice(0, 10), dateFormat)
+            //         // paymentTerm: dayjs(new Date((new Date()).getTime() + (donBanHangData?.dieuKhoan?.paymentPeriod * 24 * 60 * 60 * 1000)).toISOString()?.slice(0, 10), dateFormat)
             //         paymentTerm: dayjs(hanThanhToan.toISOString()?.slice(0, 10), dateFormat)
             //     }
             //     form.setFieldsValue({
@@ -562,12 +562,12 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
     }, [donBanHangData]);
 
     useEffect(() => {
-        if (donBanHangData?.dieuKhoan?.creditPeriod) {
+        if (donBanHangData?.dieuKhoan?.paymentPeriod) {
             // let hanThanhToan = new Date();
-            // hanThanhToan?.setDate(hanThanhToan?.getDate() + Number(donBanHangData?.dieuKhoan?.creditPeriod));
+            // hanThanhToan?.setDate(hanThanhToan?.getDate() + Number(donBanHangData?.dieuKhoan?.paymentPeriod));
 
             const data = {
-                paymentTerm: dayjs(new Date((new Date()).getTime() + (donBanHangData?.dieuKhoan?.creditPeriod * 24 * 60 * 60 * 1000)).toISOString()?.slice(0, 10), dateFormat)
+                paymentTerm: dayjs(new Date((new Date()).getTime() + (donBanHangData?.dieuKhoan?.paymentPeriod * 24 * 60 * 60 * 1000)).toISOString()?.slice(0, 10), dateFormat)
                 // paymentTerm: dayjs(hanThanhToan.toISOString()?.slice(0, 10), dateFormat)
             }
             form.setFieldsValue({
@@ -575,7 +575,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
             });
         }
 
-    }, [donBanHangData?.dieuKhoan?.creditPeriod]);
+    }, [donBanHangData?.dieuKhoan?.paymentPeriod]);
 
 
     return (

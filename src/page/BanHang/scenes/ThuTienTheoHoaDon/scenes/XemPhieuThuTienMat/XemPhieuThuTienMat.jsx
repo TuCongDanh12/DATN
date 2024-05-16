@@ -2,8 +2,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react'
 import { Tabs, Form, Input, Flex, Table, Button, InputNumber, Select, Checkbox, DatePicker, Typography } from "antd";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { banHangSelector, getDonBanHang, postChungTuBan, postPhieuThuTienGui, postPhieuThuTienMat } from '../../../../../../store/features/banHangSlice';
-import { clearState, doiTuongSelector, getListAccountant, getListBankAccount, getListProduct, getListSalesperson } from './../../../../../../store/features/doiTuongSilce';
+import { banHangSelector, getDonBanHang, getPhieuThuTienMat, postChungTuBan, postPhieuThuTienGui, postPhieuThuTienMat } from '../../../../../../store/features/banHangSlice';
+import { clearState, doiTuongSelector, getListAccountant, getListBankAccount, getListProduct, getListSalesperson } from '../../../../../../store/features/doiTuongSilce';
 import { VND } from '../../../../../../utils/func';
 
 import dayjs from "dayjs";
@@ -100,7 +100,7 @@ const EditableCell = ({
 };
 
 
-const ThemThuTien = ({ disabled = false }) => {
+const XemPhieuThuTienMat = ({ disabled = false }) => {
     const dispatch = useDispatch();
     const params = useParams();
     console.log("params", params)
@@ -111,11 +111,12 @@ const ThemThuTien = ({ disabled = false }) => {
     const {
         // donBanHangData,
         // isSuccessGetDonBanHang,
-        listHoaDonSelected
+        phieuThuTienMatData
+
 
     } = useSelector(banHangSelector);
 
-    console.log("listHoaDonSelected", listHoaDonSelected);
+    console.log("phieuThuTienMatData", phieuThuTienMatData);
 
     const [dataHoaDonSelected, setDataHoaDonSelected] = useState([]);
 
@@ -126,6 +127,7 @@ const ThemThuTien = ({ disabled = false }) => {
     } = useSelector(doiTuongSelector);
 
     useEffect(() => {
+        dispatch(getPhieuThuTienMat({ id: params.id }));
         dispatch(getListBankAccount());
         // dispatch(getListAccountant());
         dispatch(getListSalesperson());
@@ -136,70 +138,40 @@ const ThemThuTien = ({ disabled = false }) => {
 
     // console.log("listProductData", listProductData);
     useEffect(() => {
-        // const products = donBanHangData.dataHoaDonSelected.map(product => {
-
-        //     let soluongdaban = 0;
-        //     donBanHangData.ctban.forEach(chungtuban => {
-        //         chungtuban.productOfCtban.forEach(productOfCtbanItem => {
-        //             if (productOfCtbanItem.product.id === product.product.id) {
-        //                 console.log("...", productOfCtbanItem.count)
-        //                 soluongdaban += productOfCtbanItem.count;
-        //             }
-        //         })
-        //     })
-
-        //     return {
-        //         ...product,
-        //         key: product.id,
-        //         id: product.product.id,
-        //         productName: product.product.name,
-        //         unit: product.product.unit,
-        //         count: product.count - soluongdaban,
-        //         soluongchuadat: product.count - soluongdaban,
-        //         // soluongdaxuat: 1,
-        //         price: product.price,
-        //         thanhtien: product.price * product.count,
-        //         phantramthuegtgt: product.product.productGroup.tax,
-        //         tienthuegtgt: product.count * product.price * (product.product.productGroup.tax / 100)
-        //     }
-        // })
-
-
-
-        // console.log("products", products)
-
-        if (listHoaDonSelected.length !== 0) {
-            const convertData = listHoaDonSelected.map(hoaDon => {
+        if (phieuThuTienMatData) {
+            const convertData = phieuThuTienMatData?.chungTuCuaPhieuThu?.map(hoaDon => {
                 return {
                     ...hoaDon,
-                    sothanhtoan: hoaDon.chuathu
+                    sothanhtoan: hoaDon.money,
+                    customer: phieuThuTienMatData?.customer?.name,
+                    tong: hoaDon.ctban.finalValue
                 }
             })
 
             setDataHoaDonSelected(convertData);
 
 
-            let content = `${listHoaDonSelected[0].id}`;
+            // let content = `${phieuThuTienMatData[0].id}`;
 
-            if (listHoaDonSelected.length > 1) {
-                for (let i = 1; i < listHoaDonSelected.length; ++i) {
-                    content += `, ${listHoaDonSelected[i].id}`
-                }
-            }
+            // if (phieuThuTienMatData.length > 1) {
+            //     for (let i = 1; i < phieuThuTienMatData.length; ++i) {
+            //         content += `, ${phieuThuTienMatData[i].id}`
+            //     }
+            // }
 
             const data = {
-                // ...listHoaDonSelected[0].donBanHang,
+                // ...phieuThuTienMatData[0].donBanHang,
                 // receiver: donBanHangData.namecCustomer,
-                paymentMethod: "CASH",
-                address: listHoaDonSelected[0].donBanHang.customer.address,
-                salespersonID: listHoaDonSelected[0].donBanHang.salesperson.id,
-                submitter: listHoaDonSelected[0].donBanHang.customer.name,
+                paymentMethod: phieuThuTienMatData.paymentMethod,
+                address: phieuThuTienMatData?.customer?.address,
+                salespersonID: phieuThuTienMatData?.salesperson?.id,
+                submitter: phieuThuTienMatData?.submitter,
                 bankAccountId: "",
-                createdAt: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
-                receiveDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
-                taxCode: listHoaDonSelected[0].donBanHang.customer.taxCode,
-                namecCustomer: listHoaDonSelected[0].donBanHang.customer.name,
-                content: `Thu tiền khách hàng ${listHoaDonSelected[0].donBanHang.customer.name} theo hóa đơn ${content}`
+                // createdAt: dayjs(new Date(phieuThuTienMatData.createdAt).toISOString().slice(0, 10), dateFormat),
+                // receiveDate: dayjs(new Date(phieuThuTienMatData.receiveDate).toISOString().slice(0, 10), dateFormat),
+                taxCode: phieuThuTienMatData?.customer?.taxCode,
+                namecCustomer: phieuThuTienMatData?.customer?.name,
+                content: phieuThuTienMatData?.content
                 // paymentTerm: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 // deliveryDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat)
             };
@@ -211,7 +183,31 @@ const ThemThuTien = ({ disabled = false }) => {
                 ...data
             });
         }
-    }, [listHoaDonSelected]);
+    }, [phieuThuTienMatData]);
+
+    useEffect(() => {
+        if (phieuThuTienMatData?.receiveDate) {
+            const data = {
+                receiveDate: dayjs(new Date(phieuThuTienMatData.receiveDate).toISOString().slice(0, 10), dateFormat)
+            }
+            form.setFieldsValue({
+                ...data
+            });
+        }
+
+    }, [phieuThuTienMatData?.receiveDate]);
+
+    useEffect(() => {
+        if (phieuThuTienMatData?.createdAt) {
+            const data = {
+                createdAt: dayjs(new Date(phieuThuTienMatData.createdAt).toISOString().slice(0, 10), dateFormat)
+            }
+            form.setFieldsValue({
+                ...data
+            });
+        }
+
+    }, [phieuThuTienMatData?.createdAt]);
 
 
     const nameValue = Form.useWatch('id', form);
@@ -250,14 +246,14 @@ const ThemThuTien = ({ disabled = false }) => {
             sorter: (a, b) => a.tong - b.tong,
             sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
         },
-        {
-            title: "Chưa thu",
-            dataIndex: "chuathu",
-            key: "chuathu",
-            render: (val, record) => VND.format(val),
-            sorter: (a, b) => a.chuathu - b.chuathu,
-            sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
-        },
+        // {
+        //     title: "Chưa thu",
+        //     dataIndex: "chuathu",
+        //     key: "chuathu",
+        //     render: (val, record) => VND.format(val),
+        //     sorter: (a, b) => a.chuathu - b.chuathu,
+        //     sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
+        // },
         // {
         //     title: "Số lượng chưa đặt",
         //     dataIndex: "soluongchuadat",
@@ -410,11 +406,19 @@ const ThemThuTien = ({ disabled = false }) => {
     };
 
 
+
+    //Xuat file pdf, in file
+    const componentRef = useRef();
+
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+    });
+
+
     return (
         <div className="m-6">
             <h1 className="font-bold text-[32px] mb-4">
-                Phiếu thu tiền {Form.useWatch('paymentMethod', form) === "CASH" ? "mặt" : "gửi"}
-                {/* {nameValue || donBanHangData.id} */}
+                Phiếu thu tiền {Form.useWatch('paymentMethod', form) === "CASH" ? "mặt" : "gửi"} {nameValue || phieuThuTienMatData.id}
             </h1>
 
 
@@ -712,6 +716,36 @@ const ThemThuTien = ({ disabled = false }) => {
                     </Flex>
 
                 </Flex>
+
+                <div className='flex justify-start flex-col mb-8'>
+                    <div className='min-w-[300px]'>
+                        <div className='flex'>
+                            <p>Tham chiếu đến chứng từ bán hàng:</p>
+                            <p>
+                                {
+                                    phieuThuTienMatData?.chungTuCuaPhieuThu?.map(ct => <span
+                                        className='px-2 text-[#1DA1F2] font-medium	cursor-pointer'
+                                        onClick={() => navigate(`/ban-hang/chung-tu-ban-hang/xem/${ct.id}`, { state: { id: ct.id } })}
+                                    >{ct.ctban.id}</span>)
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div className='min-w-[300px]'>
+                        <div className='flex'>
+                            <p>Tham chiếu đến hóa đơn bán hàng:</p>
+                            <p>
+                                {
+                                    phieuThuTienMatData?.chungTuCuaPhieuThu?.map(ct => <span
+                                        className='px-2 text-[#1DA1F2] font-medium	cursor-pointer'
+                                        onClick={() => navigate(`/ban-hang/hoa-don-ban-hang/xem/${ct.id}`, { state: { id: ct.id } })}
+                                    >{ct.ctban.id}</span>)
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div>
                     <Table
                         components={components}
@@ -738,9 +772,9 @@ const ThemThuTien = ({ disabled = false }) => {
                                         <Table.Summary.Cell index={1}>
                                             <Text className="font-bold">{VND.format(totalTong)}</Text>
                                         </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={2}>
+                                        {/* <Table.Summary.Cell index={2}>
                                             <Text className="font-bold">{VND.format(totalChuaThu)}</Text>
-                                        </Table.Summary.Cell>
+                                        </Table.Summary.Cell> */}
                                         <Table.Summary.Cell index={3}>
                                             <Text className="font-bold">{VND.format(totalSoThanhToan)}</Text>
                                         </Table.Summary.Cell>
@@ -774,6 +808,13 @@ const ThemThuTien = ({ disabled = false }) => {
                 {disabled ?
                     <div className='w-full flex justify-end mt-6 mb-0'>
                         <Button
+                            className='bg-[#46FF42] font-bold text-white mr-2'
+                            type='link'
+                            onClick={handlePrint}
+                        >
+                            In phiếu thu
+                        </Button>
+                        <Button
                             className='bg-[#FF7742] font-bold text-white'
                             type='link'
                             onClick={() => navigate(-1)}
@@ -799,8 +840,24 @@ const ThemThuTien = ({ disabled = false }) => {
                     </Form.Item>
                 }
             </Form>
+
+            <div
+                className='hidden'
+            >
+                <div ref={componentRef}>
+                    <InPhieuThu
+                        form={form}
+                        components={components}
+                        dataSource={dataHoaDonSelected}
+                        columns={columns}
+                        // idHoaDon={chungTuBanData?.id}
+                        idCustomer={phieuThuTienMatData?.customer?.id}
+                        idPhieuThu={phieuThuTienMatData?.id}
+                    />
+                </div>
+            </div>
         </div>
     )
 }
 
-export default ThemThuTien
+export default XemPhieuThuTienMat

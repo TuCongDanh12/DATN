@@ -107,7 +107,10 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                     //     tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
                     // })
                     //continue ...
-                    dathu += chungTuBanData?.phieuThu?.map(pt => pt.money).reduce((total, currentValue) => {
+                    dathu += chungTuBanData?.phieuThuTienMat?.map(pt => pt.money).reduce((total, currentValue) => {
+                        return total + currentValue;
+                    }, 0)
+                    dathu += chungTuBanData?.phieuThuTienGui?.map(pt => pt.money).reduce((total, currentValue) => {
                         return total + currentValue;
                     }, 0)
                 })
@@ -484,6 +487,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                                     "BEING_PAID"
                                 ]
                             });
+                            setSearchText("");
                         }}
                     />
                 </div>

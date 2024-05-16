@@ -5,6 +5,7 @@ import {
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import ThuTienMat from "./components/ThuTienMat/ThuTienMat";
+import ThuTienGui from "./components/ThuTienGui/ThuTienGui";
 
 const ThuTienTheoHoaDon = () => {
   return (
@@ -22,7 +23,7 @@ const ThuTienTheoHoaDon = () => {
           {
             key: 2,
             label: `Tiền gửi`,
-            children: <ThuTienMat />,
+            children: <ThuTienGui />,
             icon: <AccountBalanceIcon />,
           }
         ]}

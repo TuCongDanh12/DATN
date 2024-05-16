@@ -6,8 +6,8 @@ import moment from 'moment';
 const { Text } = Typography;
 
 
-const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish, idPhieuXuat, idCustomer }) => {
-    const dataSourceConvert = dataSource.map((data, index) => {
+const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish, idPhieuThu, idCustomer }) => {
+    const dataSourceConvert = dataSource?.map((data, index) => {
         return {
             ...data,
             stt: index + 1
@@ -43,12 +43,12 @@ const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish,
             key: "tong",
             render: (val, record) => VND.format(val),
         },
-        {
-            title: "Chưa thu",
-            dataIndex: "chuathu",
-            key: "chuathu",
-            render: (val, record) => VND.format(val),
-        },
+        // {
+        //     title: "Chưa thu",
+        //     dataIndex: "chuathu",
+        //     key: "chuathu",
+        //     render: (val, record) => VND.format(val),
+        // },
         // {
         //     title: "Số lượng chưa đặt",
         //     dataIndex: "soluongchuadat",
@@ -227,7 +227,7 @@ const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish,
 
                     <div className="text-right">
                         <p className="">
-                            ID phiếu thu: {idPhieuXuat}
+                            ID phiếu thu: {idPhieuThu}
                         </p>
                         <p>
                             Ngày chứng từ: {formatDate(Form.useWatch('receiveDate', form)?.$d)}
@@ -261,14 +261,14 @@ const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish,
                             return (
                                 <>
                                     <Table.Summary.Row>
-                                    <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={5}>Tổng tiền thanh toán</Table.Summary.Cell>
+                                    <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={4}>Tổng tiền thanh toán</Table.Summary.Cell>
                                         <Table.Summary.Cell index={3}>
                                             <Text className="font-medium text-center">{VND.format(totalSoThanhToan)}</Text>
                                         </Table.Summary.Cell>
                                     </Table.Summary.Row>
                                     
                                     <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={6}>Số tiền viết bằng chữ: {to_vietnamese(totalSoThanhToan)}</Table.Summary.Cell>
+                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={5}>Số tiền viết bằng chữ: {to_vietnamese(totalSoThanhToan)}</Table.Summary.Cell>
                                     </Table.Summary.Row>
                                 </>
                             );
