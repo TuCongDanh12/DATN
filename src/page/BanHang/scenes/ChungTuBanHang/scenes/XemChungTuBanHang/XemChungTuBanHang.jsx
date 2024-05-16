@@ -718,7 +718,7 @@ const XemChungTuBanHang = ({ disabled = false }) => {
             </Form>
 
             <div
-            // className='hidden'
+            className='hidden'
             >
                 <div ref={componentRef}>
                     <InPhieuXuat
@@ -734,7 +734,7 @@ const XemChungTuBanHang = ({ disabled = false }) => {
             </div>
 
             <div
-            // className='hidden'
+            className='hidden'
             >
                 <div ref={componentRef2}>
                     <InHoaDonBanHang

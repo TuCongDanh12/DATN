@@ -64,9 +64,9 @@ const DonDatHang = ({ radio = false }) => {
         "NOT_DELIVERED",
         "DELIVERING"
       ],
-      "stockStatus": [
-        "IN_STOCK"
-      ]
+      // "stockStatus": [
+      //   "IN_STOCK"
+      // ]
     });
   }, []);
 
@@ -216,7 +216,7 @@ const DonDatHang = ({ radio = false }) => {
           // navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
           navigate(`/ban-hang/don-dat-hang/xem/${val}`, { state: { id: val } });
         }}
-        className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.deliveryTerm) < new Date() ? "" : ""}`}>{val}</span>,
+        className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED" ? "" : ""}`}>{val}</span>,
       sorter: (a, b) => a.id - b.id,
       sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
       ellipsis: true,
@@ -225,17 +225,17 @@ const DonDatHang = ({ radio = false }) => {
       title: "Ngày đặt hàng",
       dataIndex: "saleDate",
       key: "saleDate",
-      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
       sorter: (a, b) =>
         moment(a.saleDate, "DD-MM-YYYY") - moment(b.saleDate, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "saleDate" ? sortedInfo.order : null,
       fixed: 'left',
     },
     {
-      title: "Hạn đặt hàng",
+      title: "Hạn giao hàng",
       dataIndex: "deliveryTerm",
       key: "deliveryTerm",
-      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
       sorter: (a, b) =>
         moment(a.deliveryTerm, "DD-MM-YYYY") - moment(b.deliveryTerm, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "deliveryTerm" ? sortedInfo.order : null,
@@ -245,21 +245,21 @@ const DonDatHang = ({ radio = false }) => {
       title: "Khách hàng",
       dataIndex: "customer",
       key: "customer",
-      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{val}</span>,
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{val}</span>,
       ellipsis: true,
     },
     {
       title: "Nội dung",
       dataIndex: "content",
       key: "content",
-      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{val}</span>,
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{val}</span>,
       ellipsis: true,
     },
     {
       title: "Tổng",
       dataIndex: "tong",
       key: "tong",
-      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
       sorter: (a, b) => a.tong - b.tong,
       sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
     },
@@ -275,7 +275,7 @@ const DonDatHang = ({ radio = false }) => {
       title: "Chưa lập chứng từ",
       dataIndex: "chuathu",
       key: "chuathu",
-      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+      render: (val, record) => <span className={`${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
       sorter: (a, b) => a.chuathu - b.chuathu,
       sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
       ellipsis: true,
@@ -314,35 +314,35 @@ const DonDatHang = ({ radio = false }) => {
     //   filteredValue: filteredInfo.documentStatus || null,
     //   fixed: 'right',
     // },
-    {
-      title: "Tình trạng kho",
-      dataIndex: "stockStatus",
-      key: "stockStatus",
-      render: (val, record) => {
-        switch (val) {
-          case "IN_STOCK":
-            return "Đủ hàng";
-            case "OUT_OF_STOCK":
-              return <span className={`text-[#d44950] font-medium`}>Thiếu hàng</span>
-            // return "Thiếu hàng";
-          default:
-            return "Lỗi";
-        }
-      },
-      filters: [
-        {
-          value: "IN_STOCK",
-          text: "Đủ hàng",
-        },
-        {
-          value: "OUT_OF_STOCK",
-          text: "Thiếu hàng",
-        },
-      ],
-      onFilter: (value, record) => record.stockStatus.indexOf(value) === 0,
-      filteredValue: filteredInfo.stockStatus || null,
-      ellipsis: true,
-    },
+    // {
+    //   title: "Tình trạng kho",
+    //   dataIndex: "stockStatus",
+    //   key: "stockStatus",
+    //   render: (val, record) => {
+    //     switch (val) {
+    //       case "IN_STOCK":
+    //         return "Đủ hàng";
+    //         case "OUT_OF_STOCK":
+    //           return <span className={`text-[#d44950] font-medium`}>Thiếu hàng</span>
+    //         // return "Thiếu hàng";
+    //       default:
+    //         return "Lỗi";
+    //     }
+    //   },
+    //   filters: [
+    //     {
+    //       value: "IN_STOCK",
+    //       text: "Đủ hàng",
+    //     },
+    //     {
+    //       value: "OUT_OF_STOCK",
+    //       text: "Thiếu hàng",
+    //     },
+    //   ],
+    //   onFilter: (value, record) => record.stockStatus.indexOf(value) === 0,
+    //   filteredValue: filteredInfo.stockStatus || null,
+    //   ellipsis: true,
+    // },
     {
       title: "Tình trạng giao hàng",
       dataIndex: "deliveryStatus",
@@ -350,11 +350,11 @@ const DonDatHang = ({ radio = false }) => {
       render: (val, record) => {
         switch (val) {
           case "NOT_DELIVERED":
-            return "Chưa giao";
+            return <span className={`${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{"Chưa giao"}</span>;
           case "DELIVERING":
-            return "Đang giao";
+            return <span className={`${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{"Đang giao"}</span>;
           case "DELIVERED":
-            return "Đã giao đủ";
+            return <span className={`${new Date(record.deliveryTerm) < new Date() && record.deliveryStatus !== "DELIVERED"  ? "text-[#d44950] font-medium" : ""}`}>{"Đã giao đủ"}</span>;
           default:
             return "Lỗi";
         }
@@ -387,7 +387,7 @@ const DonDatHang = ({ radio = false }) => {
           <Dropdown
             menu={{
               onClick: (e) => handleDropdownItemClick(e, record),
-              items: ((record.deliveryStatus === "DELIVERED" || record.stockStatus === "OUT_OF_STOCK") && items.filter(item => item.key === "xem")) || items,
+              items: (record.deliveryStatus === "DELIVERED" && items.filter(item => item.key === "xem")) || items,
             }}
           >
             <Link
@@ -572,10 +572,11 @@ const DonDatHang = ({ radio = false }) => {
                   "NOT_DELIVERED",
                   "DELIVERING"
                 ],
-                "stockStatus": [
-                  "IN_STOCK"
-                ]
+                // "stockStatus": [
+                //   "IN_STOCK"
+                // ]
               });
+              setSearchText("");
             }}
           />
           <input type="file" name="photo" id="upload-photo"

@@ -24,7 +24,7 @@ import moment from "moment/moment";
 
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import { banHangSelector, clearState, getListChungTuBan } from "../../../../../../store/features/banHangSlice";
+import { banHangSelector, clearState, getListPhieuThuTienMat } from "../../../../../../store/features/banHangSlice";
 import { VND } from "../../../../../../utils/func";
 
 const { RangePicker } = DatePicker;
@@ -45,18 +45,18 @@ const ThuTienMat = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const {
-    isSuccessGetListChungTuBan,
-    isSuccessPostChungTuBan,
+    isSuccessGetListPhieuThuTienMat,
+    isSuccessPostPhieuThuTienMat,
 
     isError,
     message,
 
-    listChungTuBanData,
-    // chungTuBanData,
+    listPhieuThuTienMatData,
+    // phieuThuTienMatData,
   } = useSelector(banHangSelector);
 
   useEffect(() => {
-    dispatch(getListChungTuBan());
+    dispatch(getListPhieuThuTienMat());
   }, []);
 
   const [chungTuBan, setChungTuBan] = useState([]);
@@ -83,7 +83,7 @@ const ThuTienMat = () => {
 
 
   useEffect(() => {
-    if (isSuccessPostChungTuBan) {
+    if (isSuccessPostPhieuThuTienMat) {
       api.success({
         message: "Thêm dữ liệu thành công!",
         placement: "bottomLeft",
@@ -91,31 +91,35 @@ const ThuTienMat = () => {
       });
 
       dispatch(clearState());
-    } else if (isSuccessGetListChungTuBan) {
+    } else if (isSuccessGetListPhieuThuTienMat) {
       // messageApi.open({
       //   key: "updatable",
       //   type: "success",
       //   content: "Tải dữ liệu thành công!",
       //   duration: 2,
       // });
-      const dataConvertCurrent = listChungTuBanData.map(chungTuBanData => {
-        console.log("chungTuBanData", chungTuBanData)
+      const dataConvertCurrent = listPhieuThuTienMatData.map(phieuThuTienMatData => {
+        console.log("phieuThuTienMatData", phieuThuTienMatData)
 
         let tong = 0;
-        chungTuBanData.productOfCtban.forEach(productOfCt => {
-          tong += productOfCt.count * productOfCt.price;
-          tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
-        })
+        tong += phieuThuTienMatData?.chungTuCuaPhieuThu?.map(pt => pt.money).reduce((total, currentValue) => {
+          return total + currentValue;
+        }, 0)
+
+        // phieuThuTienMatData.productOfCtban.forEach(productOfCt => {
+        //   tong += productOfCt.count * productOfCt.price;
+        //   tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
+        // })
         //continue ...
-        let dathu = 0;
-        let chuathu = tong - dathu;
+        // let dathu = 0;
+        // let chuathu = tong - dathu;
 
         return {
-          ...chungTuBanData,
-          customer: chungTuBanData.donBanHang.customer.name,
+          ...phieuThuTienMatData,
+          customer: phieuThuTienMatData.customer.name,
           tong,
-          dathu,
-          chuathu
+          // dathu,
+          // chuathu
         }
       })
 
@@ -133,7 +137,7 @@ const ThuTienMat = () => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostChungTuBan, isSuccessGetListChungTuBan, isError]);
+  }, [isSuccessPostPhieuThuTienMat, isSuccessGetListPhieuThuTienMat, isError]);
 
   useEffect(() => {
     if (searchText.trim() === "" && filterday.length === 0) {
@@ -157,7 +161,7 @@ const ThuTienMat = () => {
 
   const items = [
     {
-      key: "xem",
+      key: "xem-phieu-thu-tien-mat",
       label: <Link className="!text-black">Xem</Link>,
     },
     // {
@@ -188,7 +192,14 @@ const ThuTienMat = () => {
       key: "id",
       sorter: (a, b) => a.id - b.id,
       sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
+      render: (val, record) => <span
+        onClick={() => {
+          // navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
+          navigate(`/ban-hang/thu-tien-theo-hoa-don/xem-phieu-thu-tien-mat/${val}`, { state: { id: val } });
+        }}
+        className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "" : ""}`}>{val}</span>,
       ellipsis: true,
+      width: '10%',
     },
     {
       title: "Ngày hạch toán",
@@ -316,7 +327,7 @@ const ThuTienMat = () => {
             }}
           >
             <Link
-              to={`xem/${record.key}`}
+              to={`xem-phieu-thu-tien-mat/${record.key}`}
               state={{ id: record.key }}
               className="!text-black"
             >
@@ -405,7 +416,7 @@ const ThuTienMat = () => {
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {
-              dispatch(getListChungTuBan());
+              dispatch(getListPhieuThuTienMat());
               messageApi.open({
                 key: "updatable",
                 type: "loading",
@@ -416,6 +427,7 @@ const ThuTienMat = () => {
               setValueRangepicker([]);
               setFilterday([]);
               setSelectedRowKeys([]);
+              setSearchText("");
             }}
           />
         </div>
@@ -474,7 +486,7 @@ const ThuTienMat = () => {
         columns={columns}
         dataSource={chungTuBan}
         pagination={{
-          // total: listChungTuBanData.length,
+          // total: listPhieuThuTienMatData.length,
           defaultPageSize: 20,
           // // pageSize: 20,
           // defaultCurrent: 1,

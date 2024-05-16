@@ -12,6 +12,7 @@ import {
   message as msg,
   notification,
   DatePicker,
+  Tabs,
 } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { SiMicrosoftexcel } from "react-icons/si";
@@ -19,15 +20,15 @@ import { TfiReload } from "react-icons/tfi";
 import { Add } from "@mui/icons-material";
 import { MdOutlineSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  banHangSelector,
-  clearState,
-  getListChungTuBan,
-} from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
-import { VND } from "../../../../utils/func";
+
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import { banHangSelector, clearState, getListPhieuThuTienGui } from "../../../../../../store/features/banHangSlice";
+import { VND } from "../../../../../../utils/func";
+
 const { RangePicker } = DatePicker;
-const ChungTuBanHang = () => {
+const ThuTienGui = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -44,18 +45,18 @@ const ChungTuBanHang = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   const {
-    isSuccessGetListChungTuBan,
-    isSuccessPostChungTuBan,
+    isSuccessGetListPhieuThuTienGui,
+    isSuccessPostPhieuThuTienGui,
 
     isError,
     message,
 
-    listChungTuBanData,
-    // chungTuBanData,
+    listPhieuThuTienGuiData,
+    // phieuThuTienGuiData,
   } = useSelector(banHangSelector);
 
   useEffect(() => {
-    dispatch(getListChungTuBan());
+    dispatch(getListPhieuThuTienGui());
   }, []);
 
   const [chungTuBan, setChungTuBan] = useState([]);
@@ -82,7 +83,7 @@ const ChungTuBanHang = () => {
 
 
   useEffect(() => {
-    if (isSuccessPostChungTuBan) {
+    if (isSuccessPostPhieuThuTienGui) {
       api.success({
         message: "Thêm dữ liệu thành công!",
         placement: "bottomLeft",
@@ -90,37 +91,35 @@ const ChungTuBanHang = () => {
       });
 
       dispatch(clearState());
-    } else if (isSuccessGetListChungTuBan) {
+    } else if (isSuccessGetListPhieuThuTienGui) {
       // messageApi.open({
       //   key: "updatable",
       //   type: "success",
       //   content: "Tải dữ liệu thành công!",
       //   duration: 2,
       // });
-      const dataConvertCurrent = listChungTuBanData.map(chungTuBanData => {
-        console.log("chungTuBanData", chungTuBanData)
+      const dataConvertCurrent = listPhieuThuTienGuiData.map(phieuThuTienGuiData => {
+        console.log("phieuThuTienGuiData", phieuThuTienGuiData)
 
-        let tong = chungTuBanData.totalProductValue - chungTuBanData.totalDiscountValue + chungTuBanData.totalTaxValue;
-        // chungTuBanData.productOfCtban.forEach(productOfCt => {
+        let tong = 0;
+        tong += phieuThuTienGuiData?.chungTuCuaPhieuThu?.map(pt => pt.money).reduce((total, currentValue) => {
+          return total + currentValue;
+        }, 0)
+
+        // phieuThuTienGuiData.productOfCtban.forEach(productOfCt => {
         //   tong += productOfCt.count * productOfCt.price;
         //   tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
         // })
         //continue ...
-        let dathu = 0;
-        dathu += chungTuBanData?.phieuThuTienMat?.map(pt => pt.money).reduce((total, currentValue) => {
-          return total + currentValue;
-        }, 0)
-        dathu += chungTuBanData?.phieuThuTienGui?.map(pt => pt.money).reduce((total, currentValue) => {
-          return total + currentValue;
-        }, 0)
-        let chuathu = tong - dathu;
+        // let dathu = 0;
+        // let chuathu = tong - dathu;
 
         return {
-          ...chungTuBanData,
-          customer: chungTuBanData.donBanHang.customer.name,
+          ...phieuThuTienGuiData,
+          customer: phieuThuTienGuiData.customer.name,
           tong,
-          dathu,
-          chuathu
+          // dathu,
+          // chuathu
         }
       })
 
@@ -138,7 +137,7 @@ const ChungTuBanHang = () => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostChungTuBan, isSuccessGetListChungTuBan, isError]);
+  }, [isSuccessPostPhieuThuTienGui, isSuccessGetListPhieuThuTienGui, isError]);
 
   useEffect(() => {
     if (searchText.trim() === "" && filterday.length === 0) {
@@ -162,7 +161,7 @@ const ChungTuBanHang = () => {
 
   const items = [
     {
-      key: "xem",
+      key: "xem-phieu-thu-tien-gui",
       label: <Link className="!text-black">Xem</Link>,
     },
     // {
@@ -188,7 +187,7 @@ const ChungTuBanHang = () => {
 
   const columns = [
     {
-      title: "ID chứng từ",
+      title: "ID phiếu thu",
       dataIndex: "id",
       key: "id",
       sorter: (a, b) => a.id - b.id,
@@ -196,16 +195,17 @@ const ChungTuBanHang = () => {
       render: (val, record) => <span
         onClick={() => {
           // navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
-          navigate(`/ban-hang/chung-tu-ban-hang/xem/${val}`, { state: { id: val } });
+          navigate(`/ban-hang/thu-tien-theo-hoa-don/xem-phieu-thu-tien-gui/${val}`, { state: { id: val } });
         }}
         className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "" : ""}`}>{val}</span>,
       ellipsis: true,
+      width: '10%',
     },
     {
       title: "Ngày hạch toán",
       dataIndex: "createdAt",
       key: "createdAt",
-      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
+      render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
       sorter: (a, b) =>
         moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
       sortOrder: sortedInfo.columnKey === "createdAt" ? sortedInfo.order : null,
@@ -215,22 +215,19 @@ const ChungTuBanHang = () => {
       title: "Khách hàng",
       dataIndex: "customer",
       key: "customer",
-      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{val}</span>,
-
       ellipsis: true,
     },
-    // {
-    //   title: "Nội dung",
-    //   dataIndex: "content",
-    //   key: "content",
-    //   ellipsis: true,
-    // },
     {
-      title: "Tổng",
+      title: "Nội dung",
+      dataIndex: "content",
+      key: "content",
+      ellipsis: true,
+    },
+    {
+      title: "Số tiền",
       dataIndex: "tong",
       key: "tong",
-      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
-
+      render: (val, record) => VND.format(val),
       sorter: (a, b) => a.tong - b.tong,
       sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
     },
@@ -242,14 +239,14 @@ const ChungTuBanHang = () => {
     //   sorter: (a, b) => a.dathu - b.dathu,
     //   sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
     // },
-    {
-      title: "Chưa thu",
-      dataIndex: "chuathu",
-      key: "chuathu",
-      render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
-      sorter: (a, b) => a.chuathu - b.chuathu,
-      sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
-    },
+    // {
+    //   title: "Chưa thu",
+    //   dataIndex: "chuathu",
+    //   key: "chuathu",
+    //   render: (val, record) => VND.format(val),
+    //   sorter: (a, b) => a.chuathu - b.chuathu,
+    //   sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
+    // },
     // {
     //   title: "Tình trạng",
     //   dataIndex: "documentStatus",
@@ -317,40 +314,6 @@ const ChungTuBanHang = () => {
     //   filteredValue: filteredInfo.deliveryStatus || null,
     // },
     {
-      title: "Tình trạng hóa đơn",
-      dataIndex: "paymentStatus",
-      key: "paymentStatus",
-      fixed: "right",
-      render: (val, record) => {
-        switch (val) {
-          case "NOT_PAID":
-            return <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{"Chưa thanh toán"}</span>;
-          case "BEING_PAID":
-            return <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{"Thanh toán 1 phần"}</span>;
-          case "PAID":
-            return <span className={`${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "text-[#d44950] font-medium" : ""}`}>{"Đã thanh toán"}</span>;
-          default:
-            return "Lỗi";
-        }
-      },
-      filters: [
-        {
-          value: "NOT_PAID",
-          text: "Chưa thanh toán",
-        },
-        {
-          value: "BEING_PAID",
-          text: "Thanh toán 1 phần",
-        },
-        {
-          value: "PAID",
-          text: "Đã thanh toán",
-        },
-      ],
-      onFilter: (value, record) => record.paymentStatus.indexOf(value) === 0,
-      filteredValue: filteredInfo.paymentStatus || null,
-    },
-    {
       title: "Chức năng",
       dataIndex: "chucnang",
       fixed: "right",
@@ -364,7 +327,7 @@ const ChungTuBanHang = () => {
             }}
           >
             <Link
-              to={`xem/${record.key}`}
+              to={`xem-phieu-thu-tien-gui/${record.key}`}
               state={{ id: record.key }}
               className="!text-black"
             >
@@ -414,7 +377,7 @@ const ChungTuBanHang = () => {
   };
 
   return (
-    <div className="m-4">
+    <div className="">
       <div className="px-[20px] w-full flex justify-between py-7 bg-white">
         <div className="flex gap-[5px] items-center">
           <Form form={form} layout="inline" onFinish={onFinish}>
@@ -453,7 +416,7 @@ const ChungTuBanHang = () => {
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {
-              dispatch(getListChungTuBan());
+              dispatch(getListPhieuThuTienGui());
               messageApi.open({
                 key: "updatable",
                 type: "loading",
@@ -472,7 +435,7 @@ const ChungTuBanHang = () => {
         <Button
           className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
           type="link"
-          onClick={() => navigate("/ban-hang/chung-tu-ban-hang/tim-kiem")}
+          onClick={() => navigate("/ban-hang/thu-tien-theo-hoa-don/tim-kiem")}
         >
           <Add />Thêm
         </Button>
@@ -514,6 +477,7 @@ const ChungTuBanHang = () => {
         </Modal> */}
       </div>
 
+
       <Table
         // rowSelection={{
         //   type: "checkbox",
@@ -522,7 +486,7 @@ const ChungTuBanHang = () => {
         columns={columns}
         dataSource={chungTuBan}
         pagination={{
-          // total: listChungTuBanData.length,
+          // total: listPhieuThuTienGuiData.length,
           defaultPageSize: 20,
           // // pageSize: 20,
           // defaultCurrent: 1,
@@ -540,4 +504,4 @@ const ChungTuBanHang = () => {
   );
 };
 
-export default ChungTuBanHang;
+export default ThuTienGui;

@@ -688,7 +688,7 @@ const XemHoaDonBanHang = ({ disabled = false }) => {
             </Form>
 
             <div
-            // className='hidden'
+            className='hidden'
             >
                 <div ref={componentRef}>
                     <InHoaDonBanHang

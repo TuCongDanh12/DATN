@@ -8,7 +8,7 @@ const dateFormat = "YYYY-MM-DD";
 dayjs.extend(customParseFormat);
 
 
-const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish, chungTuBanData, isHoaDon }) => {
+const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish, chungTuBanData, isHoaDon, isAddChungTu }) => {
     const navigate = useNavigate();
 
     const columsFilter = columns
@@ -271,9 +271,9 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish, chu
 
             </Flex>
 
-            <div className='flex justify-start flex-col'>
+            <div className='flex justify-start flex-col mb-8'>
                 <div className='min-w-[300px]'>
-                    {isHoaDon && <div className='flex'>
+                    {!isAddChungTu && <div className='flex'>
                         <p>Tham chiếu đến đơn bán hàng:</p>
                         <p>
                             <span
@@ -297,11 +297,17 @@ const HoaDon = ({ components, dataSource, columns, form, disabled, onFinish, chu
                 </div>
 
                 <div className='min-w-[300px]'>
-                    {isHoaDon && chungTuBanData?.phieuThu?.length !== 0 && <div className='flex mb-8'>
+                    {(chungTuBanData?.phieuThuTienMat?.length !== 0 || chungTuBanData?.phieuThuTienGui?.length !== 0) && <div className='flex'>
                         <p>Tham chiếu đến phiếu thu:</p>
                         <p>
                             {
-                                chungTuBanData?.phieuThu?.map(ct => <span
+                                chungTuBanData?.phieuThuTienMat?.map(ct => <span
+                                    className='px-2 text-[#1DA1F2] font-medium	cursor-pointer'
+                                    onClick={() => navigate(`/ban-hang/thu-tien-theo-hoa-don/xem/${ct.id}`, { state: { id: ct.id } })}
+                                >{ct.id}</span>)
+                            }
+                            {
+                                chungTuBanData?.phieuThuTienGui?.map(ct => <span
                                     className='px-2 text-[#1DA1F2] font-medium	cursor-pointer'
                                     onClick={() => navigate(`/ban-hang/thu-tien-theo-hoa-don/xem/${ct.id}`, { state: { id: ct.id } })}
                                 >{ct.id}</span>)
