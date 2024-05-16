@@ -102,6 +102,7 @@ const ThongBao = () => {
           return (
             // console.log(notification.message)
             <Notification
+              type={notification.type}
               id={notification.id}
               entityId={notification.entityId}
               resolved={notification.isResolved}
