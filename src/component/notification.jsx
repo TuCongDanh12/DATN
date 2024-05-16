@@ -19,9 +19,9 @@ function NotificationComponent(props) {
 
   const DetailAnnouncement = (entityId, type) => {
     return type === "THU" ? (
-      <Link onClick={() => updateStatusRead(entityId)} to={`/ban-hang/don-dat-hang/xem/${entityId}`}>Xem chi tiết</Link>
+      <Link onClick={() => updateStatusRead(entityId)} to={`/ban-hang/hoa-don-ban-hang/xem/${entityId}`}>Xem chi tiết</Link>
     ) : (
-      <Link onClick={() => updateStatusRead(entityId)} to={`/ban-hang/chung-tu-ban-hang/xem/${entityId}`}>Xem chi tiết</Link>
+      <Link onClick={() => updateStatusRead(entityId)} to={`/ban-hang/don-dat-hang/xem/${entityId}`}>Xem chi tiết</Link>
     );
   };
 
