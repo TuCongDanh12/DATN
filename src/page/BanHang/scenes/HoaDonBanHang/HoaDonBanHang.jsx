@@ -380,7 +380,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
   ];
 
   if (checkbox) {
-    columns = columns.filter(item => item.dataIndex !== "chucnang" && item.dataIndex !== "paymentStatus");
+    columns = columns.filter(item => item.dataIndex !== "chucnang");
   }
   else {
     columns = columns.filter(item => item.dataIndex !== "idCustomer");
