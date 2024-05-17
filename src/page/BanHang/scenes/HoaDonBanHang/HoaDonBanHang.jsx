@@ -181,7 +181,7 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       label: <Link className="!text-black">Xem</Link>,
     },
     {
-      key: "thu-tien",
+      key: "timkiem/thutien",
       label: <Link className="!text-black">Thu tiền</Link>,
     },
   ];
@@ -194,7 +194,8 @@ const HoaDonBanHang = ({ checkbox = false }) => {
       setOpen(true);
     } else {
       dispatch(hoaDonSelected([record]));
-      navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+      navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`);
+      // navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
     }
   };
 

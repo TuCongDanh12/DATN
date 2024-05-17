@@ -15,104 +15,44 @@ const InTongHopNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
 
     const defaultColumns = [
         {
-            title: "STT",
-            dataIndex: "stt",
-            editable: false,
+            title: "ID KH",
+            dataIndex: "makhachhang",
+            key: "makhachhang",
+            // ellipsis: true,
+            width: "10%"
         },
         {
-            title: "Tên hàng",
-            dataIndex: "productName",
-            editable: false,
+            title: "Khách hàng",
+            dataIndex: "customer",
+            key: "customer",
+            ellipsis: true,
         },
         {
-            title: "ĐVT",
-            dataIndex: "unit",
-            editable: false,
-            render: (val, record) => {
-                switch (val) {
-                    case "CAI":
-                        return "Cái";
-                    case "CAY":
-                        return "Cây";
-                    case "CHAI":
-                        return "Chai";
-                    case "CHUC":
-                        return "Chục";
-                    case "CUON":
-                        return "Cuộn";
-                    case "GOI":
-                        return "Gói";
-                    case "HOP":
-                        return "Hộp";
-                    case "HU":
-                        return "Hủ";
-                    case "KG":
-                        return "Kg";
-                    case "LOC":
-                        return "Lốc";
-                    case "LON":
-                        return "Lon";
-                    case "THUNG":
-                        return "Thùng";
-                    case "VIEN":
-                        return "Viên";
-                    default:
-                        return "Lỗi";
-                }
-            },
-        },
-        {
-            title: "Số lượng",
-            dataIndex: "count",
-            editable: !disabled,
-        },
-        // {
-        //     title: "Số lượng chưa đặt",
-        //     dataIndex: "soluongchuadat",
-        //     editable: false,
-        // },
-        // {
-        //     title: "Số lượng đã xuất",
-        //     dataIndex: "soluongdaxuat",
-        //     editable: !disabled,
-        // },
-        {
-            title: "% thuế GTGT",
-            dataIndex: "phantramthuegtgt",
-            editable: false,
-        },
-        {
-            title: "Đơn giá",
-            dataIndex: "price",
-            editable: false,
+            title: "Đã thu",
+            dataIndex: "dathu",
+            key: "dathu",
             render: (val, record) => VND.format(val),
+        },
 
+        {
+            title: "Nợ trong hạn",
+            dataIndex: "notronghan",
+            key: "notronghan",
+            render: (val, record) => VND.format(val),
+        },
+
+        {
+            title: "Nợ quá hạn",
+            dataIndex: "noquahan",
+            key: "noquahan",
+            render: (val, record) => <span className={`text-[#d44950] font-medium`}>{VND.format(val)}</span>,
         },
         {
-            title: "Thành tiền",
-            dataIndex: "thanhtien",
-            editable: false,
+            title: "Tổng",
+            dataIndex: "tong",
+            key: "tong",
             render: (val, record) => VND.format(val),
-
         },
-        // {
-        //     title: "Tiền thuế GTGT",
-        //     dataIndex: "tienthuegtgt",
-        //     editable: false,
-        //     render: (val, record) => VND.format(val),
-
-        // },
-        // {
-        //     title: '',
-        //     dataIndex: 'operation',
-        //     width: '50px',
-        //     render: (_, record) =>
-        //         productOfChungTuBans.length >= 1 ? (
-        //             <Typography.Link onClick={() => handleDelete(record.key)} className='flex justify-center'>
-        //                 <RiDeleteBin6Line size={20} color='#1E1E1E' />
-        //             </Typography.Link>
-        //         ) : null,
-        // },
     ];
 
     function formatDate(date) {
@@ -247,7 +187,7 @@ const InTongHopNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
                     </div>
                 </div> */}
 
-                <h1 className="text-center font-bold text-2xl mt-2">TỔNG HỢP CÔNG NỢ PHẢI THU KHÁCH HÀNG</h1>
+                <h1 className="text-center font-bold text-2xl mt-2">TỔNG HỢP NỢ PHẢI THU KHÁCH HÀNG</h1>
 
                 <div className="text-center font-bold">Từ ngày 02/04/2024 đến ngày 31/05/2024</div>
                 {/* <div className="text-center font-bold">Tháng 5 năm 2024</div> */}
@@ -290,29 +230,35 @@ const InTongHopNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
                         rowClassName={() => 'editable-row'}
                         bordered
                         dataSource={dataSource}
-                        columns={columns}
+                        columns={defaultColumns}
                         pagination={false}
                         summary={(pageData) => {
                             let totalTong = 0;
                             let totalDaThu = 0;
-                            let totalChuaThu = 0;
-                            pageData.forEach(({ tong, dathu, chuathu }) => {
+                            let totalNoTrongHan = 0;
+                            let totalNoQuaHan = 0;
+                            pageData.forEach(({ tong, dathu, notronghan, noquahan }) => {
                                 totalTong += tong;
                                 totalDaThu += dathu;
-                                totalChuaThu += chuathu;
+                                totalNoTrongHan += notronghan;
+                                totalNoQuaHan += noquahan;
+        
                             });
                             return (
                                 <>
                                     <Table.Summary.Row>
                                         <Table.Summary.Cell index={0} colSpan={2} className="font-medium">Tổng</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={1}>
-                                            <Text className="font-medium">{VND.format(totalTong)}</Text>
-                                        </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={2}>
+                                        <Table.Summary.Cell index={3}>
                                             <Text className="font-medium">{VND.format(totalDaThu)}</Text>
                                         </Table.Summary.Cell>
-                                        <Table.Summary.Cell index={3}>
-                                            <Text className="font-medium">{VND.format(totalChuaThu)}</Text>
+                                        <Table.Summary.Cell index={1}>
+                                            <Text className="font-medium">{VND.format(totalNoTrongHan)}</Text>
+                                        </Table.Summary.Cell>
+                                        <Table.Summary.Cell index={2}>
+                                            <Text className="font-medium text-[#d44950]">{VND.format(totalNoQuaHan)}</Text>
+                                        </Table.Summary.Cell>
+                                        <Table.Summary.Cell index={4}>
+                                            <Text className="font-medium">{VND.format(totalTong)}</Text>
                                         </Table.Summary.Cell>
                                     </Table.Summary.Row>
                                 </>

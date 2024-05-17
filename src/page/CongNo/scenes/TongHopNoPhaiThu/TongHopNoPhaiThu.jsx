@@ -13,25 +13,27 @@ import {
     notification,
     DatePicker,
     Typography,
+    Tooltip,
 } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { FaRegFilePdf } from "react-icons/fa6";
+import { SiMicrosoftexcel } from "react-icons/si";
 import { TfiReload } from "react-icons/tfi";
 import { Add } from "@mui/icons-material";
 import { MdOutlineSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import {
     banHangSelector,
-    clearState,
     getListChungTuBan,
     hoaDonSelected,
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
-import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
-import { VND } from "../../../../utils/func";
-import { congNoSelector, getListCongNo } from './../../../../store/features/congNoSlice';
-import InTongHopNoPhaiThu from "../../../../component/InTongHopNoPhaiThu/InTongHopNoPhaiThu";
+import { doiTuongSelector, getListCustomer, getListProduct } from "../../../../store/features/doiTuongSilce";
+import { VND, formatDate } from "../../../../utils/func";
+import { congNoSelector, getListCongNo, getListReportTHCN, postReportTHCN, postReportTHCNRaw, clearState } from './../../../../store/features/congNoSlice';
 import { useReactToPrint } from "react-to-print";
+import { FaRegFilePdf } from "react-icons/fa6";
+import InTongHopNoPhaiThu from "../../../../component/InTongHopNoPhaiThu/InTongHopNoPhaiThu";
+import { set } from "react-hook-form";
 const { Text } = Typography;
 
 
@@ -40,6 +42,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [form] = Form.useForm();
+    const [formAddReport] = Form.useForm();
     const [open, setOpen] = useState(false);
     const [dataSelected, setDataSelected] = useState({});
 
@@ -57,13 +60,12 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
         isError,
         message,
-
+        isSuccessPostReportTHCN,
         listCongNo,
+        listReportTHCNData,
+        reportTHCNData
     } = useSelector(congNoSelector);
 
-    useEffect(() => {
-        dispatch(getListCongNo());
-    }, []);
 
     const [chungTuBan, setChungTuBan] = useState([]);
     const [dataConvert, setDataConvert] = useState([]);
@@ -74,61 +76,73 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         setSearchText(value);
     };
     const handleFilterday = (dates) => {
-        if (dates && dates.length === 2) {
-            const startTimestamp = dates[0].valueOf();
-            const endTimestamp = dates[1].valueOf();
-            console.log("Start Timestamp:", startTimestamp, typeof (startTimestamp));
-            console.log("End Timestamp:", endTimestamp, typeof (endTimestamp));
-            setFilterday([startTimestamp, endTimestamp]);
-            setValueRangepicker(dates);
-        } else {
-            setFilterday([]);
-            setValueRangepicker([]);
-        }
+        setValueRangepicker(dates);
+
+        // if (dates && dates.length === 2) {
+        //   const startTimestamp = dates[0].valueOf();
+        //   const endTimestamp = dates[1].valueOf();
+        //   console.log("Start Timestamp:", startTimestamp, typeof (startTimestamp));
+        //   console.log("End Timestamp:", endTimestamp, typeof (endTimestamp));
+        //   setFilterday([startTimestamp, endTimestamp]);
+        //   setValueRangepicker(dates);
+        // } else {
+        //   setFilterday([]);
+        //   setValueRangepicker([]);
+        // }
     };
 
+    console.log("reportTHCNData", reportTHCNData)
+
     useEffect(() => {
-        if (isSuccessGetListCongNo) {
-            // messageApi.open({
-            //   key: "updatable",
-            //   type: "success",
-            //   content: "Tải dữ liệu thành công!",
-            //   duration: 2,
-            // });
-            const dataConvertCurrent = listCongNo.map(congNo => {
-                let tong = 0;
-                let dathu = 0;
-                congNo.forEach(chungTuBanData => {
-                    tong += chungTuBanData.totalProductValue - chungTuBanData.totalDiscountValue + chungTuBanData.totalTaxValue;
-                    // console.log("chungTuBanData", chungTuBanData)
+        if (reportTHCNData) {
+            const dataConvertCurrent = reportTHCNData?.map(customer => {
 
-                    // chungTuBanData.productOfCtban.forEach(productOfCt => {
-                    //     tong += productOfCt.count * productOfCt.price;
-                    //     tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
-                    // })
-                    //continue ...
-                    dathu += chungTuBanData?.phieuThuTienMat?.map(pt => pt.money).reduce((total, currentValue) => {
-                        return total + currentValue;
-                    }, 0)
-                    dathu += chungTuBanData?.phieuThuTienGui?.map(pt => pt.money).reduce((total, currentValue) => {
-                        return total + currentValue;
-                    }, 0)
-                })
+                let tong = customer.notCollectedTotal;
 
-                let chuathu = tong - dathu;
+                // let tong = 0;
+                // chungTuBanData.productOfCtban.forEach(productOfCt => {
+                //   tong += productOfCt.count * productOfCt.price;
+                //   tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
+                // })
+                //continue ...
+                let notronghan = customer.inOfDate;
+                let noquahan = customer.outOfDate;
+
+                let chuathu = customer.notCollectedTotal;
+                let dathu = customer.collectedTotal;
+
                 return {
-                    ...congNo[0],
-                    makhachhang: congNo[0].donBanHang.customer.id,
-                    customer: congNo[0].donBanHang.customer.name,
+                    makhachhang: customer?.customer?.id,
+                    customer: customer?.customer?.name,
                     tong,
                     dathu,
-                    chuathu
+                    chuathu,
+                    notronghan,
+                    noquahan
                 }
             })
+
+
 
             console.log("dataConvertCurrent", dataConvertCurrent)
             setDataConvert(dataConvertCurrent);
             setChungTuBan(dataConvertCurrent);
+            dispatch(clearState());
+        }
+    }, [reportTHCNData]);
+
+
+
+
+
+
+    useEffect(() => {
+        if (isSuccessPostReportTHCN) {
+            api.success({
+                message: 'Tạo báo cáo thành công!',
+                placement: 'bottomLeft',
+                duration: 2
+            });
             dispatch(clearState());
         }
         else if (isError) {
@@ -140,7 +154,9 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
             dispatch(clearState());
         }
-    }, [isSuccessGetListCongNo, isError]);
+    }, [isError, isSuccessPostReportTHCN]);
+
+
 
     // useEffect(() => {
     //   console.log(searchText);
@@ -204,22 +220,47 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
             key: "customer",
             ellipsis: true,
         },
-        // {
-        //     title: "Ngày hóa đơn",
-        //     dataIndex: "createdAt",
-        //     key: "createdAt",
-        //     render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
-        //     sorter: (a, b) =>
-        //         moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
-        //     sortOrder: sortedInfo.columnKey === "createdAt" ? sortedInfo.order : null,
-        //     // fixed: 'left',
-        // },
+
+        {
+            title: "Đã thu",
+            dataIndex: "dathu",
+            key: "dathu",
+            render: (val, record) => VND.format(val),
+            sorter: (a, b) => a.dathu - b.dathu,
+            sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
+        },
+        {
+            title: "Nợ trong hạn",
+            dataIndex: "notronghan",
+            key: "notronghan",
+            render: (val, record) => VND.format(val),
+            sorter: (a, b) => a.notronghan - b.notronghan,
+            sortOrder: sortedInfo.columnKey === "notronghan" ? sortedInfo.order : null,
+        },
+
+        {
+            title: "Nợ quá hạn",
+            dataIndex: "noquahan",
+            key: "noquahan",
+            render: (val, record) => <span className={`text-[#d44950] font-medium`}>{VND.format(val)}</span>,
+            sorter: (a, b) => a.noquahan - b.noquahan,
+            sortOrder: sortedInfo.columnKey === "noquahan" ? sortedInfo.order : null,
+        },
+        {
+            title: "Tổng nợ",
+            dataIndex: "tong",
+            key: "tong",
+            render: (val, record) => VND.format(val),
+            sorter: (a, b) => a.tong - b.tong,
+            sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
+        },
+
 
         // {
         //     title: "Hạn thanh toán",
         //     dataIndex: "paymentTerm",
         //     key: "paymentTerm",
-        //     render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
+        //     render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
         //     sorter: (a, b) =>
         //         moment(a.paymentTerm, "DD-MM-YYYY") - moment(b.paymentTerm, "DD-MM-YYYY"),
         //     sortOrder: sortedInfo.columnKey === "paymentTerm" ? sortedInfo.order : null,
@@ -231,30 +272,36 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         //   key: "content",
         //   ellipsis: true,
         // },
-        {
-            title: "Tổng",
-            dataIndex: "tong",
-            key: "tong",
-            render: (val, record) => VND.format(val),
-            sorter: (a, b) => a.tong - b.tong,
-            sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
-        },
-        {
-            title: "Đã thu",
-            dataIndex: "dathu",
-            key: "dathu",
-            render: (val, record) => VND.format(val),
-            sorter: (a, b) => a.dathu - b.dathu,
-            sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
-        },
-        {
-            title: "Chưa thu",
-            dataIndex: "chuathu",
-            key: "chuathu",
-            render: (val, record) => VND.format(val),
-            sorter: (a, b) => a.chuathu - b.chuathu,
-            sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
-        },
+        // {
+        //     title: "Giá trị hóa đơn",
+        //     dataIndex: "tong",
+        //     key: "tong",
+        //     render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+
+        //     // render: (val, record) => VND.format(val),
+        //     sorter: (a, b) => a.tong - b.tong,
+        //     sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
+        // },
+        // {
+        //     title: "Đã thu",
+        //     dataIndex: "dathu",
+        //     key: "dathu",
+        //     render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+
+        //     // render: (val, record) => VND.format(val),
+        //     sorter: (a, b) => a.dathu - b.dathu,
+        //     sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
+        // },
+        // {
+        //     title: "Chưa thu",
+        //     dataIndex: "chuathu",
+        //     key: "chuathu",
+        //     render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+
+        //     // render: (val, record) => VND.format(val),
+        //     sorter: (a, b) => a.chuathu - b.chuathu,
+        //     sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
+        // },
         // {
         //   title: "Tình trạng thanh toán",
         //   dataIndex: "paymentStatus",
@@ -323,29 +370,29 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         //   filteredValue: filteredInfo.deliveryStatus || null,
         // },
         // {
-        //     title: "Chức năng",
-        //     dataIndex: "chucnang",
-        //     fixed: "right",
-        //     width: "10%",
-        //     render: (_, record) => (
-        //         <Space size="middle">
-        //             <Dropdown
-        //                 menu={{
-        //                     onClick: (e) => handleDropdownItemClick(e, record),
-        //                     items: items,
-        //                 }}
-        //             >
-        //                 <Link
-        //                     to={`xem/${record.key}`}
-        //                     state={{ id: record.key }}
-        //                     className="!text-black"
-        //                 >
-        //                     Xem
-        //                     <DownOutlined />
-        //                 </Link>
-        //             </Dropdown>
-        //         </Space>
-        //     ),
+        //   title: "Chức năng",
+        //   dataIndex: "chucnang",
+        //   fixed: "right",
+        //   width: "10%",
+        //   render: (_, record) => (
+        //     <Space size="middle">
+        //       <Dropdown
+        //         menu={{
+        //           onClick: (e) => handleDropdownItemClick(e, record),
+        //           items: items,
+        //         }}
+        //       >
+        //         <Link
+        //           to={`xem/${record.key}`}
+        //           state={{ id: record.key }}
+        //           className="!text-black"
+        //         >
+        //           Xem
+        //           <DownOutlined />
+        //         </Link>
+        //       </Dropdown>
+        //     </Space>
+        //   ),
         // },
     ];
 
@@ -403,6 +450,17 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
     const onFinish = (values) => {
         console.log("Received values of form: ", values);
+        const dataConvert = {
+            "startDate": formatDate(values.rangePicker[0].$d),
+            "endDate": formatDate(values.rangePicker[1].$d),
+            "name": "xxx",
+            "description": "xxx",
+            "customerIds": values?.listCustomer ? [...values?.listCustomer] : []
+        }
+
+        console.log("dataConvert", dataConvert)
+        dispatch(postReportTHCNRaw({ values: dataConvert }));
+
     };
 
     const onChange = (pagination, filters, sorter, extra) => {
@@ -420,7 +478,6 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         setSortedInfo({});
     };
 
-
     //Xuat file pdf, in file
     const componentRef = useRef();
 
@@ -428,24 +485,110 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         content: () => componentRef.current,
     });
 
+
+    //select customer
+    const {
+        listCustomerData,
+    } = useSelector(doiTuongSelector);
+
+    useEffect(() => {
+        dispatch(getListCustomer());
+    }, []);
+
+
+    const options = [];
+    useEffect(() => {
+        if (listCustomerData.length !== 0) {
+            listCustomerData.forEach(customer => {
+                options.push({
+                    key: customer.id,
+                    value: customer.id,
+                    label: customer.name,
+                });
+            })
+        }
+    }, [listCustomerData]);
+
+    const sharedProps = {
+        mode: 'multiple',
+        style: {
+            width: '100%',
+        },
+        // options,
+        placeholder: 'Chọn khách hàng',
+        maxTagCount: 'responsive',
+    };
+
+
+
+    //add report
+
+    const [listCustomer, setListCustomer] = useState([]);
+
+    const onFinishAddReport = (values) => {
+        console.log('Received values of form: ', values);
+        // dispatch(postReportTHCN({ values }));
+
+        const dataConvert = {
+            "startDate": formatDate(valueRangepicker[0].$d),
+            "endDate": formatDate(valueRangepicker[1].$d),
+            "name": values.name,
+            "description": values.description,
+            "customerIds": listCustomer ? [...listCustomer] : []
+        }
+
+        console.log("dataConvert", dataConvert)
+
+        dispatch(postReportTHCN({ values: dataConvert }));
+        // formAddReport.resetFields();
+    };
+
+
     return (
         <div className="m-4">
             <div className={`px-[20px] w-full flex justify-between pb-7 ${!checkbox && "bg-white py-7"}`}>
                 <div className="flex gap-[5px] items-center">
                     <Form form={form} layout="inline" onFinish={onFinish}>
-                        <RangePicker
-                            value={valueRangepicker}
-                            format='DD-MM-YYYY'
-                            onChange={(dates) => handleFilterday(dates)}
-                            className="!me-[5px]"
-                        />
-                        <Form.Item name="keyword" className="w-[300px] !me-0">
-                            <Input
-                                className="rounded-tr-none rounded-br-none"
-                                placeholder="Nhập tên khách hàng"
-                                value={searchText}
-                                onChange={(e) => handleSearch(e.target.value)}
+                        <Form.Item name="rangePicker" className="w-[300px] !me-0"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            {/* <RangePicker
+                value={valueRangepicker}
+                format='DD-MM-YYYY'
+                className="!me-[5px]"
+              /> */}
+                            <RangePicker
+                                onChange={(dates) => handleFilterday(dates)}
+
                             />
+
+                        </Form.Item>
+                        <Form.Item name="listCustomer" className="w-[300px] !me-0">
+                            {/* <Input
+                className="rounded-tr-none rounded-br-none"
+                placeholder="Nhập tên khách hàng"
+                value={searchText}
+                onChange={(e) => handleSearch(e.target.value)}
+              /> */}
+                            <Select
+                                mode="tags"
+                                style={{
+                                    width: '100%',
+                                    // height: '31.6px'
+                                }}
+                                {...sharedProps}
+                                tokenSeparators={[',']}
+                                onChange={(values) => setListCustomer(values)}
+                            >
+                                {
+                                    listCustomerData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
+                                }
+                            </Select>
                         </Form.Item>
 
                         <Button
@@ -463,90 +606,103 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                         title="Xuất file pdf"
                         onClick={handlePrint}
                         size={30}
-                        className="p-2 bg-white border border-black cursor-pointer"
+                        className="p-2 bg-white border border-black cursor-pointer self-start"
                     />
                     <TfiReload
                         title="Cập nhật dữ liệu"
                         size={30}
-                        className="p-2 bg-white border border-black cursor-pointer"
+                        className="p-2 bg-white border border-black cursor-pointer self-start"
                         onClick={() => {
-                            dispatch(getListChungTuBan());
-                            messageApi.open({
-                                key: "updatable",
-                                type: "loading",
-                                content: "Loading...",
-                            });
+                            // dispatch(getListChungTuBan());
+                            // messageApi.open({
+                            //   key: "updatable",
+                            //   type: "loading",
+                            //   content: "Loading...",
+                            // });
                             form.resetFields();
                             clearAll();
-                            setValueRangepicker([]);
-                            setFilterday([]);
+                            // setValueRangepicker([]);
+                            // setFilterday([]);
                             setSelectedRowKeys([]);
-                            checkbox && setFilteredInfo({
-                                "paymentStatus": [
-                                    "NOT_PAID",
-                                    "BEING_PAID"
-                                ]
-                            });
-                            setSearchText("");
+                            setChungTuBan([]);
+                            // setSearchText("");
                         }}
                     />
                 </div>
 
-                {
-                    checkbox ?
-                        <Button
-                            className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
-                            type="link"
-                            disabled={!selectedRowKeys.length}
-                            onClick={() => {
-
-                                navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
-                            }}
-                        >
-                            Thu tiền
-                        </Button>
-                        :
-                        <></>
-                }
+                <Button
+                    className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
+                    type="link"
+                    disabled={chungTuBan.length === 0}
+                    onClick={() => {
+                        setOpen(true);
+                    }}
+                >
+                    Lưu báo cáo
+                </Button>
 
                 <Modal
-                    title=""
+                    title="LƯU BÁO CÁO"
                     centered
                     open={open}
-                    width={500}
+                    width={700}
                     footer=""
                     onCancel={handleCancel}
                 >
-                    <div className="m-8 mt-10 text-center">
-                        Bạn muốn xóa khách hàng
-                        <br /> <strong>"{dataSelected.name}"</strong>?
-                    </div>
+                    <Form
+                        form={formAddReport}
+                        layout='horizontal'
+                        onFinish={onFinishAddReport}
+                        labelCol={{
+                            flex: '200px',
+                        }}
+                        labelAlign="left"
+                        className='mt-4'
+                    >
+                        <Form.Item
+                            label="Tên báo cáo"
+                            name='name'
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Trường này là bắt buộc!',
+                                },
+                            ]}
+                        >
+                            <Input
+                            />
+                        </Form.Item>
 
-                    <div className="flex justify-end gap-2 mb-0">
-                        <Button
-                            className="bg-[#FF7742] font-bold text-white mr-2"
-                            onClick={() => {
-                                setDataSelected({});
-                                setOpen(false);
-                            }}
+                        <Form.Item
+                            label="Mô tả"
+                            name='description'
                         >
-                            Hủy
-                        </Button>
-                        <Button
-                            className="!bg-[#67CDBB] font-bold text-white"
-                            onClick={() => {
-                                //dispatch(deleteNhaCungCap({id:dataSelected.key}));
-                                setDataSelected({});
-                                setOpen(false);
-                            }}
-                        >
-                            Xác nhận
-                        </Button>
-                    </div>
+                            <Input
+                            />
+                        </Form.Item>
+
+                        <Form.Item className='flex justify-end gap-2 mt-6 mb-0'>
+
+                            <Button
+                                className='bg-[#FF7742] font-bold text-white mr-2'
+                                htmlType="reset"
+                                onClick={() => setOpen(false)}
+                            >
+                                Hủy
+                            </Button>
+                            <Button
+                                className='!bg-[#67CDBB] font-bold text-white'
+                                htmlType="submit"
+                                onClick={() => setOpen(false)}
+                            >
+                                Xác nhận
+                            </Button>
+                        </Form.Item>
+                    </Form>
                 </Modal>
             </div>
 
-            <Table
+            {chungTuBan && <Table
                 columns={columns}
                 dataSource={chungTuBan}
                 onChange={onChange}
@@ -560,31 +716,37 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                 summary={(pageData) => {
                     let totalTong = 0;
                     let totalDaThu = 0;
-                    let totalChuaThu = 0;
-                    pageData.forEach(({ tong, dathu, chuathu }) => {
+                    let totalNoTrongHan = 0;
+                    let totalNoQuaHan = 0;
+                    pageData.forEach(({ tong, dathu, notronghan, noquahan }) => {
                         totalTong += tong;
                         totalDaThu += dathu;
-                        totalChuaThu += chuathu;
+                        totalNoTrongHan += notronghan;
+                        totalNoQuaHan += noquahan;
+
                     });
                     return (
                         <>
                             <Table.Summary.Row>
                                 <Table.Summary.Cell index={0} colSpan={2} className="font-medium">Tổng</Table.Summary.Cell>
-                                <Table.Summary.Cell index={1}>
-                                    <Text className="font-medium">{VND.format(totalTong)}</Text>
-                                </Table.Summary.Cell>
-                                <Table.Summary.Cell index={2}>
+                                <Table.Summary.Cell index={3}>
                                     <Text className="font-medium">{VND.format(totalDaThu)}</Text>
                                 </Table.Summary.Cell>
-                                <Table.Summary.Cell index={3}>
-                                    <Text className="font-medium">{VND.format(totalChuaThu)}</Text>
+                                <Table.Summary.Cell index={1}>
+                                    <Text className="font-medium">{VND.format(totalNoTrongHan)}</Text>
+                                </Table.Summary.Cell>
+                                <Table.Summary.Cell index={2}>
+                                    <Text className="font-medium text-[#d44950]">{VND.format(totalNoQuaHan)}</Text>
+                                </Table.Summary.Cell>
+                                <Table.Summary.Cell index={4}>
+                                    <Text className="font-medium">{VND.format(totalTong)}</Text>
                                 </Table.Summary.Cell>
                             </Table.Summary.Row>
                         </>
                     );
                 }}
             />
-
+            }
             <div
                 className='hidden'
             >
@@ -594,12 +756,12 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                         // components={components}
                         dataSource={chungTuBan}
                         columns={columns}
+                        dates={valueRangepicker || [{ $d: new Date() }, { $d: new Date() }]}
                     // idHoaDon={chungTuBanData?.id}
                     // idCustomer={chungTuBanData?.donBanHang?.customer?.id}
                     />
                 </div>
             </div>
-
         </div>
     );
 };

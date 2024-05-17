@@ -23,6 +23,7 @@ import {
   banHangSelector,
   clearState,
   getListChungTuBan,
+  hoaDonSelected,
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
 import { VND } from "../../../../utils/func";
@@ -169,6 +170,10 @@ const ChungTuBanHang = () => {
     //   key: "chinh-sua",
     //   label: <Link className="!text-black">Chỉnh sửa</Link>,
     // },
+    {
+      key: "timkiem/thutien",
+      label: <Link className="!text-black">Thu tiền</Link>,
+    },
   ];
 
   const handleDropdownItemClick = (e, record) => {
@@ -178,7 +183,9 @@ const ChungTuBanHang = () => {
       setDataSelected(record);
       setOpen(true);
     } else {
-      navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+      // navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+      dispatch(hoaDonSelected([record]));
+      navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`);
     }
   };
 
@@ -360,7 +367,8 @@ const ChungTuBanHang = () => {
           <Dropdown
             menu={{
               onClick: (e) => handleDropdownItemClick(e, record),
-              items: items,
+              // items: items,
+              items: (record.paymentStatus === "PAID" && items.filter(item => item.key === "xem")) || items,
             }}
           >
             <Link
