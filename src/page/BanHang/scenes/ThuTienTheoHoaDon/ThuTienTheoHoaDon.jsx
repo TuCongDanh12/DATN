@@ -9,10 +9,10 @@ import ThuTienGui from "./components/ThuTienGui/ThuTienGui";
 
 const ThuTienTheoHoaDon = () => {
   return (
-    <div className="my-4 mr-4">
+    <div className="m-4">
       <Tabs
         defaultActiveKey="1"
-        tabPosition={'left'}
+        // tabPosition={'left'}
         items={[
           {
             key: 1,

@@ -65,6 +65,7 @@ import ThemTaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/scenes
 import EditTaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/scenes/EditTaiKhoanNganHang/EditTaiKhoanNganHang";
 import XemPhieuThuTienMat from './page/BanHang/scenes/ThuTienTheoHoaDon/scenes/XemPhieuThuTienMat/XemPhieuThuTienMat';
 import XemPhieuThuTienGui from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/XemPhieuThuTienGui/XemPhieuThuTienGui";
+import BaoCaoCongNo from "./page/CongNo/scenes/BaoCaoCongNo/BaoCaoCongNo";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -189,7 +190,7 @@ function App() {
                 <Route path="/cong-no" element={<CongNo />}>
                   <Route path="tong-hop-no-phai-thu" element={<TongHopNoPhaiThu />} />
                   <Route path="chi-tiet-no-phai-thu" element={<ChiTietNoPhaiThu />} />
-                  <Route path="bao-cao" element={<HoaDonBanHang />} />
+                  <Route path="bao-cao-da-luu" element={<BaoCaoCongNo />} />
                 </Route>
 
 

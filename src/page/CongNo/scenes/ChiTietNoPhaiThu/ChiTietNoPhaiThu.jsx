@@ -13,6 +13,7 @@ import {
   notification,
   DatePicker,
   Typography,
+  Tooltip,
 } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { SiMicrosoftexcel } from "react-icons/si";
@@ -22,16 +23,17 @@ import { MdOutlineSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import {
   banHangSelector,
-  clearState,
   getListChungTuBan,
   hoaDonSelected,
 } from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
-import { doiTuongSelector, getListProduct } from "../../../../store/features/doiTuongSilce";
-import { VND } from "../../../../utils/func";
-import { congNoSelector, getListCongNo } from './../../../../store/features/congNoSlice';
+import { doiTuongSelector, getListCustomer, getListProduct } from "../../../../store/features/doiTuongSilce";
+import { VND, formatDate } from "../../../../utils/func";
+import { congNoSelector, getListCongNo, getListReportDCCN, postReportDCCN, postReportDCCNRaw, clearState } from './../../../../store/features/congNoSlice';
 import { useReactToPrint } from "react-to-print";
 import { FaRegFilePdf } from "react-icons/fa6";
+import InChiTietNoPhaiThu from "../../../../component/InChiTietNoPhaiThu/InChiTietNoPhaiThu";
+import { set } from "react-hook-form";
 const { Text } = Typography;
 
 
@@ -40,6 +42,7 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [formAddReport] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [dataSelected, setDataSelected] = useState({});
 
@@ -57,13 +60,12 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
 
     isError,
     message,
-
+    isSuccessPostReportDCCN,
     listCongNo,
+    listReportDCCNData,
+    reportDCCNData
   } = useSelector(congNoSelector);
 
-  useEffect(() => {
-    dispatch(getListCongNo());
-  }, []);
 
   const [chungTuBan, setChungTuBan] = useState([]);
   const [dataConvert, setDataConvert] = useState([]);
@@ -74,31 +76,29 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
     setSearchText(value);
   };
   const handleFilterday = (dates) => {
-    if (dates && dates.length === 2) {
-      const startTimestamp = dates[0].valueOf();
-      const endTimestamp = dates[1].valueOf();
-      console.log("Start Timestamp:", startTimestamp, typeof (startTimestamp));
-      console.log("End Timestamp:", endTimestamp, typeof (endTimestamp));
-      setFilterday([startTimestamp, endTimestamp]);
-      setValueRangepicker(dates);
-    } else {
-      setFilterday([]);
-      setValueRangepicker([]);
-    }
+    setValueRangepicker(dates);
+
+    // if (dates && dates.length === 2) {
+    //   const startTimestamp = dates[0].valueOf();
+    //   const endTimestamp = dates[1].valueOf();
+    //   console.log("Start Timestamp:", startTimestamp, typeof (startTimestamp));
+    //   console.log("End Timestamp:", endTimestamp, typeof (endTimestamp));
+    //   setFilterday([startTimestamp, endTimestamp]);
+    //   setValueRangepicker(dates);
+    // } else {
+    //   setFilterday([]);
+    //   setValueRangepicker([]);
+    // }
   };
 
+  console.log("reportDCCNData", reportDCCNData)
+
   useEffect(() => {
-    if (isSuccessGetListCongNo) {
-      // messageApi.open({
-      //   key: "updatable",
-      //   type: "success",
-      //   content: "Tải dữ liệu thành công!",
-      //   duration: 2,
-      // });
-      const dataConvertCurrent = listCongNo.map(congNo => congNo.map(chungTuBanData => {
+    if (reportDCCNData) {
+      const dataConvertCurrent = reportDCCNData?.map(customer => customer?.ctbans?.map(chungTuBanData => {
         console.log("chungTuBanData", chungTuBanData)
 
-        let tong = chungTuBanData.totalProductValue - chungTuBanData.totalDiscountValue + chungTuBanData.totalTaxValue;
+        let tong = chungTuBanData.collected + chungTuBanData.notCollected;
 
         // let tong = 0;
         // chungTuBanData.productOfCtban.forEach(productOfCt => {
@@ -106,29 +106,42 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
         //   tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
         // })
         //continue ...
-        let dathu = 0;
-        dathu += chungTuBanData?.phieuThuTienMat?.map(pt => pt.money).reduce((total, currentValue) => {
-          return total + currentValue;
-        }, 0)
-        dathu += chungTuBanData?.phieuThuTienGui?.map(pt => pt.money).reduce((total, currentValue) => {
-          return total + currentValue;
-        }, 0)
-        let chuathu = tong - dathu;
+        let dathu = chungTuBanData.collected;
+
+        let chuathu = chungTuBanData.notCollected;
 
         return {
-          ...chungTuBanData,
-          sohoadon: chungTuBanData.id,
-          makhachhang: chungTuBanData.donBanHang.customer.id,
-          customer: chungTuBanData.donBanHang.customer.name,
+          ...chungTuBanData?.ctban,
+          sohoadon: chungTuBanData?.ctban?.id,
+          makhachhang: chungTuBanData?.ctban?.donBanHang?.customer?.id,
+          customer: chungTuBanData?.ctban?.donBanHang?.customer?.name,
           tong,
           dathu,
           chuathu
         }
       }))
 
+
+
       console.log("dataConvertCurrent", dataConvertCurrent)
       setDataConvert(dataConvertCurrent);
       setChungTuBan(dataConvertCurrent);
+      dispatch(clearState());
+    }
+  }, [reportDCCNData]);
+
+
+
+
+
+
+  useEffect(() => {
+    if (isSuccessPostReportDCCN) {
+      api.success({
+        message: 'Tạo báo cáo thành công!',
+        placement: 'bottomLeft',
+        duration: 2
+      });
       dispatch(clearState());
     }
     else if (isError) {
@@ -140,7 +153,9 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
 
       dispatch(clearState());
     }
-  }, [isSuccessGetListCongNo, isError]);
+  }, [isError, isSuccessPostReportDCCN]);
+
+
 
   // useEffect(() => {
   //   console.log(searchText);
@@ -415,6 +430,17 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
 
   const onFinish = (values) => {
     console.log("Received values of form: ", values);
+    const dataConvert = {
+      "startDate": formatDate(values.rangePicker[0].$d),
+      "endDate": formatDate(values.rangePicker[1].$d),
+      "name": "xxx",
+      "description": "xxx",
+      "customerIds": values?.listCustomer ? [...values?.listCustomer] : []
+    }
+
+    console.log("dataConvert", dataConvert)
+    dispatch(postReportDCCNRaw({ values: dataConvert }));
+
   };
 
   const onChange = (pagination, filters, sorter, extra) => {
@@ -439,24 +465,110 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
     content: () => componentRef.current,
   });
 
+
+  //select customer
+  const {
+    listCustomerData,
+  } = useSelector(doiTuongSelector);
+
+  useEffect(() => {
+    dispatch(getListCustomer());
+  }, []);
+
+
+  const options = [];
+  useEffect(() => {
+    if (listCustomerData.length !== 0) {
+      listCustomerData.forEach(customer => {
+        options.push({
+          key: customer.id,
+          value: customer.id,
+          label: customer.name,
+        });
+      })
+    }
+  }, [listCustomerData]);
+
+  const sharedProps = {
+    mode: 'multiple',
+    style: {
+      width: '100%',
+    },
+    // options,
+    placeholder: 'Chọn khách hàng',
+    maxTagCount: 'responsive',
+  };
+
+
+
+  //add report
+
+  const [listCustomer, setListCustomer] = useState([]);
+
+  const onFinishAddReport = (values) => {
+    console.log('Received values of form: ', values);
+    // dispatch(postReportDCCN({ values }));
+
+    const dataConvert = {
+      "startDate": formatDate(valueRangepicker[0].$d),
+      "endDate": formatDate(valueRangepicker[1].$d),
+      "name": values.name,
+      "description": values.description,
+      "customerIds": listCustomer ? [...listCustomer] : []
+    }
+
+    console.log("dataConvert", dataConvert)
+
+    dispatch(postReportDCCN({ values: dataConvert }));
+    // formAddReport.resetFields();
+  };
+
+
   return (
     <div className="m-4">
       <div className={`px-[20px] w-full flex justify-between pb-7 ${!checkbox && "bg-white py-7"}`}>
         <div className="flex gap-[5px] items-center">
           <Form form={form} layout="inline" onFinish={onFinish}>
-            <RangePicker
-              value={valueRangepicker}
-              format='DD-MM-YYYY'
-              onChange={(dates) => handleFilterday(dates)}
-              className="!me-[5px]"
-            />
-            <Form.Item name="keyword" className="w-[300px] !me-0">
-              <Input
+            <Form.Item name="rangePicker" className="w-[300px] !me-0"
+              rules={[
+                {
+                  required: true,
+                  message: 'Trường này là bắt buộc!',
+                },
+              ]}
+            >
+              {/* <RangePicker
+                value={valueRangepicker}
+                format='DD-MM-YYYY'
+                className="!me-[5px]"
+              /> */}
+              <RangePicker
+                onChange={(dates) => handleFilterday(dates)}
+
+              />
+
+            </Form.Item>
+            <Form.Item name="listCustomer" className="w-[300px] !me-0">
+              {/* <Input
                 className="rounded-tr-none rounded-br-none"
                 placeholder="Nhập tên khách hàng"
                 value={searchText}
                 onChange={(e) => handleSearch(e.target.value)}
-              />
+              /> */}
+              <Select
+                mode="tags"
+                style={{
+                  width: '100%',
+                  // height: '31.6px'
+                }}
+                {...sharedProps}
+                tokenSeparators={[',']}
+                onChange={(values) => setListCustomer(values)}
+              >
+                {
+                  listCustomerData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
+                }
+              </Select>
             </Form.Item>
 
             <Button
@@ -474,86 +586,99 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
             title="Xuất file pdf"
             onClick={handlePrint}
             size={30}
-            className="p-2 bg-white border border-black cursor-pointer"
+            className="p-2 bg-white border border-black cursor-pointer self-start"
           />
           <TfiReload
             title="Cập nhật dữ liệu"
             size={30}
-            className="p-2 bg-white border border-black cursor-pointer"
+            className="p-2 bg-white border border-black cursor-pointer self-start"
             onClick={() => {
-              dispatch(getListChungTuBan());
-              messageApi.open({
-                key: "updatable",
-                type: "loading",
-                content: "Loading...",
-              });
+              // dispatch(getListChungTuBan());
+              // messageApi.open({
+              //   key: "updatable",
+              //   type: "loading",
+              //   content: "Loading...",
+              // });
               form.resetFields();
               clearAll();
-              setValueRangepicker([]);
-              setFilterday([]);
+              // setValueRangepicker([]);
+              // setFilterday([]);
               setSelectedRowKeys([]);
-              checkbox && setFilteredInfo({
-                "paymentStatus": [
-                  "NOT_PAID",
-                  "BEING_PAID"
-                ]
-              });
-              setSearchText("");
+              setChungTuBan([]);
+              // setSearchText("");
             }}
           />
         </div>
 
-        {
-          checkbox ?
-            <Button
-              className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
-              type="link"
-              disabled={!selectedRowKeys.length}
-              onClick={() => {
-
-                navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
-              }}
-            >
-              Thu tiền
-            </Button>
-            :
-            <></>
-        }
+        <Button
+          className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
+          type="link"
+          disabled={chungTuBan.length === 0}
+          onClick={() => {
+            setOpen(true);
+          }}
+        >
+          Lưu báo cáo
+        </Button>
 
         <Modal
-          title=""
+          title="LƯU BÁO CÁO"
           centered
           open={open}
-          width={500}
+          width={700}
           footer=""
           onCancel={handleCancel}
         >
-          <div className="m-8 mt-10 text-center">
-            Bạn muốn xóa khách hàng
-            <br /> <strong>"{dataSelected.name}"</strong>?
-          </div>
+          <Form
+            form={formAddReport}
+            layout='horizontal'
+            onFinish={onFinishAddReport}
+            labelCol={{
+              flex: '200px',
+            }}
+            labelAlign="left"
+            className='mt-4'
+          >
+            <Form.Item
+              label="Tên báo cáo"
+              name='name'
+              rules={[
+                {
+                  required: true,
+                  message: 'Trường này là bắt buộc!',
+                },
+              ]}
+            >
+              <Input
+              />
+            </Form.Item>
 
-          <div className="flex justify-end gap-2 mb-0">
-            <Button
-              className="bg-[#FF7742] font-bold text-white mr-2"
-              onClick={() => {
-                setDataSelected({});
-                setOpen(false);
-              }}
+            <Form.Item
+              label="Mô tả"
+              name='description'
             >
-              Hủy
-            </Button>
-            <Button
-              className="!bg-[#67CDBB] font-bold text-white"
-              onClick={() => {
-                //dispatch(deleteNhaCungCap({id:dataSelected.key}));
-                setDataSelected({});
-                setOpen(false);
-              }}
-            >
-              Xác nhận
-            </Button>
-          </div>
+              <Input
+              />
+            </Form.Item>
+
+            <Form.Item className='flex justify-end gap-2 mt-6 mb-0'>
+
+              <Button
+                className='bg-[#FF7742] font-bold text-white mr-2'
+                htmlType="reset"
+                onClick={() => setOpen(false)}
+              >
+                Hủy
+              </Button>
+              <Button
+                className='!bg-[#67CDBB] font-bold text-white'
+                htmlType="submit"
+                onClick={() => setOpen(false)}
+              >
+                Xác nhận
+              </Button>
+            </Form.Item>
+          </Form>
         </Modal>
       </div>
 
@@ -598,6 +723,22 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
           }}
         />
       )}
+
+      <div
+        className='hidden'
+      >
+        <div ref={componentRef}>
+          <InChiTietNoPhaiThu
+            form={form}
+            // components={components}
+            dataSource={chungTuBan}
+            columns={columns}
+            dates={valueRangepicker || [{ $d: new Date() }, { $d: new Date() }]}
+          // idHoaDon={chungTuBanData?.id}
+          // idCustomer={chungTuBanData?.donBanHang?.customer?.id}
+          />
+        </div>
+      </div>
     </div>
   );
 };

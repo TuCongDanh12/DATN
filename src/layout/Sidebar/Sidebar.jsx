@@ -129,13 +129,13 @@ const Sidebar = ({ toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed 
               setSelected={setSelected}
             />
 
-            <Item
+            {/* <Item
               title="Mua hàng"
               to="/mua-hang"
               icon={<SellIcon size={20} />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
             <Item
               title="Bán hàng"
               to="/ban-hang"
@@ -143,7 +143,7 @@ const Sidebar = ({ toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed 
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            {/* <Item
               title="Tiền mặt"
               to="/tien-mat"
               icon={<ReceiptOutlinedIcon size={20} />}
@@ -157,10 +157,10 @@ const Sidebar = ({ toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed 
               icon={<AccountBalanceIcon size={20} />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
 
             <Item
-              title="Công nợ"
+              title="Nợ phải thu"
               to="/cong-no"
               icon={<FaCoins size={20} />}
               selected={selected}
@@ -189,13 +189,13 @@ const Sidebar = ({ toggled, handleToggleSidebar, isCollapsed, handleIsCollapsed 
               setSelected={setSelected}
             />
 
-            <Item
+            {/* <Item
               title="Hỗ trợ"
               to="/ho-tro"
               icon={<HelpOutlineOutlinedIcon size={20} />}
               selected={selected}
               setSelected={setSelected}
-            />
+            /> */}
             <Item
               title="Cài đặt"
               to="/cai-dat"
