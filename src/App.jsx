@@ -183,8 +183,8 @@ function App() {
 
 
                 <Route path="ban-hang/thu-tien-theo-hoa-don/timkiem/thutien" element={<ThemThuTien />} />
-                <Route path="ban-hang/thu-tien-theo-hoa-don/xem-phieu-thu-tien-mat/:id" element={<XemPhieuThuTienMat disabled={true} />} />
-                <Route path="ban-hang/thu-tien-theo-hoa-don/xem-phieu-thu-tien-gui/:id" element={<XemPhieuThuTienGui disabled={true} />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/CASH/:id" element={<XemPhieuThuTienMat disabled={true} />} />
+                <Route path="ban-hang/thu-tien-theo-hoa-don/TRANSFER/:id" element={<XemPhieuThuTienGui disabled={true} />} />
                 <Route path="/tien-mat" element={<TienMat />} />
                 <Route path="/tien-gui" element={<TienGui />} />
 

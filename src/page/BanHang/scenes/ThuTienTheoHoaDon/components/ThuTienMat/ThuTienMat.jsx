@@ -52,6 +52,12 @@ const ThuTienMat = () => {
     message,
 
     listPhieuThuTienMatData,
+
+    isSuccessGetListPhieuThuTienGui,
+    isSuccessPostPhieuThuTienGui,
+
+    listPhieuThuTienGuiData,
+
     // phieuThuTienMatData,
   } = useSelector(banHangSelector);
 
@@ -91,14 +97,25 @@ const ThuTienMat = () => {
       });
 
       dispatch(clearState());
-    } else if (isSuccessGetListPhieuThuTienMat) {
+    }
+    else if (isSuccessPostPhieuThuTienGui) {
+      api.success({
+        message: "Thêm dữ liệu thành công!",
+        placement: "bottomLeft",
+        duration: 2,
+      });
+
+      dispatch(clearState());
+    }
+
+    else if (isSuccessGetListPhieuThuTienMat && isSuccessGetListPhieuThuTienGui) {
       // messageApi.open({
       //   key: "updatable",
       //   type: "success",
       //   content: "Tải dữ liệu thành công!",
       //   duration: 2,
       // });
-      const dataConvertCurrent = listPhieuThuTienMatData.map(phieuThuTienMatData => {
+      const dataConvertCurrentTienMat = listPhieuThuTienMatData.map(phieuThuTienMatData => {
         console.log("phieuThuTienMatData", phieuThuTienMatData)
 
         let tong = 0;
@@ -123,9 +140,34 @@ const ThuTienMat = () => {
         }
       })
 
-      console.log("dataConvertCurrent", dataConvertCurrent)
-      setDataConvert(dataConvertCurrent);
-      setChungTuBan(dataConvertCurrent);
+      const dataConvertCurrentTienGui = listPhieuThuTienGuiData.map(phieuThuTienGuiData => {
+        console.log("phieuThuTienGuiData", phieuThuTienGuiData)
+
+        let tong = 0;
+        tong += phieuThuTienGuiData?.chungTuCuaPhieuThu?.map(pt => pt.money).reduce((total, currentValue) => {
+          return total + currentValue;
+        }, 0)
+
+        // phieuThuTienGuiData.productOfCtban.forEach(productOfCt => {
+        //   tong += productOfCt.count * productOfCt.price;
+        //   tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
+        // })
+        //continue ...
+        // let dathu = 0;
+        // let chuathu = tong - dathu;
+
+        return {
+          ...phieuThuTienGuiData,
+          customer: phieuThuTienGuiData.customer.name,
+          tong,
+          // dathu,
+          // chuathu
+        }
+      })
+
+      // console.log("dataConvertCurrent", dataConvertCurrent)
+      setDataConvert([...dataConvertCurrentTienMat, ...dataConvertCurrentTienGui]);
+      setChungTuBan([...dataConvertCurrentTienMat, ...dataConvertCurrentTienGui]);
       dispatch(clearState());
     }
     else if (isError) {
@@ -137,7 +179,11 @@ const ThuTienMat = () => {
 
       dispatch(clearState());
     }
-  }, [isSuccessPostPhieuThuTienMat, isSuccessGetListPhieuThuTienMat, isError]);
+  }, [isSuccessPostPhieuThuTienMat,
+    isSuccessPostPhieuThuTienGui,
+    isSuccessGetListPhieuThuTienMat,
+    isSuccessGetListPhieuThuTienGui,
+    isError]);
 
   useEffect(() => {
     if (searchText.trim() === "" && filterday.length === 0) {
@@ -177,7 +223,9 @@ const ThuTienMat = () => {
       setDataSelected(record);
       setOpen(true);
     } else {
-      navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+      // navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+      navigate(`${record.type}/${record.key}`, { state: { id: record.key } });
+
     }
   };
 
@@ -201,6 +249,36 @@ const ThuTienMat = () => {
       ellipsis: true,
       width: '10%',
     },
+    {
+      title: "Loại",
+      dataIndex: "type",
+      key: "type",
+      render: (val, record) => {
+        switch (val) {
+          case "CASH":
+            return "Tiền mặt";
+          case "TRANSFER":
+            return "Tiền gửi";
+          default:
+            return "Lỗi";
+        }
+      },
+      filters: [
+        {
+          value: "CASH",
+          text: "Tiền mặt",
+        },
+        {
+          value: "TRANSFER",
+          text: "Tiền gửi",
+        },
+      ],
+      onFilter: (value, record) => record.type.indexOf(value) === 0,
+      filteredValue: filteredInfo.type || null,
+      ellipsis: true,
+    },
+
+
     {
       title: "Ngày hạch toán",
       dataIndex: "createdAt",
@@ -327,7 +405,8 @@ const ThuTienMat = () => {
             }}
           >
             <Link
-              to={`xem-phieu-thu-tien-mat/${record.key}`}
+              // to={`xem-phieu-thu-tien-mat/${record.key}`}
+              to={`${record.type}/${record.key}`}
               state={{ id: record.key }}
               className="!text-black"
             >
