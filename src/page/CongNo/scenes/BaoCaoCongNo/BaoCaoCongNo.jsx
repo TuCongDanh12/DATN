@@ -136,6 +136,12 @@ const BaoCaoCongNo = () => {
       key: "id",
       sorter: (a, b) => a.id - b.id,
       sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
+      render: (val, record) => <span
+        onClick={() => {
+          // navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
+          navigate(`/cong-no/bao-cao-da-luu/${record.type}/${val}`, { state: { id: val } });
+        }}
+        className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.paymentTerm) < new Date() && record.paymentStatus !== "DELIVERED" ? "" : ""}`}>{val}</span>,
       ellipsis: true,
       width: "10%"
     },

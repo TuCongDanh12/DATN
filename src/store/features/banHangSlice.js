@@ -509,7 +509,7 @@ export const banHangSlice = createSlice({
             state.isFetching = false;
             state.isSuccessGetListPhieuThuTienMat = true;
 
-            state.listPhieuThuTienMatData = action.payload.result.data.map(item => { return { ...item, key: item.id } });
+            state.listPhieuThuTienMatData = action.payload.result.data.map(item => { return { ...item, key: item.id, type: "CASH" } });
             //   state.message = action.payload.message;
         })
 
@@ -588,7 +588,7 @@ export const banHangSlice = createSlice({
             state.isFetching = false;
             state.isSuccessGetListPhieuThuTienGui = true;
 
-            state.listPhieuThuTienGuiData = action.payload.result.data.map(item => { return { ...item, key: item.id } });
+            state.listPhieuThuTienGuiData = action.payload.result.data.map(item => { return { ...item, key: item.id, type: "TRANSFER" } });
             //   state.message = action.payload.message;
         })
 
