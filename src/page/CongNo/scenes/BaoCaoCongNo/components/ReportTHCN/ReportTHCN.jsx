@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
     Table,
     Dropdown,
@@ -21,26 +21,25 @@ import { TfiReload } from "react-icons/tfi";
 import { Add } from "@mui/icons-material";
 import { MdOutlineSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    banHangSelector,
-    getListChungTuBan,
-    hoaDonSelected,
-} from "../../../../store/features/banHangSlice";
+
 import moment from "moment/moment";
-import { doiTuongSelector, getListCustomer, getListProduct } from "../../../../store/features/doiTuongSilce";
-import { VND, formatDate } from "../../../../utils/func";
-import { congNoSelector, getListCongNo, getListReportTHCN, postReportTHCN, postReportTHCNRaw, clearState, resetData } from './../../../../store/features/congNoSlice';
 import { useReactToPrint } from "react-to-print";
 import { FaRegFilePdf } from "react-icons/fa6";
-import InTongHopNoPhaiThu from "../../../../component/InTongHopNoPhaiThu/InTongHopNoPhaiThu";
 import { set } from "react-hook-form";
+import { clearState, congNoSelector, getReportTHCN, postReportTHCN, postReportTHCNRaw } from "../../../../../../store/features/congNoSlice";
+import { hoaDonSelected } from "../../../../../../store/features/banHangSlice";
+import { doiTuongSelector, getListCustomer } from "../../../../../../store/features/doiTuongSilce";
+import InTongHopNoPhaiThu from "../../../../../../component/InTongHopNoPhaiThu/InTongHopNoPhaiThu";
+import { VND, formatDate } from "../../../../../../utils/func";
 const { Text } = Typography;
 
 
 const { RangePicker } = DatePicker;
-const TongHopNoPhaiThu = ({ checkbox = false }) => {
+const ReportTHCN = ({ checkbox = false }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const params = useParams();
+
     const [form] = Form.useForm();
     const [formAddReport] = Form.useForm();
     const [open, setOpen] = useState(false);
@@ -63,7 +62,8 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         isSuccessPostReportTHCN,
         listCongNo,
         listReportTHCNData,
-        reportTHCNData
+        reportTHCNData,
+        description
     } = useSelector(congNoSelector);
 
 
@@ -91,18 +91,18 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         // }
     };
 
-    useEffect(() => {
-        dispatch(resetData());
-    }, []);
-    
-
     console.log("reportTHCNData", reportTHCNData)
+
+    useEffect(() => {
+        dispatch(getReportTHCN({ id: params.id }));
+    }, []);
 
     useEffect(() => {
         if (reportTHCNData) {
             const dataConvertCurrent = reportTHCNData?.map(customer => {
 
-                let tong = customer.notCollectedTotal;
+                let tong = customer.inOfDate+customer.outOfDate;
+
 
                 // let tong = 0;
                 // chungTuBanData.productOfCtban.forEach(productOfCt => {
@@ -417,36 +417,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
     //   } 
     // }, [isErrorHoaDonSelected]);
 
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: (selectedRowKeys, selectedRows) => {
-            if (selectedRows.length >= 2 && selectedRows[0].donBanHang.customer.id === selectedRows[selectedRows.length - 1].donBanHang.customer.id) {
-                setSelectedRowKeys(selectedRowKeys);
-                dispatch(hoaDonSelected(selectedRows));
-            }
-            else if (selectedRows.length === 1) {
-                setSelectedRowKeys(selectedRowKeys);
-                dispatch(hoaDonSelected(selectedRows));
-            }
-            else if (selectedRows.length === 0) {
-                setSelectedRowKeys([]);
-                dispatch(hoaDonSelected([]));
-            }
-            else {
-                api.error({
-                    message: "Chỉ thu tiền các hóa đơn của 1 khách hàng!",
-                    placement: "bottomLeft",
-                    duration: 2,
-                });
-            }
 
-            console.log(
-                `selectedRowKeys: ${selectedRowKeys}`,
-                "selectedRows: ",
-                selectedRows
-            );
-        },
-    };
 
     // const onSelectChange = (newSelectedRowKeys) => {
     //   console.log("selectedRowKeys changed: ", newSelectedRowKeys);
@@ -502,17 +473,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
 
     const options = [];
-    useEffect(() => {
-        if (listCustomerData.length !== 0) {
-            listCustomerData.forEach(customer => {
-                options.push({
-                    key: customer.id,
-                    value: customer.id,
-                    label: customer.name,
-                });
-            })
-        }
-    }, [listCustomerData]);
+
 
     const sharedProps = {
         mode: 'multiple',
@@ -553,98 +514,26 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         <div className="m-4">
             <div className={`px-[20px] w-full flex justify-between pb-7 ${!checkbox && "bg-white py-7"}`}>
                 <div className="flex gap-[5px] items-center">
-                    <Form form={form} layout="inline" onFinish={onFinish}>
-                        <Form.Item name="rangePicker" className="w-[300px] !me-0"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            {/* <RangePicker
-                value={valueRangepicker}
-                format='DD-MM-YYYY'
-                className="!me-[5px]"
-              /> */}
-                            <RangePicker
-                                onChange={(dates) => handleFilterday(dates)}
+                    <h1 className="text-[20px] font-bold">{description?.description} <span className="font-normal">(Từ {description?.startDate} đến {description?.endDate})</span></h1>
 
-                            />
+                </div>
 
-                        </Form.Item>
-                        <Form.Item name="listCustomer" className="w-[300px] !me-0">
-                            {/* <Input
-                className="rounded-tr-none rounded-br-none"
-                placeholder="Nhập tên khách hàng"
-                value={searchText}
-                onChange={(e) => handleSearch(e.target.value)}
-              /> */}
-                            <Select
-                                mode="tags"
-                                style={{
-                                    width: '100%',
-                                    // height: '31.6px'
-                                }}
-                                {...sharedProps}
-                                tokenSeparators={[',']}
-                                onChange={(values) => setListCustomer(values)}
-                            >
-                                {
-                                    listCustomerData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
-                                }
-                            </Select>
-                        </Form.Item>
-
-                        <Button
-                            className="!bg-[#FAFAFA] font-bold m-0 p-0 w-[32px] h-[32px] flex justify-center items-center rounded-tl-none rounded-bl-none rounded-tr-md rounded-br-md"
-                            htmlType="submit"
-                        >
-                            <MdOutlineSearch size={20} color="#898989" />
-                        </Button>
-                    </Form>
-
-                    {contextHolderMes}
-                    {contextHolder}
-
+                <div className="flex gap-4">
                     <FaRegFilePdf
                         title="Xuất file pdf"
                         onClick={handlePrint}
                         size={30}
                         className="p-2 bg-white border border-black cursor-pointer self-start"
                     />
-                    <TfiReload
-                        title="Cập nhật dữ liệu"
-                        size={30}
-                        className="p-2 bg-white border border-black cursor-pointer self-start"
-                        onClick={() => {
-                            // dispatch(getListChungTuBan());
-                            // messageApi.open({
-                            //   key: "updatable",
-                            //   type: "loading",
-                            //   content: "Loading...",
-                            // });
-                            form.resetFields();
-                            clearAll();
-                            // setValueRangepicker([]);
-                            // setFilterday([]);
-                            setSelectedRowKeys([]);
-                            setChungTuBan([]);
-                            // setSearchText("");
-                        }}
-                    />
-                </div>
 
-                <Button
-                    className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
-                    type="link"
-                    disabled={chungTuBan.length === 0}
-                    onClick={() => {
-                        setOpen(true);
-                    }}
-                >
-                    Lưu báo cáo
-                </Button>
+                    <Button
+                        className='bg-[#FF7742] font-bold text-white'
+                        type='link'
+                        onClick={() => navigate(-1)}
+                    >
+                        Thoát
+                    </Button>
+                </div>
 
                 <Modal
                     title="LƯU BÁO CÁO"
@@ -707,7 +596,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                 </Modal>
             </div>
 
-            {chungTuBan.length!==0 && <Table
+            <Table
                 columns={columns}
                 dataSource={chungTuBan}
                 onChange={onChange}
@@ -751,7 +640,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                     );
                 }}
             />
-            }
+
             <div
                 className='hidden'
             >
@@ -761,7 +650,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                         // components={components}
                         dataSource={chungTuBan}
                         columns={columns}
-                        dates={valueRangepicker || [{ $d: new Date() }, { $d: new Date() }]}
+                        dates={[{ $d: description?.startDate }, { $d: description?.endDate }]}
                     // idHoaDon={chungTuBanData?.id}
                     // idCustomer={chungTuBanData?.donBanHang?.customer?.id}
                     />
@@ -771,4 +660,4 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
     );
 };
 
-export default TongHopNoPhaiThu;
+export default ReportTHCN;

@@ -5,14 +5,7 @@ import { VND } from '../../utils/func';
 const { Text } = Typography;
 
 
-const InTongHopNoPhaiThu = ({ components, dataSource, columns, form, disabled, onFinish, idHoaDon, idCustomer }) => {
-    const dataSourceConvert = dataSource.map((data, index) => {
-        return {
-            ...data,
-            stt: index + 1
-        };
-    })
-
+const InTongHopNoPhaiThu = ({ components, dataSource, columns, form, disabled, onFinish, idHoaDon, idCustomer, dates }) => {
     const defaultColumns = [
         {
             title: "ID KH",
@@ -189,7 +182,7 @@ const InTongHopNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
 
                 <h1 className="text-center font-bold text-2xl mt-2">TỔNG HỢP NỢ PHẢI THU KHÁCH HÀNG</h1>
 
-                <div className="text-center font-bold">Từ ngày 02/04/2024 đến ngày 31/05/2024</div>
+                <div className="text-center font-bold">Từ ngày {formatDate(dates[0]?.$d || new Date())} đến ngày {formatDate(dates[1]?.$d || new Date())}</div>
                 {/* <div className="text-center font-bold">Tháng 5 năm 2024</div> */}
 
                 {/* <div className="grid grid-cols-2 mt-8">

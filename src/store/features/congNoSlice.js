@@ -175,6 +175,8 @@ const initialState = {
 
     listReportTHCNData: [],
     reportTHCNData: [],
+
+    description: {}
 };
 
 
@@ -201,6 +203,12 @@ export const congNoSlice = createSlice({
             state.message = "";
             return state;
         },
+
+        resetData: (state, action) => {
+            state.reportDCCNData = [];
+            state.reportTHCNData = [];
+            return state;
+        }
     },
 
     extraReducers: (builder) => {
@@ -294,7 +302,7 @@ export const congNoSlice = createSlice({
             state.isFetching = false;
             state.isSuccessGetListReportDCCN = true;
 
-            state.listReportDCCNData = action.payload.result.data.map(item => { return { ...item, key: item.id } });
+            state.listReportDCCNData = action.payload.result.data.map(item => { return { ...item, key: item.id, type: "DCCN", time: `Từ ${item.startDate} đến ${item.endDate}` } });
             //   state.message = action.payload.message;
         })
 
@@ -314,11 +322,10 @@ export const congNoSlice = createSlice({
             console.log("getReportDCCN.fulfilled", action.payload)
             state.isFetching = false;
             state.isSuccessGetReportDCCN = true;
-            state.reportDCCNData =
-            {
-                ...action.payload.result.data,
-                key: action.payload.result.data.id,
-            };
+            state.reportDCCNData = action.payload.result.data?.reportDccnDetails;
+            state.description = action.payload.result.data;
+            // key: action.payload.result.data.reportDccnDetails.id,
+
 
             //   state.message = action.payload.message;
         })
@@ -392,7 +399,7 @@ export const congNoSlice = createSlice({
             state.isFetching = false;
             state.isSuccessGetListReportTHCN = true;
 
-            state.listReportTHCNData = action.payload.result.data.map(item => { return { ...item, key: item.id } });
+            state.listReportTHCNData = action.payload.result.data.map(item => { return { ...item, key: item.id, type: "THCN", time: `Từ ${item.startDate} đến ${item.endDate}` } });
             //   state.message = action.payload.message;
         })
 
@@ -412,12 +419,8 @@ export const congNoSlice = createSlice({
             console.log("getReportTHCN.fulfilled", action.payload)
             state.isFetching = false;
             state.isSuccessGetReportTHCN = true;
-            state.reportTHCNData =
-            {
-                ...action.payload.result.data,
-                key: action.payload.result.data.id,
-            };
-
+            state.reportTHCNData = action.payload.result.data?.reportThcnDetails;
+            state.description = action.payload.result.data;
             //   state.message = action.payload.message;
         })
 
@@ -473,6 +476,6 @@ export const congNoSlice = createSlice({
     }
 });
 
-export const { clearState } = congNoSlice.actions;
+export const { clearState, resetData } = congNoSlice.actions;
 
 export const congNoSelector = (state) => state.congNo;

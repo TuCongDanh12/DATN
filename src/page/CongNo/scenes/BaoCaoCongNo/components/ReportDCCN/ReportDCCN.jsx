@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import {
     Table,
     Dropdown,
@@ -21,26 +21,23 @@ import { TfiReload } from "react-icons/tfi";
 import { Add } from "@mui/icons-material";
 import { MdOutlineSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import {
-    banHangSelector,
-    getListChungTuBan,
-    hoaDonSelected,
-} from "../../../../store/features/banHangSlice";
 import moment from "moment/moment";
-import { doiTuongSelector, getListCustomer, getListProduct } from "../../../../store/features/doiTuongSilce";
-import { VND, formatDate } from "../../../../utils/func";
-import { congNoSelector, getListCongNo, getListReportTHCN, postReportTHCN, postReportTHCNRaw, clearState, resetData } from './../../../../store/features/congNoSlice';
 import { useReactToPrint } from "react-to-print";
 import { FaRegFilePdf } from "react-icons/fa6";
-import InTongHopNoPhaiThu from "../../../../component/InTongHopNoPhaiThu/InTongHopNoPhaiThu";
 import { set } from "react-hook-form";
+import { clearState, congNoSelector, getListReportDCCN, getReportDCCN, postReportDCCN, postReportDCCNRaw } from "../../../../../../store/features/congNoSlice";
+import { VND, formatDate } from "../../../../../../utils/func";
+import { doiTuongSelector, getListCustomer } from "../../../../../../store/features/doiTuongSilce";
+import InChiTietNoPhaiThu from "../../../../../../component/InChiTietNoPhaiThu/InChiTietNoPhaiThu";
 const { Text } = Typography;
 
 
 const { RangePicker } = DatePicker;
-const TongHopNoPhaiThu = ({ checkbox = false }) => {
+const ReportDCCN = ({ checkbox = false }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const params = useParams();
+
     const [form] = Form.useForm();
     const [formAddReport] = Form.useForm();
     const [open, setOpen] = useState(false);
@@ -60,10 +57,11 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
         isError,
         message,
-        isSuccessPostReportTHCN,
+        isSuccessPostReportDCCN,
         listCongNo,
-        listReportTHCNData,
-        reportTHCNData
+        listReportDCCNData,
+        reportDCCNData,
+        description
     } = useSelector(congNoSelector);
 
 
@@ -91,40 +89,36 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         // }
     };
 
-    useEffect(() => {
-        dispatch(resetData());
-    }, []);
-    
-
-    console.log("reportTHCNData", reportTHCNData)
+    console.log("reportDCCNData", reportDCCNData)
 
     useEffect(() => {
-        if (reportTHCNData) {
-            const dataConvertCurrent = reportTHCNData?.map(customer => {
+        if (reportDCCNData) {
+            const dataConvertCurrent = reportDCCNData?.map(customer => {
+                return customer?.reportDccnCustomerDetails?.map(chungTuBanData => {
+                    console.log("chungTuBanData", chungTuBanData)
 
-                let tong = customer.notCollectedTotal;
+                    let tong = chungTuBanData.collected + chungTuBanData.notCollected;
 
-                // let tong = 0;
-                // chungTuBanData.productOfCtban.forEach(productOfCt => {
-                //   tong += productOfCt.count * productOfCt.price;
-                //   tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
-                // })
-                //continue ...
-                let notronghan = customer.inOfDate;
-                let noquahan = customer.outOfDate;
+                    // let tong = 0;
+                    // chungTuBanData.productOfCtban.forEach(productOfCt => {
+                    //   tong += productOfCt.count * productOfCt.price;
+                    //   tong += productOfCt.count * productOfCt.price * (productOfCt.product.productGroup.tax / 100);
+                    // })
+                    //continue ...
+                    let dathu = chungTuBanData.collected;
 
-                let chuathu = customer.notCollectedTotal;
-                let dathu = customer.collectedTotal;
+                    let chuathu = chungTuBanData.notCollected;
 
-                return {
-                    makhachhang: customer?.customer?.id,
-                    customer: customer?.customer?.name,
-                    tong,
-                    dathu,
-                    chuathu,
-                    notronghan,
-                    noquahan
-                }
+                    return {
+                        ...chungTuBanData?.ctban,
+                        sohoadon: chungTuBanData?.ctban?.id,
+                        makhachhang: customer?.customer?.id,
+                        customer: customer?.customer?.name,
+                        tong,
+                        dathu,
+                        chuathu
+                    }
+                })
             })
 
 
@@ -134,7 +128,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
             setChungTuBan(dataConvertCurrent);
             dispatch(clearState());
         }
-    }, [reportTHCNData]);
+    }, [reportDCCNData]);
 
 
 
@@ -142,7 +136,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
 
     useEffect(() => {
-        if (isSuccessPostReportTHCN) {
+        if (isSuccessPostReportDCCN) {
             api.success({
                 message: 'Tạo báo cáo thành công!',
                 placement: 'bottomLeft',
@@ -159,7 +153,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
             dispatch(clearState());
         }
-    }, [isError, isSuccessPostReportTHCN]);
+    }, [isError, isSuccessPostReportDCCN]);
 
 
 
@@ -211,102 +205,83 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
     };
 
     let columns = [
-        {
-            title: "ID khách hàng",
-            dataIndex: "makhachhang",
-            key: "makhachhang",
-            sorter: (a, b) => a.makhachhang - b.makhachhang,
-            sortOrder: sortedInfo.columnKey === "makhachhang" ? sortedInfo.order : null,
-            ellipsis: true,
-        },
-        {
-            title: "Khách hàng",
-            dataIndex: "customer",
-            key: "customer",
-            ellipsis: true,
-        },
-
-        {
-            title: "Đã thu",
-            dataIndex: "dathu",
-            key: "dathu",
-            render: (val, record) => VND.format(val),
-            sorter: (a, b) => a.dathu - b.dathu,
-            sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
-        },
-        {
-            title: "Nợ trong hạn",
-            dataIndex: "notronghan",
-            key: "notronghan",
-            render: (val, record) => VND.format(val),
-            sorter: (a, b) => a.notronghan - b.notronghan,
-            sortOrder: sortedInfo.columnKey === "notronghan" ? sortedInfo.order : null,
-        },
-
-        {
-            title: "Nợ quá hạn",
-            dataIndex: "noquahan",
-            key: "noquahan",
-            render: (val, record) => <span className={`text-[#d44950] font-medium`}>{VND.format(val)}</span>,
-            sorter: (a, b) => a.noquahan - b.noquahan,
-            sortOrder: sortedInfo.columnKey === "noquahan" ? sortedInfo.order : null,
-        },
-        {
-            title: "Tổng nợ",
-            dataIndex: "tong",
-            key: "tong",
-            render: (val, record) => VND.format(val),
-            sorter: (a, b) => a.tong - b.tong,
-            sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
-        },
-
-
         // {
-        //     title: "Hạn thanh toán",
-        //     dataIndex: "paymentTerm",
-        //     key: "paymentTerm",
-        //     render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
-        //     sorter: (a, b) =>
-        //         moment(a.paymentTerm, "DD-MM-YYYY") - moment(b.paymentTerm, "DD-MM-YYYY"),
-        //     sortOrder: sortedInfo.columnKey === "paymentTerm" ? sortedInfo.order : null,
-        //     // fixed: 'left',
+        //   title: "Khách hàng",
+        //   dataIndex: "customer",
+        //   key: "customer",
+        //   ellipsis: true,
         // },
+        {
+            title: "ID hóa đơn",
+            dataIndex: "sohoadon",
+            key: "sohoadon",
+            render: (val, record) => <span
+                onClick={() => {
+                    // navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`, { state: { id: selectedRowKeys } });
+                    navigate(`/ban-hang/hoa-don-ban-hang/xem/${val}`, { state: { id: val } });
+                }}
+                className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.paymentTerm) < new Date() ? "" : ""}`}>{val}</span>,
+            sorter: (a, b) => a.sohoadon - b.sohoadon,
+            sortOrder: sortedInfo.columnKey === "sohoadon" ? sortedInfo.order : null,
+            ellipsis: true,
+        },
+        {
+            title: "Ngày hóa đơn",
+            dataIndex: "createdAt",
+            key: "createdAt",
+            render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
+            sorter: (a, b) =>
+                moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
+            sortOrder: sortedInfo.columnKey === "createdAt" ? sortedInfo.order : null,
+            // fixed: 'left',
+        },
+
+        {
+            title: "Hạn thanh toán",
+            dataIndex: "paymentTerm",
+            key: "paymentTerm",
+            render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
+            sorter: (a, b) =>
+                moment(a.paymentTerm, "DD-MM-YYYY") - moment(b.paymentTerm, "DD-MM-YYYY"),
+            sortOrder: sortedInfo.columnKey === "paymentTerm" ? sortedInfo.order : null,
+            // fixed: 'left',
+        },
         // {
         //   title: "Nội dung",
         //   dataIndex: "content",
         //   key: "content",
         //   ellipsis: true,
         // },
-        // {
-        //     title: "Giá trị hóa đơn",
-        //     dataIndex: "tong",
-        //     key: "tong",
-        //     render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+        {
+            title: "Giá trị hóa đơn",
+            dataIndex: "tong",
+            key: "tong",
+            render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
 
-        //     // render: (val, record) => VND.format(val),
-        //     sorter: (a, b) => a.tong - b.tong,
-        //     sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
-        // },
-        // {
-        //     title: "Đã thu",
-        //     dataIndex: "dathu",
-        //     key: "dathu",
-        //     render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+            // render: (val, record) => VND.format(val),
+            sorter: (a, b) => a.tong - b.tong,
+            sortOrder: sortedInfo.columnKey === "tong" ? sortedInfo.order : null,
+        },
+        {
+            title: "Đã thu",
+            dataIndex: "dathu",
+            key: "dathu",
+            render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
 
-        //     // render: (val, record) => VND.format(val),
-        //     sorter: (a, b) => a.dathu - b.dathu,
-        //     sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
-        // },
-        // {
-        //     title: "Chưa thu",
-        //     dataIndex: "chuathu",
-        //     key: "chuathu",
-        //     render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+            // render: (val, record) => VND.format(val),
+            sorter: (a, b) => a.dathu - b.dathu,
+            sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
+        },
+        {
+            title: "Chưa thu",
+            dataIndex: "chuathu",
+            key: "chuathu",
+            render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
 
-        //     // render: (val, record) => VND.format(val),
-        //     sorter: (a, b) => a.chuathu - b.chuathu,
-        //     sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
-        // },
+            // render: (val, record) => VND.format(val),
+            sorter: (a, b) => a.chuathu - b.chuathu,
+            sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
+        },
         // {
         //   title: "Tình trạng thanh toán",
         //   dataIndex: "paymentStatus",
@@ -417,36 +392,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
     //   } 
     // }, [isErrorHoaDonSelected]);
 
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: (selectedRowKeys, selectedRows) => {
-            if (selectedRows.length >= 2 && selectedRows[0].donBanHang.customer.id === selectedRows[selectedRows.length - 1].donBanHang.customer.id) {
-                setSelectedRowKeys(selectedRowKeys);
-                dispatch(hoaDonSelected(selectedRows));
-            }
-            else if (selectedRows.length === 1) {
-                setSelectedRowKeys(selectedRowKeys);
-                dispatch(hoaDonSelected(selectedRows));
-            }
-            else if (selectedRows.length === 0) {
-                setSelectedRowKeys([]);
-                dispatch(hoaDonSelected([]));
-            }
-            else {
-                api.error({
-                    message: "Chỉ thu tiền các hóa đơn của 1 khách hàng!",
-                    placement: "bottomLeft",
-                    duration: 2,
-                });
-            }
 
-            console.log(
-                `selectedRowKeys: ${selectedRowKeys}`,
-                "selectedRows: ",
-                selectedRows
-            );
-        },
-    };
 
     // const onSelectChange = (newSelectedRowKeys) => {
     //   console.log("selectedRowKeys changed: ", newSelectedRowKeys);
@@ -464,7 +410,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         }
 
         console.log("dataConvert", dataConvert)
-        dispatch(postReportTHCNRaw({ values: dataConvert }));
+        dispatch(postReportDCCNRaw({ values: dataConvert }));
 
     };
 
@@ -497,22 +443,22 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
     } = useSelector(doiTuongSelector);
 
     useEffect(() => {
-        dispatch(getListCustomer());
+        dispatch(getReportDCCN({ id: params.id }));
     }, []);
 
 
     const options = [];
-    useEffect(() => {
-        if (listCustomerData.length !== 0) {
-            listCustomerData.forEach(customer => {
-                options.push({
-                    key: customer.id,
-                    value: customer.id,
-                    label: customer.name,
-                });
-            })
-        }
-    }, [listCustomerData]);
+    // useEffect(() => {
+    //     if (listCustomerData.length !== 0) {
+    //         listCustomerData.forEach(customer => {
+    //             options.push({
+    //                 key: customer.id,
+    //                 value: customer.id,
+    //                 label: customer.name,
+    //             });
+    //         })
+    //     }
+    // }, [listCustomerData]);
 
     const sharedProps = {
         mode: 'multiple',
@@ -532,7 +478,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
     const onFinishAddReport = (values) => {
         console.log('Received values of form: ', values);
-        // dispatch(postReportTHCN({ values }));
+        // dispatch(postReportDCCN({ values }));
 
         const dataConvert = {
             "startDate": formatDate(valueRangepicker[0].$d),
@@ -544,7 +490,7 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
 
         console.log("dataConvert", dataConvert)
 
-        dispatch(postReportTHCN({ values: dataConvert }));
+        dispatch(postReportDCCN({ values: dataConvert }));
         // formAddReport.resetFields();
     };
 
@@ -553,98 +499,25 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
         <div className="m-4">
             <div className={`px-[20px] w-full flex justify-between pb-7 ${!checkbox && "bg-white py-7"}`}>
                 <div className="flex gap-[5px] items-center">
-                    <Form form={form} layout="inline" onFinish={onFinish}>
-                        <Form.Item name="rangePicker" className="w-[300px] !me-0"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Trường này là bắt buộc!',
-                                },
-                            ]}
-                        >
-                            {/* <RangePicker
-                value={valueRangepicker}
-                format='DD-MM-YYYY'
-                className="!me-[5px]"
-              /> */}
-                            <RangePicker
-                                onChange={(dates) => handleFilterday(dates)}
+                    <h1 className="text-[20px] font-bold">{description?.description} <span className="font-normal">(Từ {description?.startDate} đến {description?.endDate})</span></h1>
+                </div>
 
-                            />
-
-                        </Form.Item>
-                        <Form.Item name="listCustomer" className="w-[300px] !me-0">
-                            {/* <Input
-                className="rounded-tr-none rounded-br-none"
-                placeholder="Nhập tên khách hàng"
-                value={searchText}
-                onChange={(e) => handleSearch(e.target.value)}
-              /> */}
-                            <Select
-                                mode="tags"
-                                style={{
-                                    width: '100%',
-                                    // height: '31.6px'
-                                }}
-                                {...sharedProps}
-                                tokenSeparators={[',']}
-                                onChange={(values) => setListCustomer(values)}
-                            >
-                                {
-                                    listCustomerData.map(item => <Select.Option value={item.id} key={item.id}>{item.name}</Select.Option>)
-                                }
-                            </Select>
-                        </Form.Item>
-
-                        <Button
-                            className="!bg-[#FAFAFA] font-bold m-0 p-0 w-[32px] h-[32px] flex justify-center items-center rounded-tl-none rounded-bl-none rounded-tr-md rounded-br-md"
-                            htmlType="submit"
-                        >
-                            <MdOutlineSearch size={20} color="#898989" />
-                        </Button>
-                    </Form>
-
-                    {contextHolderMes}
-                    {contextHolder}
-
+                <div className="flex gap-4">
                     <FaRegFilePdf
                         title="Xuất file pdf"
                         onClick={handlePrint}
                         size={30}
                         className="p-2 bg-white border border-black cursor-pointer self-start"
                     />
-                    <TfiReload
-                        title="Cập nhật dữ liệu"
-                        size={30}
-                        className="p-2 bg-white border border-black cursor-pointer self-start"
-                        onClick={() => {
-                            // dispatch(getListChungTuBan());
-                            // messageApi.open({
-                            //   key: "updatable",
-                            //   type: "loading",
-                            //   content: "Loading...",
-                            // });
-                            form.resetFields();
-                            clearAll();
-                            // setValueRangepicker([]);
-                            // setFilterday([]);
-                            setSelectedRowKeys([]);
-                            setChungTuBan([]);
-                            // setSearchText("");
-                        }}
-                    />
-                </div>
 
-                <Button
-                    className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
-                    type="link"
-                    disabled={chungTuBan.length === 0}
-                    onClick={() => {
-                        setOpen(true);
-                    }}
-                >
-                    Lưu báo cáo
-                </Button>
+                    <Button
+                        className='bg-[#FF7742] font-bold text-white'
+                        type='link'
+                        onClick={() => navigate(-1)}
+                    >
+                        Thoát
+                    </Button>
+                </div>
 
                 <Modal
                     title="LƯU BÁO CÁO"
@@ -707,61 +580,58 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
                 </Modal>
             </div>
 
-            {chungTuBan.length!==0 && <Table
-                columns={columns}
-                dataSource={chungTuBan}
-                onChange={onChange}
-                scroll={{
-                    x: 1300,
-                }}
-                className="overflow-x-visible	overflow-y-visible mb-3"
+            {chungTuBan.map((ctb, index) =>
+                <Table
+                    key={index}
+                    columns={columns}
+                    dataSource={ctb}
+                    onChange={onChange}
+                    scroll={{
+                        x: 1300,
+                    }}
+                    className="overflow-x-visible	overflow-y-visible mb-3"
 
-                pagination={false}
-                bordered
-                summary={(pageData) => {
-                    let totalTong = 0;
-                    let totalDaThu = 0;
-                    let totalNoTrongHan = 0;
-                    let totalNoQuaHan = 0;
-                    pageData.forEach(({ tong, dathu, notronghan, noquahan }) => {
-                        totalTong += tong;
-                        totalDaThu += dathu;
-                        totalNoTrongHan += notronghan;
-                        totalNoQuaHan += noquahan;
+                    pagination={false}
+                    bordered
+                    summary={(pageData) => {
+                        let totalTong = 0;
+                        let totalDaThu = 0;
+                        let totalChuaThu = 0;
+                        pageData.forEach(({ tong, dathu, chuathu }) => {
+                            totalTong += tong;
+                            totalDaThu += dathu;
+                            totalChuaThu += chuathu;
+                        });
+                        return (
+                            <>
+                                <Table.Summary.Row>
+                                    <Table.Summary.Cell index={0} colSpan={3} className="font-medium">Tên khách hàng: {pageData[0].customer} - ID: {pageData[0].makhachhang}</Table.Summary.Cell>
+                                    <Table.Summary.Cell index={1}>
+                                        <Text className="font-medium">{VND.format(totalTong)}</Text>
+                                    </Table.Summary.Cell>
+                                    <Table.Summary.Cell index={2}>
+                                        <Text className="font-medium">{VND.format(totalDaThu)}</Text>
+                                    </Table.Summary.Cell>
+                                    <Table.Summary.Cell index={3}>
+                                        <Text className="font-medium">{VND.format(totalChuaThu)}</Text>
+                                    </Table.Summary.Cell>
+                                </Table.Summary.Row>
+                            </>
+                        );
+                    }}
+                />
+            )}
 
-                    });
-                    return (
-                        <>
-                            <Table.Summary.Row>
-                                <Table.Summary.Cell index={0} colSpan={2} className="font-medium">Tổng</Table.Summary.Cell>
-                                <Table.Summary.Cell index={3}>
-                                    <Text className="font-medium">{VND.format(totalDaThu)}</Text>
-                                </Table.Summary.Cell>
-                                <Table.Summary.Cell index={1}>
-                                    <Text className="font-medium">{VND.format(totalNoTrongHan)}</Text>
-                                </Table.Summary.Cell>
-                                <Table.Summary.Cell index={2}>
-                                    <Text className="font-medium text-[#d44950]">{VND.format(totalNoQuaHan)}</Text>
-                                </Table.Summary.Cell>
-                                <Table.Summary.Cell index={4}>
-                                    <Text className="font-medium">{VND.format(totalTong)}</Text>
-                                </Table.Summary.Cell>
-                            </Table.Summary.Row>
-                        </>
-                    );
-                }}
-            />
-            }
             <div
                 className='hidden'
             >
                 <div ref={componentRef}>
-                    <InTongHopNoPhaiThu
+                    <InChiTietNoPhaiThu
                         form={form}
                         // components={components}
                         dataSource={chungTuBan}
                         columns={columns}
-                        dates={valueRangepicker || [{ $d: new Date() }, { $d: new Date() }]}
+                        dates={[{ $d: description?.startDate }, { $d: description?.endDate }]}
                     // idHoaDon={chungTuBanData?.id}
                     // idCustomer={chungTuBanData?.donBanHang?.customer?.id}
                     />
@@ -771,4 +641,4 @@ const TongHopNoPhaiThu = ({ checkbox = false }) => {
     );
 };
 
-export default TongHopNoPhaiThu;
+export default ReportDCCN;

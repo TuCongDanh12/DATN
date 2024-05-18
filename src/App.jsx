@@ -66,6 +66,8 @@ import EditTaiKhoanNganHang from "./page/DoiTuong/scenes/TaiKhoanNganHang/scenes
 import XemPhieuThuTienMat from './page/BanHang/scenes/ThuTienTheoHoaDon/scenes/XemPhieuThuTienMat/XemPhieuThuTienMat';
 import XemPhieuThuTienGui from "./page/BanHang/scenes/ThuTienTheoHoaDon/scenes/XemPhieuThuTienGui/XemPhieuThuTienGui";
 import BaoCaoCongNo from "./page/CongNo/scenes/BaoCaoCongNo/BaoCaoCongNo";
+import ReportDCCN from "./page/CongNo/scenes/BaoCaoCongNo/components/ReportDCCN/ReportDCCN";
+import ReportTHCN from "./page/CongNo/scenes/BaoCaoCongNo/components/ReportTHCN/ReportTHCN";
 
 function App() {
   const [theme, colorMode] = useMode();
@@ -191,6 +193,8 @@ function App() {
                   <Route path="tong-hop-no-phai-thu" element={<TongHopNoPhaiThu />} />
                   <Route path="chi-tiet-no-phai-thu" element={<ChiTietNoPhaiThu />} />
                   <Route path="bao-cao-da-luu" element={<BaoCaoCongNo />} />
+                  <Route path="bao-cao-da-luu/DCCN/:id" element={<ReportDCCN />} />
+                  <Route path="bao-cao-da-luu/THCN/:id" element={<ReportTHCN />} />
                 </Route>
 
 

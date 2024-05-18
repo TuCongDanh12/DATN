@@ -29,7 +29,7 @@ import {
 import moment from "moment/moment";
 import { doiTuongSelector, getListCustomer, getListProduct } from "../../../../store/features/doiTuongSilce";
 import { VND, formatDate } from "../../../../utils/func";
-import { congNoSelector, getListCongNo, getListReportDCCN, postReportDCCN, postReportDCCNRaw, clearState } from './../../../../store/features/congNoSlice';
+import { congNoSelector, getListCongNo, getListReportDCCN, postReportDCCN, postReportDCCNRaw, clearState, resetData } from './../../../../store/features/congNoSlice';
 import { useReactToPrint } from "react-to-print";
 import { FaRegFilePdf } from "react-icons/fa6";
 import InChiTietNoPhaiThu from "../../../../component/InChiTietNoPhaiThu/InChiTietNoPhaiThu";
@@ -92,6 +92,10 @@ const ChiTietNoPhaiThu = ({ checkbox = false }) => {
   };
 
   console.log("reportDCCNData", reportDCCNData)
+
+  useEffect(() => {
+    dispatch(resetData());
+}, []);
 
   useEffect(() => {
     if (reportDCCNData) {

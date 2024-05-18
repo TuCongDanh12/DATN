@@ -18,11 +18,7 @@ import { TfiReload } from "react-icons/tfi";
 import { Add } from "@mui/icons-material";
 import { MdOutlineSearch } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  clearState,
-  doiTuongSelector,
-  getListProduct,
-} from "../../../../store/features/doiTuongSilce";
+import { congNoSelector, getListReportDCCN, getListReportTHCN, clearState, resetData } from "../../../../store/features/congNoSlice";
 
 const BaoCaoCongNo = () => {
   const dispatch = useDispatch();
@@ -43,64 +39,47 @@ const BaoCaoCongNo = () => {
   const handleSearch = (value) => {
     setSearchText(value);
   };
+  // const {
+  //   listProductData,
+  //   isSuccessGetListProduct,
+  //   isSuccessPostProduct,
+  //   isError,
+  //   message,
+  //   isSuccessUpdateProduct
+  // } = useSelector(doiTuongSelector);
+
+
+
   const {
-    listProductData,
-    isSuccessGetListProduct,
-    isSuccessPostProduct,
-    isError,
-    message,
-    isSuccessUpdateProduct
-  } = useSelector(doiTuongSelector);
+    listReportDCCNData,
+    isSuccessGetListReportDCCN,
+    listReportTHCNData,
+    isSuccessGetListReportTHCN,
+  } = useSelector(congNoSelector);
 
   useEffect(() => {
-    dispatch(getListProduct());
+    dispatch(getListReportDCCN());
+    dispatch(getListReportTHCN());
+    dispatch(resetData());
   }, []);
+
+  const [listProductData, setlistProductData] = useState([]);
+
+
+  useEffect(() => {
+    if (isSuccessGetListReportDCCN && isSuccessGetListReportTHCN) {
+      setlistProductData([...listReportDCCNData, ...listReportTHCNData]);
+      dispatch(clearState());
+    }
+  }, [isSuccessGetListReportDCCN, isSuccessGetListReportTHCN]);
+
+
+
 
   useEffect(() => {
     setProductData(listProductData);
   }, [listProductData]);
 
-
-  useEffect(() => {
-    if (isSuccessPostProduct) {
-      api.success({
-        message: "Thêm dữ liệu thành công!",
-        placement: "bottomLeft",
-        duration: 2,
-      });
-      dispatch(getListProduct());
-      dispatch(clearState());
-    } 
-    else if(isSuccessUpdateProduct){
-      api.success({
-        message: 'Cập nhật dữ liệu thành công!',
-        placement: 'bottomLeft',
-        duration: 2
-      });
-
-      // dispatch(getListCustomerGroup());
-      dispatch(clearState());
-    }
-    else if (isSuccessGetListProduct) {
-      // messageApi.open({
-      //     key: 'updatable',
-      //     type: 'success',
-      //     content: 'Tải dữ liệu thành công!',
-      //     duration: 2,
-      // });
-
-      dispatch(clearState());
-    }
-    if (isError) {
-      api.error({
-        message: message,
-        placement: "bottomLeft",
-        duration: 2,
-      });
-
-      dispatch(clearState());
-    }
-  }, [isSuccessGetListProduct, isSuccessPostProduct, isError, message, isSuccessUpdateProduct]);
 
   useEffect(() => {
     if (searchText.trim() === "") {
@@ -142,7 +121,7 @@ const BaoCaoCongNo = () => {
       setDataSelected(record);
       setOpen(true);
     } else {
-      navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+      navigate(`${record.type}/${record.key}`, { state: { id: record.key } });
     }
   };
 
@@ -158,6 +137,7 @@ const BaoCaoCongNo = () => {
       sorter: (a, b) => a.id - b.id,
       sortOrder: sortedInfo.columnKey === "id" ? sortedInfo.order : null,
       ellipsis: true,
+      width: "10%"
     },
     {
       title: "Tên",
@@ -169,11 +149,41 @@ const BaoCaoCongNo = () => {
     },
 
     {
+      title: "Loại",
+      dataIndex: "type",
+      key: "type",
+      render: (val, record) => {
+        switch (val) {
+          case "DCCN":
+            return "Chi tiết công nợ";
+          case "THCN":
+            return "Tổng hợp công nợ";
+          default:
+            return "Lỗi";
+        }
+      },
+      filters: [
+        {
+          value: "DCCN",
+          text: "Chi tiết công nợ",
+        },
+        {
+          value: "THCN",
+          text: "Tổng hợp công nợ",
+        },
+      ],
+      onFilter: (value, record) => record.type.indexOf(value) === 0,
+      filteredValue: filteredInfo.type || null,
+      ellipsis: true,
+    },
+
+
+    {
       title: "Kỳ báo cáo",
-      dataIndex: "xxx",
-      key: "xxx",
-      sorter: (a, b) => a.xxx.localeCompare(b.xxx),
-      sortOrder: sortedInfo.columnKey === "xxx" ? sortedInfo.order : null,
+      dataIndex: "time",
+      key: "time",
+      sorter: (a, b) => a.time.localeCompare(b.time),
+      sortOrder: sortedInfo.columnKey === "time" ? sortedInfo.order : null,
       ellipsis: true,
     },
 
@@ -196,7 +206,7 @@ const BaoCaoCongNo = () => {
             }}
           >
             <Link
-              to={`xem/${record.key}`}
+              to={`${record.type}/${record.key}`}
               state={{ id: record.key }}
               className="!text-black"
             >
@@ -268,7 +278,8 @@ const BaoCaoCongNo = () => {
             size={30}
             className="p-2 bg-white border border-black cursor-pointer"
             onClick={() => {
-              dispatch(getListProduct());
+              dispatch(getListReportDCCN());
+              dispatch(getListReportTHCN());
               messageApi.open({
                 key: "updatable",
                 type: "loading",
@@ -281,14 +292,14 @@ const BaoCaoCongNo = () => {
           />
         </div>
 
-        <Button
+        {/* <Button
           className="!bg-[#7A77DF] font-bold text-white flex items-center gap-1"
           type="link"
           onClick={() => navigate("them")}
         >
           <Add />
           Thêm
-        </Button>
+        </Button> */}
 
         <Modal
           title=""
