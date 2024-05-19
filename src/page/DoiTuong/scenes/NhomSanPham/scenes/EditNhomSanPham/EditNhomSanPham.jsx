@@ -254,7 +254,7 @@ const EditNhomSanPham = ({ disabled = false }) => {
         // },
         {
             title: "Số dư",
-            dataIndex: "",
+            dataIndex: "category",
             editable: false,
         },
         {

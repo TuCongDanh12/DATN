@@ -239,7 +239,7 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
                             Mã số thuế: 1234567889
                         </p>
                         <p className="">
-                            Email: sales@tailwindcss.com
+                            Email: saigonsky@gmail.com
                         </p>
                         <p className="">
                             Số điện thoại: +41-442341232
@@ -363,6 +363,15 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
                     <div className='w-[25%] text-center'>
                         <br />
                         <p className="font-bold text-gray-800">
+                            Người lập phiếu
+                        </p>
+                        <p className="text-gray-500 text-sm">
+                            (Ký và ghi rõ họ tên)
+                        </p>
+                    </div>
+                    <div className='w-[25%] text-center'>
+                        <br />
+                        <p className="font-bold text-gray-800">
                             Người nhận hàng
                         </p>
                         <p className="text-gray-500 text-sm">
@@ -380,15 +389,6 @@ const InPhieuXuat = ({ components, dataSource, columns, form, disabled, onFinish
                         </p>
                     </div>
 
-                    <div className='w-[25%] text-center'>
-                        <br />
-                        <p className="font-bold text-gray-800">
-                            Kế toán
-                        </p>
-                        <p className="text-gray-500 text-sm">
-                            (Ký và ghi rõ họ tên)
-                        </p>
-                    </div>
 
                     <div className='w-[25%] text-center'>
                         <p className="text-sm">

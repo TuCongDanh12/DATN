@@ -311,10 +311,10 @@ const ThemSanPham = ({ disabled = true }) => {
 
 
                     </Flex>
-                    
+
 
                     <Flex vertical gap={5} className='w-[50%]'>
-                    <Form.Item
+                        <Form.Item
                             label="Giá mua"
                             name='priceReceived'
                             rules={[
@@ -329,6 +329,9 @@ const ThemSanPham = ({ disabled = true }) => {
                                     width: '100%',
                                 }}
                                 disabled={disabled}
+                                addonAfter='đ'
+                                min={0}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             />
                         </Form.Item>
 
@@ -347,9 +350,12 @@ const ThemSanPham = ({ disabled = true }) => {
                                     width: '100%',
                                 }}
                                 disabled={disabled}
+                                addonAfter='đ'
+                                min={0}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             />
                         </Form.Item>
-                        
+
 
                         {/* <Form.Item
                             label="Số dư"

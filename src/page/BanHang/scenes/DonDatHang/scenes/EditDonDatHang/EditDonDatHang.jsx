@@ -182,11 +182,11 @@ const EditDonDatHang = ({ disabled = false }) => {
                     soluongdaban: soluongdaban,
                     // soluongdaxuat: 1,
                     price: product.price,
-                    phantramcktm: donBanHangData?.cktm?.discountRate,
-                    tiencktm: product.count * product.price * (donBanHangData?.cktm?.discountRate / 100),
+                    phantramcktm: donBanHangData?.discountRate,
+                    tiencktm: product.count * product.price * (donBanHangData?.discountRate / 100),
                     thanhtien: product.price * product.count,
                     phantramthuegtgt: product.product.productGroup.tax,
-                    tienthuegtgt: product.count * product.price * (1 - donBanHangData?.cktm?.discountRate / 100) * (product.product.productGroup.tax / 100)
+                    tienthuegtgt: product.count * product.price * (1 - donBanHangData?.discountRate / 100) * (product.product.productGroup.tax / 100)
                 }
             })
 

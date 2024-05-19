@@ -457,7 +457,7 @@ const ThuTienTheoHoaDon = () => {
   };
 
   return (
-    <div className="">
+    <div className="m-4">
       <div className="px-[20px] w-full flex justify-between py-7 bg-white">
         <div className="flex gap-[5px] items-center">
           <Form form={form} layout="inline" onFinish={onFinish}>

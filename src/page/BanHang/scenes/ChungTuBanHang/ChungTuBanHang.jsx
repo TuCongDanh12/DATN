@@ -182,7 +182,12 @@ const ChungTuBanHang = () => {
     if (e.key === "xoa") {
       setDataSelected(record);
       setOpen(true);
-    } else {
+    } 
+    else if(e.key === "xem"){
+      navigate(`xem/${record.key}`, { state: { id: record.key } });
+
+    }
+    else {
       // navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
       dispatch(hoaDonSelected([record]));
       navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`);

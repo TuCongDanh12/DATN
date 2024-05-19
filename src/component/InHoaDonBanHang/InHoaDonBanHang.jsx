@@ -239,7 +239,7 @@ const InHoaDonBanHang = ({ components, dataSource, columns, form, disabled, onFi
                             Mã số thuế: 1234567889
                         </p>
                         <p className="">
-                            Email: sales@tailwindcss.com
+                            Email: saigonsky@gmail.com
                         </p>
                         <p className="">
                             Số điện thoại: +41-442341232
@@ -355,7 +355,7 @@ const InHoaDonBanHang = ({ components, dataSource, columns, form, disabled, onFi
                     <div className='w-[30%] text-center'>
                         <br />
                         <p className="font-bold text-gray-800">
-                            Người mua hàng
+                            Người lập phiếu
                         </p>
                         <p className="text-gray-500 text-sm">
                             (Ký và ghi rõ họ tên)
@@ -365,12 +365,13 @@ const InHoaDonBanHang = ({ components, dataSource, columns, form, disabled, onFi
                     <div className='w-[30%] text-center'>
                         <br />
                         <p className="font-bold text-gray-800">
-                            Kế toán
+                            Người mua hàng
                         </p>
                         <p className="text-gray-500 text-sm">
                             (Ký và ghi rõ họ tên)
                         </p>
                     </div>
+
 
                     <div className='w-[30%] text-center'>
                         <p className="text-sm">

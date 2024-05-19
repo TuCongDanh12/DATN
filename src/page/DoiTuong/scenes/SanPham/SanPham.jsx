@@ -23,6 +23,7 @@ import {
   doiTuongSelector,
   getListProduct,
 } from "../../../../store/features/doiTuongSilce";
+import { VND } from "../../../../utils/func";
 
 const SanPham = () => {
   const dispatch = useDispatch();
@@ -172,6 +173,7 @@ const SanPham = () => {
       dataIndex: "priceReceived",
       key: "priceReceived",
       sorter: (a, b) => a.priceReceived - b.priceReceived,
+      render: (val, record) => VND.format(val),
       sortOrder:
         sortedInfo.columnKey === "priceReceived" ? sortedInfo.order : null,
     },
@@ -180,6 +182,7 @@ const SanPham = () => {
       dataIndex: "priceDelivery",
       key: "priceDelivery",
       sorter: (a, b) => a.priceDelivery - b.priceDelivery,
+      render: (val, record) => VND.format(val),
       sortOrder:
         sortedInfo.columnKey === "priceDelivery" ? sortedInfo.order : null,
     },

@@ -150,11 +150,11 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                     soluongchuadat: productOfChungTu.count,
                     // soluongdaxuat: 1,
                     price: productOfChungTu.price,
-                    phantramcktm: chungTuBanData.donBanHang?.cktm?.discountRate,
-                    tiencktm: productOfChungTu.count * productOfChungTu.price * (chungTuBanData.donBanHang?.cktm?.discountRate / 100),
+                    phantramcktm: chungTuBanData.donBanHang?.discountRate,
+                    tiencktm: productOfChungTu.count * productOfChungTu.price * (chungTuBanData.donBanHang?.discountRate / 100),
                     thanhtien: productOfChungTu.price * productOfChungTu.count,
                     phantramthuegtgt: productOfChungTu.product.productGroup.tax,
-                    tienthuegtgt: productOfChungTu.count * productOfChungTu.price * (1 - chungTuBanData.donBanHang?.cktm?.discountRate / 100) * (productOfChungTu.product.productGroup.tax / 100)
+                    tienthuegtgt: productOfChungTu.count * productOfChungTu.price * (1 - chungTuBanData.donBanHang?.discountRate / 100) * (productOfChungTu.product.productGroup.tax / 100)
                 }
             })
 
@@ -496,7 +496,7 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                 createdAt: dayjs(chungTuBanData.createdAt, dateFormat),
                 deliveryDate: dayjs(chungTuBanData.deliveryDate, dateFormat),
                 dieukhoanthanhtoan: chungTuBanData?.donBanHang?.dieuKhoan?.name,
-                chietkhauthuongmai: chungTuBanData?.donBanHang?.cktm?.name
+                chietkhauthuongmai: chungTuBanData?.donBanHang?.name
             };
 
             switch (chungTuBanData.documentStatus) {
@@ -632,7 +632,7 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                         </div>
                         <div className='flex justify-between'>
                             <p>Tiền chiết khấu
-                                 {/* ({chungTuBanData?.donBanHang?.cktm?.discountRate}%) */}
+                                 {/* ({chungTuBanData?.donBanHang?.discountRate}%) */}
                                  </p>
                             <p>
                                 {
@@ -728,7 +728,7 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                         columns={columns}
                         idPhieuXuat={chungTuBanData?.id}
                         idCustomer={chungTuBanData?.donBanHang?.customer?.id}
-                        tilechietkhau={chungTuBanData?.donBanHang?.cktm?.discountRate}
+                        tilechietkhau={chungTuBanData?.donBanHang?.discountRate}
                     />
                 </div>
             </div>
@@ -744,7 +744,7 @@ const XemChungTuBanHang = ({ disabled = false }) => {
                         columns={columns}
                         idHoaDon={chungTuBanData?.id}
                         idCustomer={chungTuBanData?.donBanHang?.customer?.id}
-                        tilechietkhau={chungTuBanData?.donBanHang?.cktm?.discountRate}
+                        tilechietkhau={chungTuBanData?.donBanHang?.discountRate}
                         // hanthanhtoan={formatDate(dayjs(chungTuBanData?.paymentTerm, dateFormat))}
                     />
                 </div>

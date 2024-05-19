@@ -192,7 +192,12 @@ const HoaDonBanHang = ({ checkbox = false }) => {
     if (e.key === "xoa") {
       setDataSelected(record);
       setOpen(true);
-    } else {
+    }
+    else if (e.key === "xem") {
+      navigate(`${e.key}/${record.key}`, { state: { id: record.key } });
+
+    }
+    else {
       dispatch(hoaDonSelected([record]));
       navigate(`/ban-hang/thu-tien-theo-hoa-don/timkiem/thutien`);
       // navigate(`${e.key}/${record.key}`, { state: { id: record.key } });

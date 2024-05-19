@@ -4,6 +4,7 @@ import { muahangSlice } from "./features/muahangSlice";
 import { doiTuongSlice } from "./features/doiTuongSilce";
 import { banHangSlice } from "./features/banHangSlice";
 import { congNoSlice } from "./features/congNoSlice";
+import { baoCaoSlice } from "./features/baoCaoSlice";
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     doiTuong: doiTuongSlice.reducer,
     banHang: banHangSlice.reducer,
     congNo: congNoSlice.reducer,
+    baoCao: baoCaoSlice.reducer,
   },
 });
 
