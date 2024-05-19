@@ -5,6 +5,9 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { useDispatch, useSelector } from 'react-redux';
 import { doiTuongSelector, getListCustomerGroup, getCustomer, clearState, updateCustomer, postDieuKhoanThanhToan, postCktm, updateDieuKhoanThanhToan, updateCktm } from '../../../../../../store/features/doiTuongSilce';
 import { FaCheck } from "react-icons/fa";
+import { VND } from '../../../../../../utils/func';
+import { MdOutlineDelete } from "react-icons/md";
+
 
 const EditableContext = React.createContext(null);
 const EditableRow = ({ index, ...props }) => {
@@ -220,6 +223,12 @@ const EditKhachHang = ({ disabled = false }) => {
             ellipsis: true,
         },
         {
+            title: 'Số lượng SP tối thiểu',
+            dataIndex: 'minOrderQuantity',
+            editable: !disabled,
+            ellipsis: true,
+        },
+        {
             title: 'Mô tả',
             dataIndex: 'description',
             editable: !disabled,
@@ -251,6 +260,32 @@ const EditKhachHang = ({ disabled = false }) => {
                     </Typography.Link>
                 ) : null,
         },
+        {
+            title: 'Xóa',
+            dataIndex: 'delete',
+            width: '60px',
+            render: (_, record) =>
+                dataSource.length >= 1 ? (
+                    <Typography.Link
+                        onClick={() => {
+                            // handleDelete(record.key)
+                            // console.log("record", record)
+                            // const dataConvert = {
+                            //     "name": record.name,
+                            //     "description": record.description,
+                            //     "paymentPeriod": record.paymentPeriod,
+                            //     "minProductValue": record.minProductValue,
+                            //     "id": record.id
+                            // }
+                            // dispatch(updateDieuKhoanThanhToan({ values: dataConvert }));
+                        }
+
+                        }
+                        className='flex justify-center'>
+                        <MdOutlineDelete size={30} color='#1E1E1E' />
+                    </Typography.Link>
+                ) : null,
+        },
     ];
 
 
@@ -273,6 +308,7 @@ const EditKhachHang = ({ disabled = false }) => {
             dataIndex: 'minProductValue',
             editable: !disabled,
             ellipsis: true,
+            render: (val, record) => VND.format(val),
         },
         {
             title: '% chiết khấu',
@@ -309,12 +345,38 @@ const EditKhachHang = ({ disabled = false }) => {
                     </Typography.Link>
                 ) : null,
         },
+        {
+            title: 'Xóa',
+            dataIndex: 'delete',
+            width: '60px',
+            render: (_, record) =>
+                dataSource.length >= 1 ? (
+                    <Typography.Link
+                        onClick={() => {
+                            // handleDelete(record.key)
+                            // console.log("record", record)
+                            // const dataConvert = {
+                            //     "name": record.name,
+                            //     "description": record.description,
+                            //     "paymentPeriod": record.paymentPeriod,
+                            //     "minProductValue": record.minProductValue,
+                            //     "id": record.id
+                            // }
+                            // dispatch(updateDieuKhoanThanhToan({ values: dataConvert }));
+                        }
+
+                        }
+                        className='flex justify-center'>
+                        <MdOutlineDelete size={30} color='#1E1E1E' />
+                    </Typography.Link>
+                ) : null,
+        },
     ];
 
 
     if (disabled) {
-        defaultColumns = defaultColumns.filter(item => item.dataIndex !== "operation");
-        defaultColumns2 = defaultColumns2.filter(item => item.dataIndex !== "operation");
+        defaultColumns = defaultColumns.filter(item => item.dataIndex !== "operation" && item.dataIndex !== "delete");
+        defaultColumns2 = defaultColumns2.filter(item => item.dataIndex !== "operation" && item.dataIndex !== "delete");
     }
 
     const handleAdd = () => {
@@ -368,7 +430,7 @@ const EditKhachHang = ({ disabled = false }) => {
             ...col,
             onCell: (record) => ({
                 record,
-                inputType: ['paymentPeriod'].includes(col.dataIndex) ? 'number' : 'text',
+                inputType: ['paymentPeriod', 'minOrderQuantity'].includes(col.dataIndex) ? 'number' : 'text',
                 editable: col.editable,
                 dataIndex: col.dataIndex,
                 title: col.title,
@@ -422,7 +484,6 @@ const EditKhachHang = ({ disabled = false }) => {
         const dataConvert = {
             ...values,
             "customerId": customerData.id,
-            minProductValue: 0
         }
         formAddDieuKhoanThanhToan.resetFields();
         dispatch(postDieuKhoanThanhToan({ values: dataConvert }));
@@ -615,6 +676,23 @@ const EditKhachHang = ({ disabled = false }) => {
                                 <Form.Item
                                     label="Số ngày được nợ"
                                     name='paymentPeriod'
+                                    rules={[
+                                        {
+                                            required: true,
+                                            message: 'Trường này là bắt buộc!',
+                                        },
+                                    ]}
+                                >
+                                    <InputNumber
+                                        min={0}
+                                        style={{
+                                            width: '100%',
+                                        }} />
+                                </Form.Item>
+
+                                <Form.Item
+                                    label="Số lượng sản phẩm tối thiểu"
+                                    name='minOrderQuantity'
                                     rules={[
                                         {
                                             required: true,

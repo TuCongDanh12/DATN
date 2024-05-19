@@ -5,7 +5,7 @@ import { VND } from '../../utils/func';
 const { Text } = Typography;
 
 
-const InChiTietNoPhaiThu = ({ components, dataSource, columns, form, disabled, onFinish, idHoaDon, idCustomer, dates }) => {
+const InChiTietDoanhThuNhanVien = ({ components, dataSource, columns, form, disabled, onFinish, idHoaDon, idCustomer, dates }) => {
     const dataSourceConvert = dataSource.map((data, index) => {
         return {
             ...data,
@@ -13,27 +13,25 @@ const InChiTietNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
         };
     })
 
-    const defaultColumns = [
+    let defaultColumns = [
         // {
         //   title: "Khách hàng",
-        //   dataIndex: "customer",
-        //   key: "customer",
+        //   dataIndex: "salesperson",
+        //   key: "salesperson",
         //   ellipsis: true,
         // },
         {
-            title: "ID",
+            title: "ID hóa đơn",
             dataIndex: "sohoadon",
             key: "sohoadon",
-            render: (val, record) => <span
-                className={`cursor-pointer font-medium text-[#1DA1F2] ${new Date(record.paymentTerm) < new Date() ? "" : ""}`}>{val}</span>,
             ellipsis: true,
-            width: '7%',
         },
         {
             title: "Ngày hóa đơn",
             dataIndex: "createdAt",
             key: "createdAt",
             render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
+
             // fixed: 'left',
         },
 
@@ -42,8 +40,10 @@ const InChiTietNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
             dataIndex: "paymentTerm",
             key: "paymentTerm",
             render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{new Date(val).toLocaleDateString("vi-VN")}</span>,
+
             // fixed: 'left',
         },
+
         // {
         //   title: "Nội dung",
         //   dataIndex: "content",
@@ -56,26 +56,35 @@ const InChiTietNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
             key: "tong",
             render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
 
-            // render: (val, record) => VND.format(val),
 
         },
         {
-            title: "Đã thu",
-            dataIndex: "dathu",
-            key: "dathu",
+            title: "Doanh thu (thuần)",
+            dataIndex: "doanhthu",
+            key: "doanhthu",
             render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
 
-            // render: (val, record) => VND.format(val),
-
         },
-        {
-            title: "Chưa thu",
-            dataIndex: "chuathu",
-            key: "chuathu",
-            render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+        // {
+        //   title: "Đã thu",
+        //   dataIndex: "dathu",
+        //   key: "dathu",
+        //   render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
 
-            // render: (val, record) => VND.format(val),
-        },
+        //   // render: (val, record) => VND.format(val),
+        //   sorter: (a, b) => a.dathu - b.dathu,
+        //   sortOrder: sortedInfo.columnKey === "dathu" ? sortedInfo.order : null,
+        // },
+        // {
+        //   title: "Chưa thu",
+        //   dataIndex: "chuathu",
+        //   key: "chuathu",
+        //   render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+
+        //   // render: (val, record) => VND.format(val),
+        //   sorter: (a, b) => a.chuathu - b.chuathu,
+        //   sortOrder: sortedInfo.columnKey === "chuathu" ? sortedInfo.order : null,
+        // },
         // {
         //   title: "Tình trạng thanh toán",
         //   dataIndex: "paymentStatus",
@@ -302,7 +311,7 @@ const InChiTietNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
                     </div>
                 </div> */}
 
-                <h1 className="text-center font-bold text-2xl mt-2">CHI TIẾT NỢ PHẢI THU KHÁCH HÀNG</h1>
+                <h1 className="text-center font-bold text-2xl mt-2">DOANH THU BÁN HÀNG CHI TIẾT THEO TỪNG NHÂN VIÊN</h1>
 
                 <div className="text-center font-bold">Từ ngày {formatDate(dates[0]?.$d || new Date())} đến ngày {formatDate(dates[1]?.$d || new Date())}</div>
                 {/* <div className="text-center font-bold">Tháng 5 năm 2024</div> */}
@@ -352,25 +361,22 @@ const InChiTietNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
                             bordered
                             summary={(pageData) => {
                                 let totalTong = 0;
-                                let totalDaThu = 0;
+                                let totalDoanhThu = 0;
                                 let totalChuaThu = 0;
-                                pageData.forEach(({ tong, dathu, chuathu }) => {
+                                pageData.forEach(({ tong, doanhthu, chuathu }) => {
                                     totalTong += tong;
-                                    totalDaThu += dathu;
+                                    totalDoanhThu += doanhthu;
                                     totalChuaThu += chuathu;
                                 });
                                 return (
                                     <>
                                         <Table.Summary.Row>
-                                            <Table.Summary.Cell index={0} colSpan={3} className="font-medium">Tên khách hàng: {pageData[0].customer} - ID: {pageData[0].makhachhang}</Table.Summary.Cell>
+                                            <Table.Summary.Cell index={0} colSpan={3} className="font-medium">Tên nhân viên bán hàng: {pageData[0]?.salesperson} - ID: {pageData[0]?.manhanvienbanhang}</Table.Summary.Cell>
                                             <Table.Summary.Cell index={1}>
                                                 <Text className="font-medium">{VND.format(totalTong)}</Text>
                                             </Table.Summary.Cell>
                                             <Table.Summary.Cell index={2}>
-                                                <Text className="font-medium">{VND.format(totalDaThu)}</Text>
-                                            </Table.Summary.Cell>
-                                            <Table.Summary.Cell index={3}>
-                                                <Text className="font-medium">{VND.format(totalChuaThu)}</Text>
+                                                <Text className="font-medium">{VND.format(totalDoanhThu)}</Text>
                                             </Table.Summary.Cell>
                                         </Table.Summary.Row>
                                     </>
@@ -444,4 +450,4 @@ const InChiTietNoPhaiThu = ({ components, dataSource, columns, form, disabled, o
     )
 }
 
-export default InChiTietNoPhaiThu
+export default InChiTietDoanhThuNhanVien

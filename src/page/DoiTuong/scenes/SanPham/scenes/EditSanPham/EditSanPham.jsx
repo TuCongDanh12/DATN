@@ -355,6 +355,9 @@ const EditSanPham = ({ disabled = false }) => {
                                     width: '100%',
                                 }}
                                 disabled={disabled}
+                                addonAfter='đ'
+                                min={0}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             />
                         </Form.Item>
 
@@ -373,6 +376,9 @@ const EditSanPham = ({ disabled = false }) => {
                                     width: '100%',
                                 }}
                                 disabled={disabled}
+                                addonAfter='đ'
+                                min={0}
+                                formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
                             />
                         </Form.Item>
 

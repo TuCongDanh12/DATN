@@ -114,7 +114,7 @@ const DonDatHang = ({ radio = false }) => {
         let tong = 0;
         donBanHangData.productOfDonBanHangs.forEach(productOfDon => {
           let tienhang = productOfDon.count * productOfDon.price;
-          let chietkhau = productOfDon.count * productOfDon.price * (donBanHangData.cktm.discountRate / 100);
+          let chietkhau = productOfDon.count * productOfDon.price * (donBanHangData.discountRate / 100);
           let thue = (tienhang - chietkhau) * (productOfDon.product.productGroup.tax / 100);
           tong += (tienhang - chietkhau + thue);
         })

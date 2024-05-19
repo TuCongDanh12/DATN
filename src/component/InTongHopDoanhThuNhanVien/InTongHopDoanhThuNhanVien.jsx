@@ -1,70 +1,33 @@
 import { Form, Table, Typography } from 'antd'
 import React, { useState } from 'react'
 import { VND } from '../../utils/func';
-import moment from 'moment';
 
 const { Text } = Typography;
 
 
-const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish, idPhieuThu, idCustomer }) => {
-    const dataSourceConvert = dataSource?.map((data, index) => {
-        return {
-            ...data,
-            stt: index + 1
-        };
-    })
-
+const InTongHopDoanhThuNhanVien = ({ components, dataSource, columns, form, disabled, onFinish, idHoaDon, idCustomer, dates }) => {
     const defaultColumns = [
         {
-            title: "STT",
-            dataIndex: "stt",
-            editable: false,
-        },
-        {
-            title: "Ngày hóa đơn",
-            dataIndex: "createdAt",
-            key: "createdAt",
-            render: (val, record) => new Date(val).toLocaleDateString("vi-VN"),
-            sorter: (a, b) =>
-                moment(a.createdAt, "DD-MM-YYYY") - moment(b.createdAt, "DD-MM-YYYY"),
-            // fixed: 'left',
-            editable: false,
-        },
-        {
-            title: "Khách hàng",
-            dataIndex: "customer",
-            key: "customer",
+            title: "ID",
+            dataIndex: "id",
+            key: "id",
             ellipsis: true,
-            editable: false,
         },
+
         {
-            title: "Giá trị hóa đơn",
+            title: "Nhân viên bán hàng",
+            dataIndex: "name",
+            key: "name",
+            ellipsis: true,
+        },
+
+        {
+            title: "Doanh thu (thuần)",
             dataIndex: "tong",
             key: "tong",
-            render: (val, record) => VND.format(val),
-        },
-        // {
-        //     title: "Chưa thu",
-        //     dataIndex: "chuathu",
-        //     key: "chuathu",
-        //     render: (val, record) => VND.format(val),
-        // },
-        // {
-        //     title: "Số lượng chưa đặt",
-        //     dataIndex: "soluongchuadat",
-        //     editable: false,
-        // },
-        // {
-        //     title: "Số lượng đã xuất",
-        //     dataIndex: "soluongdaxuat",
-        //     editable: !disabled,
-        // },
-        {
-            title: "Số thanh toán",
-            dataIndex: "sothanhtoan",
-            key: "sothanhtoan",
-            render: (val, record) => VND.format(val),
-            editable: true,
+            render: (val, record) => <span className={`${new Date(record.paymentTerm) < new Date() ? "text-[#d44950] font-medium" : ""}`}>{VND.format(val)}</span>,
+
+            // render: (val, record) => VND.format(val),
         },
     ];
 
@@ -176,10 +139,10 @@ const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish,
 
             <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow-sm my-6" id="invoice">
 
-                <div className="flex justify-center items-center">
-                    {/* <div className='w-[20%]'>
+                {/* <div className="flex justify-center items-center">
+                    <div className='w-[20%]'>
                         <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Tailwind_CSS_Logo.svg" alt="company-logo" height="100" width="100" />
-                    </div> */}
+                    </div>
 
                     <div className="w-[100%] text-left">
                         <h2
@@ -198,11 +161,14 @@ const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish,
                             Số điện thoại: +41-442341232
                         </p>
                     </div>
-                </div>
+                </div> */}
 
-                <h1 className="text-center font-bold text-2xl mt-2">PHIẾU THU</h1>
+                <h1 className="text-center font-bold text-2xl mt-2">TỔNG HỢP DOANH THU THEO TỪNG NHÂN VIÊN</h1>
 
-                <div className="grid grid-cols-2 mt-8">
+                <div className="text-center font-bold">Từ ngày {formatDate(dates[0]?.$d || new Date())} đến ngày {formatDate(dates[1]?.$d || new Date())}</div>
+                {/* <div className="text-center font-bold">Tháng 5 năm 2024</div> */}
+
+                {/* <div className="grid grid-cols-2 mt-8">
                     <div>
                         <p
                         //  className="font-bold text-gray-800"
@@ -219,25 +185,19 @@ const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish,
                             Mã khách hàng: {idCustomer}
                         </p>
 
-                        <p className="">
-                            Nội dung: {Form.useWatch('content', form)}
-                        </p>
-
                     </div>
 
                     <div className="text-right">
                         <p className="">
-                            ID phiếu thu: {idPhieuThu}
+                            ID hóa đơn: {idHoaDon}
                         </p>
                         <p>
-                            Ngày chứng từ: {formatDate(Form.useWatch('receiveDate', form)?.$d)}
-                            {/* Ngày hóa đơn: {Form.useWatch('createdAt', form).$D} */}
-                            {/* {console.log("Form.useWatch('createdAt', form)", Form.useWatch('createdAt', form))} */}
-                            {/* <br />
-                            Người giữ kho: {Form.useWatch('warehouseKeeperId')} */}
+                            Ngày hóa đơn: {formatDate(Form.useWatch('createdAt', form)?.$d)}
+                            <br />
+                            Hạn thanh toán: {formatDate(Form.useWatch('paymentTerm', form)?.$d)}
                         </p>
                     </div>
-                </div>
+                </div> */}
 
 
                 <div className='mt-2'>
@@ -245,30 +205,25 @@ const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish,
                         components={components}
                         rowClassName={() => 'editable-row'}
                         bordered
-                        dataSource={dataSourceConvert}
+                        dataSource={dataSource}
                         columns={defaultColumns}
-
                         pagination={false}
                         summary={(pageData) => {
                             let totalTong = 0;
+                            let totalDoanhThu = 0;
                             let totalChuaThu = 0;
-                            let totalSoThanhToan = 0;
-                            pageData.forEach(({ tong, sothanhtoan, chuathu }) => {
+                            pageData.forEach(({ tong, doanhthu, chuathu }) => {
                                 totalTong += tong;
+                                totalDoanhThu += doanhthu;
                                 totalChuaThu += chuathu;
-                                totalSoThanhToan += sothanhtoan;
                             });
                             return (
                                 <>
                                     <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={4}>Tổng tiền thanh toán</Table.Summary.Cell>
-                                        <Table.Summary.Cell index={3}>
-                                            <Text className="font-medium text-center">{VND.format(totalSoThanhToan)}</Text>
+                                        <Table.Summary.Cell index={1} colSpan={2}>Tổng</Table.Summary.Cell>
+                                        <Table.Summary.Cell index={2}>
+                                            <Text className="font-medium">{VND.format(totalTong)}</Text>
                                         </Table.Summary.Cell>
-                                    </Table.Summary.Row>
-
-                                    <Table.Summary.Row>
-                                        <Table.Summary.Cell index={0} className="font-medium text-center" colSpan={5}>Số tiền viết bằng chữ: {to_vietnamese(totalSoThanhToan)}</Table.Summary.Cell>
                                     </Table.Summary.Row>
                                 </>
                             );
@@ -277,36 +232,25 @@ const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish,
                 </div>
 
                 <div className='flex justify-between mt-4'>
-                    <div className='w-[18%] text-center'>
+                    <div className='w-[30%] text-center'>
                         <br />
                         <p className="font-bold text-gray-800">
                             Người lập phiếu
                         </p>
                         <p className="text-gray-500 text-sm">
-                            (Ký, ghi rõ họ tên)
-                        </p>
-                    </div>
-                    <div className='w-[18%] text-center'>
-                        <br />
-                        <p className="font-bold text-gray-800">
-                            Người nộp
-                        </p>
-                        <p className="text-gray-500 text-sm">
-                            (Ký, ghi rõ họ tên)
+                            (Ký và ghi rõ họ tên)
                         </p>
                     </div>
 
-            
-
-                    <div className='w-[25%] text-center'>
+                    <div className='w-[30%] text-center'>
                         <p className="text-sm">
                             Ngày ..... tháng ..... năm 20 ...
                         </p>
                         <p className="font-bold text-gray-800">
-                            Thủ quỹ
+                            Giám đốc
                         </p>
                         <p className="text-gray-500 text-sm">
-                            (Ký, ghi rõ họ tên)
+                            (Ký, ghi rõ họ tên và đóng dấu)
                         </p>
                     </div>
                 </div>
@@ -317,4 +261,4 @@ const InPhieuThu = ({ components, dataSource, columns, form, disabled, onFinish,
     )
 }
 
-export default InPhieuThu
+export default InTongHopDoanhThuNhanVien

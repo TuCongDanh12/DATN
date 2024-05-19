@@ -148,11 +148,11 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                     soluongchuadat: product.count - soluongdaban,
                     // soluongdaxuat: 1,
                     price: product.price,
-                    phantramcktm: donBanHangData?.cktm?.discountRate,
-                    tiencktm: product.count * product.price * (donBanHangData?.cktm?.discountRate / 100),
+                    phantramcktm: donBanHangData?.discountRate,
+                    tiencktm: product.count * product.price * (donBanHangData?.discountRate / 100),
                     thanhtien: product.price * product.count,
                     phantramthuegtgt: product.product.productGroup.tax,
-                    tienthuegtgt: product.count * product.price * (1 - donBanHangData?.cktm?.discountRate / 100) * (product.product.productGroup.tax / 100)
+                    tienthuegtgt: product.count * product.price * (1 - donBanHangData?.discountRate / 100) * (product.product.productGroup.tax / 100)
                 }
             })
 
@@ -498,7 +498,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                 createdAt: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 deliveryDate: dayjs(new Date().toISOString().slice(0, 10), dateFormat),
                 dieukhoanthanhtoan: donBanHangData?.dieuKhoan?.name,
-                chietkhauthuongmai: donBanHangData?.cktm?.name
+                chietkhauthuongmai: donBanHangData?.name
             };
 
             switch (donBanHangData.documentStatus) {
@@ -562,12 +562,12 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
     }, [donBanHangData]);
 
     useEffect(() => {
-        if (donBanHangData?.dieuKhoan?.paymentPeriod) {
+        if (donBanHangData?.paymentPeriod) {
             // let hanThanhToan = new Date();
             // hanThanhToan?.setDate(hanThanhToan?.getDate() + Number(donBanHangData?.dieuKhoan?.paymentPeriod));
 
             const data = {
-                paymentTerm: dayjs(new Date((new Date()).getTime() + (donBanHangData?.dieuKhoan?.paymentPeriod * 24 * 60 * 60 * 1000)).toISOString()?.slice(0, 10), dateFormat)
+                paymentTerm: dayjs(new Date((new Date()).getTime() + (donBanHangData?.paymentPeriod * 24 * 60 * 60 * 1000)).toISOString()?.slice(0, 10), dateFormat)
                 // paymentTerm: dayjs(hanThanhToan.toISOString()?.slice(0, 10), dateFormat)
             }
             form.setFieldsValue({
@@ -575,7 +575,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
             });
         }
 
-    }, [donBanHangData?.dieuKhoan?.paymentPeriod]);
+    }, [donBanHangData?.paymentPeriod]);
 
 
     return (
@@ -662,7 +662,7 @@ const ThemChungTuBanHang = ({ disabled = false }) => {
                         </div>
                         <div className='flex justify-between'>
                             <p>Tiền chiết khấu 
-                                {/* ({donBanHangData?.cktm?.discountRate}%) */}
+                                {/* ({donBanHangData?.discountRate}%) */}
                                 </p>
                             <p>
                                 {

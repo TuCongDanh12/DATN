@@ -10,12 +10,12 @@ const BaoCao = () => {
       //   content: "Quy trình"
       // },
       {
-        url: 'chi-tiet-no-phai-thu',
-        content: "Chi tiết nợ phải thu"
+        url: 'chi-tiet-doanh-thu-nhan-vien',
+        content: "Chi tiết doanh thu nhân viên"
       },
       {
-        url: 'tong-hop-no-phai-thu',
-        content: "Tổng hợp nợ phải thu"
+        url: 'tong-hop-doanh-thu-nhan-vien',
+        content: "Tổng hợp doanh thu nhân viên"
       },
       {
         url: 'bao-cao-da-luu',
