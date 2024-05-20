@@ -8,6 +8,7 @@ import { z } from 'zod';
 const validationSchema = z
     .object({
         username: z.string().min(1, { message: "Tên là bắt buộc" }),
+        email: z.string().min(1, { message: "Trường này là bắt buộc" }).email("Email không hợp lệ!"),
         phoneNumber: z.string().min(1, { message: "Số điện thoại là bắt buộc" }),
         address: z.string().min(1, { message: "Địa chỉ là bắt buộc" }),
         password: z
@@ -81,6 +82,24 @@ const Signup = () => {
                                     {errors.username && (
                                         <p className="textDanger">
                                             {errors.username?.message}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div className="form-groupS">
+                                    <div className="form-group">
+                                        <input
+                                            // autoComplete="off"
+                                            type="email"
+                                            name="email"
+                                            placeholder=" "
+                                            {...register("email")}
+                                        />
+                                        <label>Email</label>
+                                    </div>
+                                    {errors.email && (
+                                        <p className="textDanger">
+                                            {errors.email?.message}
                                         </p>
                                     )}
                                 </div>

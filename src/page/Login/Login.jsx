@@ -8,7 +8,7 @@ import { FaCoins } from 'react-icons/fa';
 
 const validationSchema = z
     .object({
-        phoneNumber: z.string().min(10, { message: "Số điện thoại gồm 10 chữ số" }),
+        email: z.string().min(1, { message: "Trường này là bắt buộc" }).email("Email không hợp lệ!"),
 
         password: z
             .string()
@@ -31,8 +31,8 @@ const Login = () => {
 
     const onSubmit = (data) => {
         console.log(data)
-        //   const { phoneNumber, password } = data;
-        //   dispatch(loginUser({ phoneNumber, password }));
+        //   const { email, password } = data;
+        //   dispatch(loginUser({ email, password }));
     };
     return (
         <div className="login-container">
@@ -55,16 +55,16 @@ const Login = () => {
                                     <div className="form-group">
                                         <input
                                             // autoComplete="off"
-                                            type="number"
-                                            name="phoneNumber"
+                                            type="email"
+                                            name="email"
                                             placeholder=" "
-                                            {...register("phoneNumber")}
+                                            {...register("email")}
                                         />
-                                        <label>Số điện thoại</label>
+                                        <label>Email</label>
                                     </div>
-                                    {errors.phoneNumber && (
+                                    {errors.email && (
                                         <p className="textDanger">
-                                            {errors.phoneNumber?.message}
+                                            {errors.email?.message}
                                         </p>
                                     )}
                                 </div>

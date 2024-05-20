@@ -319,7 +319,7 @@ const Profile = ({ disabled = false }) => {
               />
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
               label="Vị trí"
               name='role'
               rules={[
@@ -332,7 +332,7 @@ const Profile = ({ disabled = false }) => {
               <Input
                 disabled={disabled}
               />
-            </Form.Item>
+            </Form.Item> */}
 
 
             {disabled ?
