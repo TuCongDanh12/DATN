@@ -19,7 +19,7 @@
     /* background-image: var(--main-3), url("/public/assets/images/login-signup.jpg"); */
     /* background-image: linear-gradient(to left, rgba(244, 237, 237, 0.648), rgba(254, 228, 195, 0.205)), url("/public/assets/images/login-signup.jpg"); */
 
-    background-image: url("/public/assets/accounting.jpg");
+    background-image: url("/public/assets/background4.jpg");
 
     background-position: right 35% bottom 30%;
     background-size: cover;
